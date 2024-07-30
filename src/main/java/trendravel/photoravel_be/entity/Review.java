@@ -3,6 +3,7 @@ package trendravel.photoravel_be.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import trendravel.photoravel_be.dto.request.ReviewRequestDto;
 import trendravel.photoravel_be.entity.enums.ReviewTypes;
 
 import java.util.List;
@@ -10,10 +11,10 @@ import java.util.List;
 @Entity
 @Getter
 @AllArgsConstructor
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor
 @Builder
 @Table(name = "REVIEW")
-public class Review {
+public class Review extends BaseTimeEntity{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -45,14 +46,20 @@ public class Review {
     private Spot spotReview;
 
     //연관관계 편의 메소드
-    public void setSpotReview(Spot spot){
+    public void setSpotReview(Spot spot) {
         this.spotReview = spot;
         spot.getReviews().add(this);
     }
 
-    public void setLocationReview(Location location){
+    public void setLocationReview(Location location) {
         this.locationReview = location;
         location.getReview().add(this);
+    }
+
+    public void updateReview(ReviewRequestDto review){
+        this.content = review.getContent();
+        this.rating = review.getRating();
+        this.images = review.getImages();
     }
 
 }

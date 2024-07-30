@@ -3,6 +3,7 @@ package trendravel.photoravel_be.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import trendravel.photoravel_be.dto.request.LocationRequestDto;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,10 +11,10 @@ import java.util.List;
 @Entity
 @Getter
 @AllArgsConstructor
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor
 @Builder
 @Table(name = "LOCATION")
-public class Location {
+public class Location extends BaseTimeEntity{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -35,7 +36,6 @@ public class Location {
             joinColumns = @JoinColumn(name = "location_id")
     )
     private List<String> images = new ArrayList<>();
-    private double distance;
     private int views;
 
     //유저 엔티티 생성 후, 연관관계 필드 추가 필요
@@ -47,6 +47,13 @@ public class Location {
     @OneToMany(mappedBy = "locationReview")
     private List<Review> review = new ArrayList<>();
 
-
+    public void updateLocation(LocationRequestDto location){
+        this.longitude = location.getLongitude();
+        this.latitude = location.getLatitude();
+        this.address = location.getAddress();
+        this.description = location.getDescription();
+        this.name = location.getName();
+        this.images = location.getImages();
+    }
 
 }

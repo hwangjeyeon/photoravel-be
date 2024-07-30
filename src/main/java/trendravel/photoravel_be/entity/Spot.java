@@ -3,6 +3,7 @@ package trendravel.photoravel_be.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import trendravel.photoravel_be.dto.request.SpotRequestDto;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,10 +11,10 @@ import java.util.List;
 @Entity
 @Getter
 @AllArgsConstructor
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor
 @Builder
 @Table(name = "SPOT")
-public class Spot {
+public class Spot extends BaseTimeEntity{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -51,6 +52,15 @@ public class Spot {
         this.location = location;
         location.getSpot().add(this);
     }
+
+    public void updateSpot(SpotRequestDto spot){
+        this.title = spot.getTitle();
+        this.description = spot.getDescription();
+        this.latitude = spot.getLatitude();
+        this.longitude = spot.getLongitude();
+        this.images = spot.getImages();
+    }
+
 
 
 }
