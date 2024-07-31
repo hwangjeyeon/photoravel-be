@@ -10,10 +10,10 @@
 |[hwangjeyeon](https://github.com/hwangjeyeon)|[Seong57](https://github.com/Seong57)|[DongUk-Shin](https://github.com/DongUk-Shin)|
 
 
-## git Convention
-1. Main 브랜치는 Prototype 테스트 통과 이후 merge한다
-2. Prototype 브랜치는 자신을 제외한 다른 두 팀원의 Code Review를 받은 후 Rebase한다.
-3. 모든 pull Request는 자신을 제외한 다른 두 팀원의 Code Review를 받은 후 수락한다
+## Git Convention
+- Main 브랜치는 Prototype 테스트 통과 이후 merge한다
+- Prototype 브랜치는 자신을 제외한 다른 두 팀원의 Code Review를 받은 후 Rebase한다.
+- 모든 pull Request는 자신을 제외한 다른 두 팀원의 Code Review를 받은 후 수락한다
 
 ### Commit Message Convention
 |Tag|Description|
@@ -30,15 +30,20 @@
 |Remove|파일 삭제|
 |Config|설정 파일 수정|
 |Move|파일 위치 변경|
+|Docs|문서 수정(README.MD 등)|
 
-### 예시
+### Example
+--- 
+
 Feat: location CRUD 컨트롤러 기능 구현 **<-- Head (머릿말)**
 <br> 1번 컨트롤러는 Create,DELETE 2번 컨트롤러는 READ, UPDATE를 담당합니다. **<-- Body (본문)**
+
+--- 
 
 Footer의 경우 개발 진행 중 버그가 발생했을 때, 컨벤션 논의 후 추가 예정
 
 
 ## Code Convention
-1. 변수명 camelCase 준수
-2. 들여쓰기 탭 사용
-3. 한줄 최대 글자수 80자 제한
+- 변수명 camelCase 준수
+- 들여쓰기 탭 사용
+- 한줄 최대 글자수 80자 제한
