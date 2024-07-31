@@ -28,7 +28,7 @@ public class ReviewController {
                                             List<MultipartFile> images){
         DataResultDto<ReviewResponseDto> results = new DataResultDto<>();
         results.setResult(new ResultInfo(HttpStatus.CREATED, SUCCESS));
-        results.setData(reviewService.createReview(reviewRequestDto));
+        results.setData(reviewService.createReview(reviewRequestDto, images));
         return results;
     }
 
@@ -39,12 +39,12 @@ public class ReviewController {
                                             List<MultipartFile> images){
         DataResultDto<ReviewResponseDto> results = new DataResultDto<>();
         results.setResult(new ResultInfo(HttpStatus.OK, SUCCESS));
-        results.setData(reviewService.updateReview(reviewRequestDto));
+        results.setData(reviewService.updateReview(reviewRequestDto, images));
         return results;
     }
 
     @DeleteMapping("/review/{reviewId}/delete")
-    public OnlyResultDto locationDelete(@PathVariable Long reviewId) {
+    public OnlyResultDto locationDelete(@PathVariable("reviewId") Long reviewId) {
         reviewService.deleteReview(reviewId);
 
         OnlyResultDto results = new OnlyResultDto();

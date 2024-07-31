@@ -29,7 +29,7 @@ public class LocationController {
 
         DataResultDto<LocationResponseDto> results = new DataResultDto<>();
         results.setResult(new ResultInfo(HttpStatus.CREATED, SUCCESS));
-        results.setData(locationService.createLocation(locationRequestDto));
+        results.setData(locationService.createLocation(locationRequestDto, images));
         return results;
     }
 
@@ -42,12 +42,12 @@ public class LocationController {
 
         DataResultDto<LocationResponseDto> results = new DataResultDto<>();
         results.setResult(new ResultInfo(HttpStatus.OK, SUCCESS));
-        results.setData(locationService.updateLocation(locationRequestDto));
+        results.setData(locationService.updateLocation(locationRequestDto, images));
         return results;
     }
 
     @DeleteMapping("/location/{locationId}")
-    public OnlyResultDto locationDelete(@PathVariable Long locationId) {
+    public OnlyResultDto locationDelete(@PathVariable("locationId") Long locationId) {
         locationService.deleteLocation(locationId);
 
         OnlyResultDto results = new OnlyResultDto();

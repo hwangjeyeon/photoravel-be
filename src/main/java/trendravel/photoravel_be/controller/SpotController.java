@@ -30,7 +30,7 @@ public class SpotController {
                                             List<MultipartFile> images){
         DataResultDto<SpotResponseDto> results = new DataResultDto<>();
         results.setResult(new ResultInfo(HttpStatus.CREATED, SUCCESS));
-        results.setData(spotService.createSpot(spotRequestDto));
+        results.setData(spotService.createSpot(spotRequestDto, images));
         return results;
     }
 
@@ -42,12 +42,12 @@ public class SpotController {
                                             List<MultipartFile> images) {
         DataResultDto<SpotResponseDto> results = new DataResultDto<>();
         results.setResult(new ResultInfo(HttpStatus.OK, SUCCESS));
-        results.setData(spotService.updateSpot(spotRequestDto));
+        results.setData(spotService.updateSpot(spotRequestDto, images));
         return results;
     }
 
     @DeleteMapping("/spot/{spotId}")
-    public OnlyResultDto spotDelete(@PathVariable Long spotId) {
+    public OnlyResultDto spotDelete(@PathVariable("spotId") Long spotId) {
         spotRepository.deleteById(spotId);
 
         OnlyResultDto results = new OnlyResultDto();
