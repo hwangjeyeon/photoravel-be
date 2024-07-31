@@ -21,7 +21,7 @@ public class ReviewController {
     private final ReviewService reviewService;
     private final String SUCCESS = "성공";
 
-    @PostMapping("review/create")
+    @PostMapping("/review/create")
     public DataResultDto<?> createReview(@RequestPart(value = "data")
                                              ReviewRequestDto reviewRequestDto,
                                          @RequestPart(value = "images", required = false)
@@ -32,7 +32,7 @@ public class ReviewController {
         return results;
     }
 
-    @PatchMapping("review/update")
+    @PatchMapping("/review/update")
     public DataResultDto<?> updateReview(@RequestPart(value = "data")
                                              ReviewRequestDto reviewRequestDto,
                                          @RequestPart(value = "images", required = false)
