@@ -22,7 +22,7 @@ public class Review extends BaseTimeEntity{
     private Long id;
 
     @Enumerated(EnumType.STRING)
-    private Enum<ReviewTypes> reviewType;
+    private ReviewTypes reviewType;
 
     private String content;
     private double rating;
