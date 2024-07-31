@@ -45,6 +45,7 @@ public class Spot extends BaseTimeEntity{
     private Location location;
 
     @OneToMany(mappedBy = "spotReview")
+    @Builder.Default
     private List<Review> reviews = new ArrayList<>();
 
     //연관관계 편의 메소드

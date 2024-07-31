@@ -42,9 +42,11 @@ public class Location extends BaseTimeEntity{
 
 
     @OneToMany(mappedBy = "location")
+    @Builder.Default
     private List<Spot> spot = new ArrayList<>();
 
     @OneToMany(mappedBy = "locationReview")
+    @Builder.Default
     private List<Review> review = new ArrayList<>();
 
     public void updateLocation(LocationRequestDto location){
