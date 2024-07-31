@@ -2,7 +2,7 @@ package trendravel.photoravel_be.dto.request;
 
 import lombok.Data;
 
-import java.util.List;
+
 
 @Data
 public class SpotRequestDto {
@@ -12,7 +12,6 @@ public class SpotRequestDto {
     private String description;
     private double latitude;
     private double longitude;
-    private List<String> images;
     private Long LocationId;
     private String userId;
 
