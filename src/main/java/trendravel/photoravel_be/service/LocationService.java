@@ -4,11 +4,13 @@ package trendravel.photoravel_be.service;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 import trendravel.photoravel_be.dto.request.LocationRequestDto;
 import trendravel.photoravel_be.dto.response.domain.LocationResponseDto;
 import trendravel.photoravel_be.entity.Location;
 import trendravel.photoravel_be.repository.LocationRepository;
 
+import java.util.List;
 import java.util.Optional;
 
 
@@ -21,16 +23,16 @@ import java.util.Optional;
 public class LocationService {
 
     private final LocationRepository locationRepository;
-
+    private final ImageService imageService;
 
     public LocationResponseDto createLocation(
-            LocationRequestDto locationRequestDto) {
+            LocationRequestDto locationRequestDto, List<MultipartFile> images) {
         Location location = locationRepository.save(Location.builder()
                 .description(locationRequestDto.getDescription())
                 .name(locationRequestDto.getName())
                 .latitude(locationRequestDto.getLatitude())
                 .longitude(locationRequestDto.getLongitude())
-                .images(locationRequestDto.getImages())
+                .images(imageService.uploadImages(images))
                 .address(locationRequestDto.getAddress())
                 .views(0)
                 .build());
@@ -52,7 +54,7 @@ public class LocationService {
 
     @Transactional
     public LocationResponseDto updateLocation(
-            LocationRequestDto locationRequestDto) {
+            LocationRequestDto locationRequestDto, List<MultipartFile> images) {
 
         Optional<Location> location = locationRepository.findById(
                 locationRequestDto.getLocationId());
@@ -60,7 +62,7 @@ public class LocationService {
         if(location.isEmpty()){
             // 추후 Exception Controller 만들어 처리할 계획
         }
-        location.get().updateLocation(locationRequestDto);
+        location.get().updateLocation(locationRequestDto, imageService.uploadImages(images));
 
 
         return LocationResponseDto
