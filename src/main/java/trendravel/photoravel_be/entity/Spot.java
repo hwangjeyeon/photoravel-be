@@ -54,12 +54,12 @@ public class Spot extends BaseTimeEntity{
         location.getSpot().add(this);
     }
 
-    public void updateSpot(SpotRequestDto spot){
+    public void updateSpot(SpotRequestDto spot, List<String> images){
         this.title = spot.getTitle();
         this.description = spot.getDescription();
         this.latitude = spot.getLatitude();
         this.longitude = spot.getLongitude();
-        this.images = spot.getImages();
+        this.images = images;
     }
 
 

@@ -49,13 +49,13 @@ public class Location extends BaseTimeEntity{
     @Builder.Default
     private List<Review> review = new ArrayList<>();
 
-    public void updateLocation(LocationRequestDto location){
+    public void updateLocation(LocationRequestDto location, List<String> images){
         this.longitude = location.getLongitude();
         this.latitude = location.getLatitude();
         this.address = location.getAddress();
         this.description = location.getDescription();
         this.name = location.getName();
-        this.images = location.getImages();
+        this.images = images;
     }
 
 }
