@@ -7,12 +7,12 @@ import lombok.Data;
 @Data
 public class SpotRequestDto {
 
-    private Long SpotId;
+    private Long spotId;
     private String title;
     private String description;
     private double latitude;
     private double longitude;
-    private Long LocationId;
+    private Long locationId;
     private String userId;
 
 }

@@ -33,9 +33,9 @@ public class SpotService {
                 .latitude(spotRequestDto.getLatitude())
                 .longitude(spotRequestDto.getLongitude())
                 .images(imageService.uploadImages(images))
+                .location(locationRepository.findById(spotRequestDto.
+                        getLocationId()).get())
                 .build();
-        spot.setLocation(locationRepository.findById(spotRequestDto.
-                getLocationId()).get());
 
         spotRepository.save(spot);
 
@@ -68,6 +68,7 @@ public class SpotService {
         return SpotResponseDto
                 .builder()
                 .spotId(spot.get().getId())
+                .title(spot.get().getTitle())
                 .description(spot.get().getDescription())
                 .latitude(spot.get().getLatitude())
                 .longitude(spot.get().getLongitude())

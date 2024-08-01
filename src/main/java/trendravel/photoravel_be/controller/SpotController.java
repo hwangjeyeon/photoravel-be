@@ -46,7 +46,7 @@ public class SpotController {
         return results;
     }
 
-    @DeleteMapping("/spot/{spotId}")
+    @DeleteMapping("/spot/{spotId}/delete")
     public OnlyResultDto spotDelete(@PathVariable("spotId") Long spotId) {
         spotRepository.deleteById(spotId);
 

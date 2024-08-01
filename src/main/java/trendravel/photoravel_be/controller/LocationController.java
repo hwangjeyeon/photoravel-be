@@ -46,7 +46,7 @@ public class LocationController {
         return results;
     }
 
-    @DeleteMapping("/location/{locationId}")
+    @DeleteMapping("/location/{locationId}/delete")
     public OnlyResultDto locationDelete(@PathVariable("locationId") Long locationId) {
         locationService.deleteLocation(locationId);
 
