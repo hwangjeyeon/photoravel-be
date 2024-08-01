@@ -45,6 +45,7 @@ public class Spot extends BaseTimeEntity{
     private Location location;
 
     @OneToMany(mappedBy = "spotReview")
+    @Builder.Default
     private List<Review> reviews = new ArrayList<>();
 
     //연관관계 편의 메소드
@@ -53,12 +54,12 @@ public class Spot extends BaseTimeEntity{
         location.getSpot().add(this);
     }
 
-    public void updateSpot(SpotRequestDto spot){
+    public void updateSpot(SpotRequestDto spot, List<String> images){
         this.title = spot.getTitle();
         this.description = spot.getDescription();
         this.latitude = spot.getLatitude();
         this.longitude = spot.getLongitude();
-        this.images = spot.getImages();
+        this.images = images;
     }
 
 

@@ -22,7 +22,7 @@ public class Review extends BaseTimeEntity{
     private Long id;
 
     @Enumerated(EnumType.STRING)
-    private Enum<ReviewTypes> reviewType;
+    private ReviewTypes reviewType;
 
     private String content;
     private double rating;
@@ -56,10 +56,10 @@ public class Review extends BaseTimeEntity{
         location.getReview().add(this);
     }
 
-    public void updateReview(ReviewRequestDto review){
+    public void updateReview(ReviewRequestDto review, List<String> images) {
         this.content = review.getContent();
         this.rating = review.getRating();
-        this.images = review.getImages();
+        this.images = images;
     }
 
 }
