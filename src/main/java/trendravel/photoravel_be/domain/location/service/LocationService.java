@@ -100,8 +100,8 @@ public class LocationService {
                 .longitude(location.get().getLongitude())
                 .images(location.get().getImages())
                 .address(location.get().getAddress())
-                .createdTime(location.get().getCreatedTime())
-                .updatedTime(location.get().getUpdatedTime())
+                .createdTime(location.get().getCreatedAt())
+                .updatedTime(location.get().getUpdatedAt())
                 .build();
     }
 
