@@ -2,7 +2,8 @@ package trendravel.photoravel_be.entity;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import trendravel.photoravel_be.dto.request.LocationRequestDto;
+import trendravel.photoravel_be.db.location.Location;
+import trendravel.photoravel_be.domain.location.dto.request.LocationRequestDto;
 
 import java.util.ArrayList;
 import java.util.List;
