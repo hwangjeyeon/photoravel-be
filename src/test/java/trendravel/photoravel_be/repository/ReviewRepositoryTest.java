@@ -5,16 +5,18 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import trendravel.photoravel_be.entity.Location;
-import trendravel.photoravel_be.entity.Review;
-import trendravel.photoravel_be.entity.Spot;
-import trendravel.photoravel_be.entity.enums.ReviewTypes;
+import trendravel.photoravel_be.db.respository.LocationRepository;
+import trendravel.photoravel_be.db.respository.ReviewRepository;
+import trendravel.photoravel_be.db.respository.SpotRepository;
+import trendravel.photoravel_be.db.location.Location;
+import trendravel.photoravel_be.db.review.Review;
+import trendravel.photoravel_be.db.spot.Spot;
+import trendravel.photoravel_be.db.review.enums.ReviewTypes;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 
 @DataJpaTest
 class ReviewRepositoryTest {
