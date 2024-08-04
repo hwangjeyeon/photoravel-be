@@ -23,14 +23,13 @@ public class LocationController {
     private final String SUCCESS = "성공";
 
 
-    @PostMapping(value = "/location/create",
-            consumes = MediaType.APPLICATION_JSON_VALUE)
-    public DataResultDto<LocationResponseDto> locationCreateWithNoImage(@RequestPart(value = "data")
+    @PostMapping(value = "/location/create")
+    public DataResultDto<LocationResponseDto> locationCreate(@RequestBody
                                            LocationRequestDto locationRequestDto) {
 
         DataResultDto<LocationResponseDto> results = new DataResultDto<>();
         results.setResult(new ResultInfo(HttpStatus.CREATED, SUCCESS));
-        results.setData(locationService.createLocationWithNoImage(locationRequestDto));
+        results.setData(locationService.createLocation(locationRequestDto));
         return results;
     }
 
@@ -52,7 +51,7 @@ public class LocationController {
     @PatchMapping(value = "/location/update",
             consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public DataResultDto<?> locationUpdate(@RequestPart(value = "data")
+    public DataResultDto<LocationResponseDto> locationUpdate(@RequestPart(value = "data")
                                                LocationRequestDto locationRequestDto,
                                            @RequestPart(value = "images", required = false)
                                                 List<MultipartFile> images) {
@@ -60,6 +59,16 @@ public class LocationController {
         DataResultDto<LocationResponseDto> results = new DataResultDto<>();
         results.setResult(new ResultInfo(HttpStatus.OK, SUCCESS));
         results.setData(locationService.updateLocation(locationRequestDto, images));
+        return results;
+    }
+
+    @PatchMapping(value = "/location/update")
+    public DataResultDto<LocationResponseDto> locationUpdate(@RequestBody
+                                           LocationRequestDto locationRequestDto) {
+
+        DataResultDto<LocationResponseDto> results = new DataResultDto<>();
+        results.setResult(new ResultInfo(HttpStatus.OK, SUCCESS));
+        results.setData(locationService.updateLocation(locationRequestDto));
         return results;
     }
 

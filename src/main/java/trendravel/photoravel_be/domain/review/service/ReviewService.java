@@ -58,6 +58,38 @@ public class ReviewService {
                 .build();
     }
 
+    public ReviewResponseDto createReview(
+            ReviewRequestDto reviewRequestDto) {
+
+
+        Review review = reviewRepository.save(Review.builder()
+                .reviewType(reviewRequestDto.getReviewType())
+                .content(reviewRequestDto.getContent())
+                .rating(reviewRequestDto.getRating())
+                .locationReview(ReviewTypes.LOCATION ==
+                        reviewRequestDto.getReviewType()
+                        ? locationRepository.
+                        findById(reviewRequestDto.getTypeId())
+                        .orElse(null) : null)
+                .spotReview(ReviewTypes.SPOT ==
+                        reviewRequestDto.getReviewType()
+                        ? spotRepository.findById(reviewRequestDto.getTypeId())
+                        .orElse(null) : null)
+                .build());
+
+
+        return ReviewResponseDto
+                .builder()
+                .ReviewId(review.getId())
+                .rating(review.getRating())
+                .content(review.getContent())
+                .reviewType(review.getReviewType().toString())
+                .createdTime(review.getCreatedAt())
+                .updatedTime(review.getUpdatedAt())
+                .build();
+    }
+
+
 
     @Transactional
     public ReviewResponseDto updateReview(
@@ -76,6 +108,30 @@ public class ReviewService {
                 .builder()
                 .ReviewId(review.get().getId())
                 .images(review.get().getImages())
+                .rating(review.get().getRating())
+                .content(review.get().getContent())
+                .reviewType(review.get().getReviewType().toString())
+                .createdTime(review.get().getCreatedAt())
+                .updatedTime(review.get().getUpdatedAt())
+                .build();
+    }
+
+    @Transactional
+    public ReviewResponseDto updateReview(
+            ReviewRequestDto reviewRequestDto) {
+
+        Optional<Review> review = reviewRepository.findById(
+                reviewRequestDto.getReviewId());
+
+
+        if(review.isEmpty()){
+            // 추후 Exception Controller 만들어 처리할 계획
+        }
+        review.get().updateReview(reviewRequestDto);
+
+        return ReviewResponseDto
+                .builder()
+                .ReviewId(review.get().getId())
                 .rating(review.get().getRating())
                 .content(review.get().getContent())
                 .reviewType(review.get().getReviewType().toString())

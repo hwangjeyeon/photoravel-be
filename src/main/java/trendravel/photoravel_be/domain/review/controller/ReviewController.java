@@ -25,7 +25,7 @@ public class ReviewController {
     @PostMapping(value = "/review/create",
             consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public DataResultDto<?> createReview(@RequestPart(value = "data")
+    public DataResultDto<ReviewResponseDto> createReview(@RequestPart(value = "data")
                                              ReviewRequestDto reviewRequestDto,
                                          @RequestPart(value = "images", required = false)
                                             List<MultipartFile> images){
@@ -35,16 +35,34 @@ public class ReviewController {
         return results;
     }
 
+    @PostMapping(value = "/review/create")
+    public DataResultDto<ReviewResponseDto> createReview(@RequestBody
+                                         ReviewRequestDto reviewRequestDto){
+        DataResultDto<ReviewResponseDto> results = new DataResultDto<>();
+        results.setResult(new ResultInfo(HttpStatus.CREATED, SUCCESS));
+        results.setData(reviewService.createReview(reviewRequestDto));
+        return results;
+    }
+
     @PatchMapping(value = "/review/update",
             consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public DataResultDto<?> updateReview(@RequestPart(value = "data")
+    public DataResultDto<ReviewResponseDto> updateReview(@RequestPart(value = "data")
                                              ReviewRequestDto reviewRequestDto,
                                          @RequestPart(value = "images", required = false)
                                             List<MultipartFile> images){
         DataResultDto<ReviewResponseDto> results = new DataResultDto<>();
         results.setResult(new ResultInfo(HttpStatus.OK, SUCCESS));
         results.setData(reviewService.updateReview(reviewRequestDto, images));
+        return results;
+    }
+
+    @PatchMapping(value = "/review/update")
+    public DataResultDto<ReviewResponseDto> updateReview(@RequestBody
+                                         ReviewRequestDto reviewRequestDto){
+        DataResultDto<ReviewResponseDto> results = new DataResultDto<>();
+        results.setResult(new ResultInfo(HttpStatus.OK, SUCCESS));
+        results.setData(reviewService.updateReview(reviewRequestDto));
         return results;
     }
 

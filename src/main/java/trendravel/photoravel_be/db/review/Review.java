@@ -65,4 +65,9 @@ public class Review extends BaseEntity {
         this.images = images;
     }
 
+    public void updateReview(ReviewRequestDto review) {
+        this.content = review.getContent();
+        this.rating = review.getRating();
+    }
+
 }

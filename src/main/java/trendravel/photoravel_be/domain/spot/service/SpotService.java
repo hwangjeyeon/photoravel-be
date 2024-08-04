@@ -53,6 +53,31 @@ public class SpotService {
                 .build();
     }
 
+    public SpotResponseDto createSpot(
+            SpotRequestDto spotRequestDto) {
+        Spot spot = Spot.builder()
+                .description(spotRequestDto.getDescription())
+                .title(spotRequestDto.getTitle())
+                .latitude(spotRequestDto.getLatitude())
+                .longitude(spotRequestDto.getLongitude())
+                .location(locationRepository.findById(spotRequestDto.
+                        getLocationId()).get())
+                .build();
+
+        spotRepository.save(spot);
+
+        return SpotResponseDto
+                .builder()
+                .spotId(spot.getId())
+                .description(spot.getDescription())
+                .latitude(spot.getLatitude())
+                .longitude(spot.getLongitude())
+                .title(spot.getTitle())
+                .createdTime(spot.getCreatedAt())
+                .updatedTime(spot.getUpdatedAt())
+                .build();
+    }
+
 
     @Transactional
     public SpotResponseDto updateSpot(
@@ -74,6 +99,30 @@ public class SpotService {
                 .latitude(spot.get().getLatitude())
                 .longitude(spot.get().getLongitude())
                 .images(spot.get().getImages())
+                .createdTime(spot.get().getCreatedAt())
+                .updatedTime(spot.get().getUpdatedAt())
+                .build();
+    }
+
+    @Transactional
+    public SpotResponseDto updateSpot(
+            SpotRequestDto spotRequestDto) {
+
+        Optional<Spot> spot = spotRepository.findById(
+                spotRequestDto.getSpotId());
+
+        if(spot.isEmpty()){
+            // 추후 Exception Controller 만들어 처리할 계획
+        }
+        spot.get().updateSpot(spotRequestDto);
+
+        return SpotResponseDto
+                .builder()
+                .spotId(spot.get().getId())
+                .title(spot.get().getTitle())
+                .description(spot.get().getDescription())
+                .latitude(spot.get().getLatitude())
+                .longitude(spot.get().getLongitude())
                 .createdTime(spot.get().getCreatedAt())
                 .updatedTime(spot.get().getUpdatedAt())
                 .build();

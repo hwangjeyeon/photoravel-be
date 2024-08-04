@@ -27,7 +27,7 @@ public class SpotController {
     @PostMapping(value = "/spot/create",
             consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public DataResultDto<?> spotCreate(@RequestPart(value = "data")
+    public DataResultDto<SpotResponseDto> spotCreate(@RequestPart(value = "data")
                                            SpotRequestDto spotRequestDto,
                                        @RequestPart(value = "images", required = false)
                                             List<MultipartFile> images){
@@ -37,17 +37,35 @@ public class SpotController {
         return results;
     }
 
+    @PostMapping(value = "/spot/create")
+    public DataResultDto<SpotResponseDto> spotCreate(@RequestBody
+                                       SpotRequestDto spotRequestDto){
+        DataResultDto<SpotResponseDto> results = new DataResultDto<>();
+        results.setResult(new ResultInfo(HttpStatus.CREATED, SUCCESS));
+        results.setData(spotService.createSpot(spotRequestDto));
+        return results;
+    }
+
 
     @PatchMapping(value = "/spot/update",
             consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public DataResultDto<?> spotUpdate(@RequestPart(value = "data")
+    public DataResultDto<SpotResponseDto> spotUpdate(@RequestPart(value = "data")
                                            SpotRequestDto spotRequestDto,
                                        @RequestPart(value = "images", required = false)
                                             List<MultipartFile> images) {
         DataResultDto<SpotResponseDto> results = new DataResultDto<>();
         results.setResult(new ResultInfo(HttpStatus.OK, SUCCESS));
         results.setData(spotService.updateSpot(spotRequestDto, images));
+        return results;
+    }
+
+    @PatchMapping(value = "/spot/update")
+    public DataResultDto<SpotResponseDto> spotUpdate(@RequestBody
+                                       SpotRequestDto spotRequestDto) {
+        DataResultDto<SpotResponseDto> results = new DataResultDto<>();
+        results.setResult(new ResultInfo(HttpStatus.OK, SUCCESS));
+        results.setData(spotService.updateSpot(spotRequestDto));
         return results;
     }
 

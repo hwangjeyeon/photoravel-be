@@ -65,6 +65,13 @@ public class Spot extends BaseEntity {
         this.images = images;
     }
 
+    public void updateSpot(SpotRequestDto spot){
+        this.title = spot.getTitle();
+        this.description = spot.getDescription();
+        this.latitude = spot.getLatitude();
+        this.longitude = spot.getLongitude();
+    }
+
 
 
 }

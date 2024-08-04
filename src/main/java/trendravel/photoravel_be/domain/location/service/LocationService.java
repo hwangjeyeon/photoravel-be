@@ -52,7 +52,7 @@ public class LocationService {
                 .build();
     }
 
-    public LocationResponseDto createLocationWithNoImage(
+    public LocationResponseDto createLocation(
             LocationRequestDto locationRequestDto) {
         Location location = locationRepository.save(Location.builder()
                 .description(locationRequestDto.getDescription())
@@ -70,7 +70,6 @@ public class LocationService {
                 .name(location.getName())
                 .latitude(location.getLatitude())
                 .longitude(location.getLongitude())
-                .images(location.getImages())
                 .address(location.getAddress())
                 .createdTime(location.getCreatedAt())
                 .updatedTime(location.getUpdatedAt())
@@ -99,6 +98,32 @@ public class LocationService {
                 .latitude(location.get().getLatitude())
                 .longitude(location.get().getLongitude())
                 .images(location.get().getImages())
+                .address(location.get().getAddress())
+                .createdTime(location.get().getCreatedAt())
+                .updatedTime(location.get().getUpdatedAt())
+                .build();
+    }
+
+    @Transactional
+    public LocationResponseDto updateLocation(
+            LocationRequestDto locationRequestDto) {
+
+        Optional<Location> location = locationRepository.findById(
+                locationRequestDto.getLocationId());
+
+        if(location.isEmpty()){
+            // 추후 Exception Controller 만들어 처리할 계획
+        }
+        location.get().updateLocation(locationRequestDto);
+
+
+        return LocationResponseDto
+                .builder()
+                .LocationId(location.get().getId())
+                .description(location.get().getDescription())
+                .name(location.get().getName())
+                .latitude(location.get().getLatitude())
+                .longitude(location.get().getLongitude())
                 .address(location.get().getAddress())
                 .createdTime(location.get().getCreatedAt())
                 .updatedTime(location.get().getUpdatedAt())

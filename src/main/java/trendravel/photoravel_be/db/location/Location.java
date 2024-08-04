@@ -61,4 +61,12 @@ public class Location extends BaseEntity {
         this.images = images;
     }
 
+    public void updateLocation(LocationRequestDto location){
+        this.longitude = location.getLongitude();
+        this.latitude = location.getLatitude();
+        this.address = location.getAddress();
+        this.description = location.getDescription();
+        this.name = location.getName();
+    }
+
 }
