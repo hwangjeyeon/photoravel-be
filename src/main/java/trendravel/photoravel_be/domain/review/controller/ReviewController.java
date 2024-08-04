@@ -66,9 +66,7 @@ public class ReviewController {
         return results;
     }
 
-    @DeleteMapping(value ="/review/{reviewId}/delete",
-            consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
-            produces = MediaType.APPLICATION_JSON_VALUE)
+    @DeleteMapping(value ="/review/{reviewId}/delete")
     public OnlyResultDto locationDelete(@PathVariable("reviewId") Long reviewId) {
         reviewService.deleteReview(reviewId);
 
