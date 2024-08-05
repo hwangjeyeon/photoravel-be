@@ -49,7 +49,7 @@ public class SpotController {
     }
 
 
-    @GetMapping(value = "/location/{locationSearchId}/spot/{spotSearchId}")
+    @GetMapping(value = "/location/{locationSearchId}/spot/{spotSearchId}/detail")
     public Api<SpotSingleReadResponseDto> spotSingleRead(@PathVariable("locationSearchId")
                                                 Long locationSearchId,
                                                          @PathVariable("spotSearchId")
