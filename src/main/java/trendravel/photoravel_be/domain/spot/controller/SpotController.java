@@ -10,7 +10,8 @@ import trendravel.photoravel_be.commom.response.Api;
 import trendravel.photoravel_be.commom.response.Result;
 import trendravel.photoravel_be.domain.spot.dto.request.SpotRequestDto;
 import trendravel.photoravel_be.domain.spot.dto.response.SpotResponseDto;
-import trendravel.photoravel_be.db.respository.SpotRepository;
+import trendravel.photoravel_be.db.respository.spot.SpotRepository;
+import trendravel.photoravel_be.domain.spot.dto.response.SpotSingleReadResponseDto;
 import trendravel.photoravel_be.domain.spot.service.SpotService;
 
 import java.util.List;
@@ -46,6 +47,17 @@ public class SpotController {
 
         return Api.CREATED(spotService.createSpot(spotRequestDto, images));
     }
+
+
+    @GetMapping(value = "/location/{locationSearchId}/spot/{spotSearchId}")
+    public Api<SpotSingleReadResponseDto> spotSingleRead(@PathVariable("locationSearchId")
+                                                Long locationSearchId,
+                                                         @PathVariable("spotSearchId")
+                                                Long spotSearchId){
+        return Api.READ(spotService.readSingleSpot(locationSearchId, spotSearchId));
+    }
+
+
 
 
     @Schema(description = "스팟 수정 요청 (이미지 미포함)",

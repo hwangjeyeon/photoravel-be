@@ -4,12 +4,14 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import trendravel.photoravel_be.domain.review.dto.response.RecentReviewsDto;
 import trendravel.photoravel_be.domain.spot.dto.request.SpotRequestDto;
 import trendravel.photoravel_be.domain.spot.dto.response.SpotResponseDto;
 import trendravel.photoravel_be.db.spot.Spot;
-import trendravel.photoravel_be.db.respository.LocationRepository;
-import trendravel.photoravel_be.db.respository.SpotRepository;
+import trendravel.photoravel_be.db.respository.location.LocationRepository;
+import trendravel.photoravel_be.db.respository.spot.SpotRepository;
 import trendravel.photoravel_be.commom.service.ImageService;
+import trendravel.photoravel_be.domain.spot.dto.response.SpotSingleReadResponseDto;
 
 import java.util.List;
 import java.util.Optional;
@@ -77,6 +79,42 @@ public class SpotService {
                 .updatedTime(spot.getUpdatedAt())
                 .build();
     }
+
+
+    @Transactional
+    public SpotSingleReadResponseDto readSingleSpot(Long locationId, Long spotId) {
+        List<Spot> spots = locationRepository.findById(locationId).get().getSpot();
+        if(spots.isEmpty()){
+            //예외처리
+        }
+        Spot spot = spots.stream().
+                filter(s -> s.getId().equals(spotId)).findFirst().get();
+
+        List<RecentReviewsDto> reviews = spotRepository.recentReviews(locationId, spotId);
+
+        return SpotSingleReadResponseDto.builder()
+                .spotId(spot.getId())
+                .title(spot.getTitle())
+                .description(spot.getDescription())
+                .createdTime(spot.getCreatedAt())
+                .updatedTime(spot.getUpdatedAt())
+                .views(spot.getViews())
+                .latitude(spot.getLatitude())
+                .longitude(spot.getLongitude())
+                .images(spot.getImages())
+                .ratingAvg(String.format("%.2f", ratingAverage(reviews)))
+                .recentReviewDtos(reviews)
+                .build();
+    }
+
+    private double ratingAverage(List<RecentReviewsDto> reviews) {
+        double sum = 0;
+        for (RecentReviewsDto review : reviews) {
+            sum += review.getRating();
+        }
+        return sum / reviews.size();
+    }
+
 
 
     @Transactional
