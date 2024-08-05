@@ -72,6 +72,10 @@ public class Spot extends BaseEntity {
         this.longitude = spot.getLongitude();
     }
 
+    public void increaseViews(){
+        this.views++;
+    }
+
 
 
 }

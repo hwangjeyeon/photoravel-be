@@ -69,4 +69,8 @@ public class Location extends BaseEntity {
         this.name = location.getName();
     }
 
+    public void increaseViews(){
+        this.views++;
+    }
+
 }
