@@ -18,11 +18,12 @@ public class LocationRepositoryImpl implements LocationRepositoryCustom{
     private final JPAQueryFactory queryFactory;
 
     @Override
-    public List<RecentReviewsDto> recentReviews() {
+    public List<RecentReviewsDto> recentReviews(Long id) {
         List<Review> recentReviews = queryFactory
                 .select(review)
                 .from(review)
                 .innerJoin(review.locationReview, location)
+                .where(location.id.eq(id))
                 .orderBy(review.updatedAt.desc())
                 .limit(3)
                 .fetch();

@@ -86,7 +86,7 @@ public class LocationService {
             //예외처리
         }
         location.increaseViews();
-        List<RecentReviewsDto> reviews = locationRepository.recentReviews();
+        List<RecentReviewsDto> reviews = locationRepository.recentReviews(location.getId());
 
         return LocationSingleReadResponseDto.builder()
                 .LocationId(location.getId())

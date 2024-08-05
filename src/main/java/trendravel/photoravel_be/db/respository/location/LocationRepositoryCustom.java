@@ -6,6 +6,6 @@ import java.util.List;
 
 public interface LocationRepositoryCustom {
 
-    List<RecentReviewsDto> recentReviews();
+    List<RecentReviewsDto> recentReviews(Long id);
 
 }
