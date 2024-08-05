@@ -90,7 +90,7 @@ public class SpotService {
         Spot spot = spots.stream().
                 filter(s -> s.getId().equals(spotId)).findFirst().get();
 
-        List<RecentReviewsDto> reviews = spotRepository.recentReviews(locationId, spotId);
+        List<RecentReviewsDto> reviews = spotRepository.recentReviews(spot.getId());
 
         return SpotSingleReadResponseDto.builder()
                 .spotId(spot.getId())

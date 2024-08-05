@@ -6,6 +6,6 @@ import java.util.List;
 
 public interface SpotRepositoryCustom {
 
-    List<RecentReviewsDto> recentReviews(Long locationId, Long SpotId);
+    List<RecentReviewsDto> recentReviews(Long SpotId);
 
 }
