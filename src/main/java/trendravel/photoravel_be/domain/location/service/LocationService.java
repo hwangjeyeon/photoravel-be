@@ -8,8 +8,10 @@ import org.springframework.web.multipart.MultipartFile;
 import trendravel.photoravel_be.domain.location.dto.request.LocationRequestDto;
 import trendravel.photoravel_be.domain.location.dto.response.LocationResponseDto;
 import trendravel.photoravel_be.db.location.Location;
-import trendravel.photoravel_be.db.respository.LocationRepository;
+import trendravel.photoravel_be.db.respository.location.LocationRepository;
 import trendravel.photoravel_be.commom.service.ImageService;
+import trendravel.photoravel_be.domain.location.dto.response.LocationSingleReadResponseDto;
+import trendravel.photoravel_be.domain.review.dto.response.RecentReviewsDto;
 
 import java.util.List;
 import java.util.Optional;
@@ -74,6 +76,40 @@ public class LocationService {
                 .createdTime(location.getCreatedAt())
                 .updatedTime(location.getUpdatedAt())
                 .build();
+    }
+
+    @Transactional
+    public LocationSingleReadResponseDto readSingleLocation(Long id){
+        Location location = locationRepository.findById(id).orElse(null);
+
+        if(location == null){
+            //예외처리
+        }
+        location.increaseViews();
+        List<RecentReviewsDto> reviews = locationRepository.recentReviews();
+
+        return LocationSingleReadResponseDto.builder()
+                .LocationId(location.getId())
+                .latitude(location.getLatitude())
+                .longitude(location.getLongitude())
+                .address(location.getAddress())
+                .name(location.getName())
+                .description(location.getDescription())
+                .updatedTime(location.getUpdatedAt())
+                .createdTime(location.getCreatedAt())
+                .images(location.getImages())
+                .views(location.getViews())
+                .ratingAvg(String.format("%.2f", ratingAverage(reviews)))
+                .recentReviewDtos(reviews)
+                .build();
+    }
+
+    private double ratingAverage(List<RecentReviewsDto> reviews) {
+        double sum = 0;
+        for (RecentReviewsDto review : reviews) {
+            sum += review.getRating();
+        }
+        return sum / reviews.size();
     }
 
 

@@ -10,6 +10,7 @@ import trendravel.photoravel_be.commom.response.Api;
 import trendravel.photoravel_be.commom.response.Result;
 import trendravel.photoravel_be.domain.location.dto.request.LocationRequestDto;
 import trendravel.photoravel_be.domain.location.dto.response.LocationResponseDto;
+import trendravel.photoravel_be.domain.location.dto.response.LocationSingleReadResponseDto;
 import trendravel.photoravel_be.domain.location.service.LocationService;
 
 import java.util.List;
@@ -41,6 +42,13 @@ public class LocationController {
                                                 List<MultipartFile> images) {
 
         return Api.CREATED(locationService.createLocation(locationRequestDto, images));
+    }
+
+
+    @GetMapping(value = "/location/{locationId}/detail")
+    public Api<LocationSingleReadResponseDto> locationSingleRead(@PathVariable("locationId")
+                                                           Long locationId){
+        return Api.READ(locationService.readSingleLocation(locationId));
     }
 
 
