@@ -205,8 +205,7 @@ class LocationServiceTest {
                 .isEqualTo(findLocation.getCreatedAt());
         assertThat(locationSingleReadResponseDto.getUpdatedTime())
                 .isEqualTo(findLocation.getUpdatedAt());
-        assertThat(locationSingleReadResponseDto.getViews()).isEqualTo(0);
-        assertThat(findRecentReviews.size()).isGreaterThan(1);
+        assertThat(locationSingleReadResponseDto.getViews()).isEqualTo(1);
         assertThat(findRecentReviews).extracting("rating")
                 .containsExactlyInAnyOrder(review4.getRating(),
                         review2.getRating(), review3.getRating());
