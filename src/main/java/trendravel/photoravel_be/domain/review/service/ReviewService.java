@@ -4,6 +4,7 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import trendravel.photoravel_be.db.location.Location;
 import trendravel.photoravel_be.db.spot.Spot;
 import trendravel.photoravel_be.domain.review.dto.request.ReviewRequestDto;
 import trendravel.photoravel_be.domain.review.dto.response.ReviewResponseDto;
@@ -29,6 +30,16 @@ public class ReviewService {
     public ReviewResponseDto createReview(
             ReviewRequestDto reviewRequestDto, List<MultipartFile> images) {
 
+        Location location = locationRepository.
+                findById(reviewRequestDto.getTypeId())
+                .orElse(null);
+
+        Spot spot = spotRepository.findById(reviewRequestDto.getTypeId())
+                .orElse(null);
+
+        if(location == null && spot == null){
+            // 예외처리 로직 추가 필요
+        }
 
         Review review = reviewRepository.save(Review.builder()
                 .reviewType(reviewRequestDto.getReviewType())
@@ -37,15 +48,13 @@ public class ReviewService {
                 .rating(reviewRequestDto.getRating())
                 .locationReview(ReviewTypes.LOCATION ==
                         reviewRequestDto.getReviewType()
-                        ? locationRepository.
-                        findById(reviewRequestDto.getTypeId())
-                        .orElse(null) : null)
+                        ? location : null)
                 .spotReview(ReviewTypes.SPOT ==
                         reviewRequestDto.getReviewType()
-                        ? spotRepository.findById(reviewRequestDto.getTypeId())
-                        .orElse(null) : null)
+                        ? spot : null)
                 .build());
-
+        review.setLocationReview(location);
+        review.setSpotReview(spot);
 
         return ReviewResponseDto
                 .builder()
@@ -62,6 +71,17 @@ public class ReviewService {
     public ReviewResponseDto createReview(
             ReviewRequestDto reviewRequestDto) {
 
+        Location location = locationRepository.
+                findById(reviewRequestDto.getTypeId())
+                .orElse(null);
+
+        Spot spot = spotRepository.findById(reviewRequestDto.getTypeId())
+                .orElse(null);
+
+        if(location == null && spot == null){
+            // 예외처리 로직 추가 필요
+        }
+
 
         Review review = reviewRepository.save(Review.builder()
                 .reviewType(reviewRequestDto.getReviewType())
@@ -69,14 +89,14 @@ public class ReviewService {
                 .rating(reviewRequestDto.getRating())
                 .locationReview(ReviewTypes.LOCATION ==
                         reviewRequestDto.getReviewType()
-                        ? locationRepository.
-                        findById(reviewRequestDto.getTypeId())
-                        .orElse(null) : null)
+                        ? location : null)
                 .spotReview(ReviewTypes.SPOT ==
                         reviewRequestDto.getReviewType()
-                        ? spotRepository.findById(reviewRequestDto.getTypeId())
-                        .orElse(null) : null)
+                        ? spot : null)
                 .build());
+
+        review.setLocationReview(location);
+        review.setSpotReview(spot);
 
 
         return ReviewResponseDto

@@ -4,6 +4,7 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import trendravel.photoravel_be.db.location.Location;
 import trendravel.photoravel_be.domain.review.dto.response.RecentReviewsDto;
 import trendravel.photoravel_be.domain.spot.dto.request.SpotRequestDto;
 import trendravel.photoravel_be.domain.spot.dto.response.SpotResponseDto;
@@ -30,16 +31,19 @@ public class SpotService {
 
     public SpotResponseDto createSpot(
             SpotRequestDto spotRequestDto, List<MultipartFile> images) {
+
+        Location location = locationRepository.findById(spotRequestDto.
+                getLocationId()).get();
+
         Spot spot = Spot.builder()
                 .description(spotRequestDto.getDescription())
                 .title(spotRequestDto.getTitle())
                 .latitude(spotRequestDto.getLatitude())
                 .longitude(spotRequestDto.getLongitude())
                 .images(imageService.uploadImages(images))
-                .location(locationRepository.findById(spotRequestDto.
-                        getLocationId()).get())
+                .location(location)
                 .build();
-
+        spot.setLocation(location);
         spotRepository.save(spot);
 
         return SpotResponseDto
@@ -57,15 +61,16 @@ public class SpotService {
 
     public SpotResponseDto createSpot(
             SpotRequestDto spotRequestDto) {
+        Location location = locationRepository.findById(spotRequestDto.
+                getLocationId()).get();
         Spot spot = Spot.builder()
                 .description(spotRequestDto.getDescription())
                 .title(spotRequestDto.getTitle())
                 .latitude(spotRequestDto.getLatitude())
                 .longitude(spotRequestDto.getLongitude())
-                .location(locationRepository.findById(spotRequestDto.
-                        getLocationId()).get())
+                .location(location)
                 .build();
-
+        spot.setLocation(location);
         spotRepository.save(spot);
 
         return SpotResponseDto
