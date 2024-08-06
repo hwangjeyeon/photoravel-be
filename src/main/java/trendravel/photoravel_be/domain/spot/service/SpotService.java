@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import trendravel.photoravel_be.db.location.Location;
+import trendravel.photoravel_be.db.review.Review;
 import trendravel.photoravel_be.domain.review.dto.response.RecentReviewsDto;
 import trendravel.photoravel_be.domain.spot.dto.request.SpotRequestDto;
 import trendravel.photoravel_be.domain.spot.dto.response.SpotResponseDto;
@@ -107,14 +108,14 @@ public class SpotService {
                 .latitude(spot.getLatitude())
                 .longitude(spot.getLongitude())
                 .images(spot.getImages())
-                .ratingAvg(String.format("%.2f", ratingAverage(reviews)))
+                .ratingAvg(String.format("%.2f", ratingAverage(spot.getReviews())))
                 .recentReviewDtos(reviews)
                 .build();
     }
 
-    private double ratingAverage(List<RecentReviewsDto> reviews) {
+    private double ratingAverage(List<Review> reviews) {
         double sum = 0;
-        for (RecentReviewsDto review : reviews) {
+        for (Review review : reviews) {
             sum += review.getRating();
         }
         return sum / reviews.size();
