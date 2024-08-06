@@ -200,7 +200,7 @@ class LocationServiceTest {
         assertThat(locationSingleReadResponseDto.getRatingAvg())
                 .isEqualTo(String.format("%.2f",
                         (review4.getRating() + review2.getRating()
-                                + review3.getRating()) / 3));
+                                + review3.getRating() + review1.getRating()) / 4));
         assertThat(locationSingleReadResponseDto.getCreatedTime())
                 .isEqualTo(findLocation.getCreatedAt());
         assertThat(locationSingleReadResponseDto.getUpdatedTime())
