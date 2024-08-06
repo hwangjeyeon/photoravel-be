@@ -4,13 +4,14 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import trendravel.photoravel_be.db.spot.Spot;
 import trendravel.photoravel_be.domain.review.dto.request.ReviewRequestDto;
 import trendravel.photoravel_be.domain.review.dto.response.ReviewResponseDto;
 import trendravel.photoravel_be.db.review.Review;
 import trendravel.photoravel_be.db.review.enums.ReviewTypes;
-import trendravel.photoravel_be.db.respository.LocationRepository;
-import trendravel.photoravel_be.db.respository.ReviewRepository;
-import trendravel.photoravel_be.db.respository.SpotRepository;
+import trendravel.photoravel_be.db.respository.location.LocationRepository;
+import trendravel.photoravel_be.db.respository.review.ReviewRepository;
+import trendravel.photoravel_be.db.respository.spot.SpotRepository;
 import trendravel.photoravel_be.commom.service.ImageService;
 
 import java.util.List;
@@ -87,6 +88,36 @@ public class ReviewService {
                 .createdTime(review.getCreatedAt())
                 .updatedTime(review.getUpdatedAt())
                 .build();
+    }
+
+    @Transactional
+    public List<ReviewResponseDto> readAllLocationReview(Long locationId){
+        List<Review> reviews = locationRepository.findById(locationId).get().getReview();
+
+
+        return reviews.stream()
+                .map(p -> new ReviewResponseDto(p.getId(), p.getReviewType().toString(),
+                        p.getContent(), p.getRating(), p.getImages(),
+                        p.getCreatedAt(), p.getUpdatedAt()))
+                .toList();
+    }
+
+    @Transactional
+    public List<ReviewResponseDto> readAllSpotReview(Long locationId, Long spotId){
+        List<Spot> spots = locationRepository.findById(locationId).get().getSpot();
+
+        if(spots.isEmpty()){
+            // 예외 처리 로직
+        }
+
+        Spot spot = spots.stream()
+                .filter(s -> s.getId().equals(spotId)).findFirst().get();
+
+        return spot.getReviews().stream()
+                .map(p -> new ReviewResponseDto(p.getId(), p.getReviewType().toString(),
+                        p.getContent(), p.getRating(), p.getImages(),
+                        p.getCreatedAt(), p.getUpdatedAt()))
+                .toList();
     }
 
 

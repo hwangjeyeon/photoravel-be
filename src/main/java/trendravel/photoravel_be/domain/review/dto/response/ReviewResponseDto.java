@@ -2,8 +2,10 @@ package trendravel.photoravel_be.domain.review.dto.response;
 
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.springframework.http.MediaType;
 
 import java.time.LocalDateTime;
@@ -13,6 +15,7 @@ import java.util.List;
 @Schema(description = "리뷰 생성/수정 응답 DTO", contentEncoding = MediaType.APPLICATION_JSON_VALUE)
 @Data
 @Builder
+@NoArgsConstructor @AllArgsConstructor
 public class ReviewResponseDto {
 
     @Schema(description = "리뷰 ID")
