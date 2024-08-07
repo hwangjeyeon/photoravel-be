@@ -2,6 +2,7 @@ package trendravel.photoravel_be.domain.location.dto.response;
 
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 
@@ -10,6 +11,7 @@ import java.util.List;
 
 @Data
 @Builder
+@AllArgsConstructor
 public class LocationMultiReadResponseDto {
 
     @Schema(description = "장소ID")
@@ -37,8 +39,8 @@ public class LocationMultiReadResponseDto {
     // private List<RecentReviewsDto> recentReviewDtos;
 
     @Schema(description = "장소 생성일")
-    private LocalDateTime createdTime;
+    private LocalDateTime createAt;
     @Schema(description = "장소 수정일")
-    private LocalDateTime updatedTime;
+    private LocalDateTime updatedAt;
 
 }
