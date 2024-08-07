@@ -8,6 +8,7 @@ import org.locationtech.jts.geom.GeometryFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import trendravel.photoravel_be.db.review.Review;
+import trendravel.photoravel_be.domain.location.dto.request.LocationKeywordDto;
 import trendravel.photoravel_be.domain.location.dto.request.LocationNowPositionDto;
 import trendravel.photoravel_be.domain.location.dto.request.LocationRequestDto;
 import trendravel.photoravel_be.domain.location.dto.response.LocationMultiReadResponseDto;
@@ -139,6 +140,26 @@ public class LocationService {
                 )
                 .toList();
     }
+
+    @Transactional
+    public List<LocationMultiReadResponseDto> readMultiLocation(LocationKeywordDto locationKeywordDto){
+        List<Location> locations = locationRepository.searchKeyword(locationKeywordDto);
+
+        if(locations.isEmpty()){
+            //예외처리
+        }
+
+        return locations.stream()
+                .map(p -> new LocationMultiReadResponseDto(
+                        p.getId(), p.getLatitude(), p.getLongitude(),
+                        p.getAddress(), p.getDescription(), p.getName(),
+                        p.getImages(),p.getViews(),
+                        String.format("%.2f",ratingAverage(p.getReview())),
+                        p.getCreatedAt(), p.getUpdatedAt())
+                )
+                .toList();
+    }
+
 
     private double ratingAverage(List<Review> reviews) {
         double sum = 0;

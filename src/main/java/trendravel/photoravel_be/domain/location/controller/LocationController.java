@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import trendravel.photoravel_be.commom.response.Api;
 import trendravel.photoravel_be.commom.response.Result;
+import trendravel.photoravel_be.domain.location.dto.request.LocationKeywordDto;
 import trendravel.photoravel_be.domain.location.dto.request.LocationNowPositionDto;
 import trendravel.photoravel_be.domain.location.dto.request.LocationRequestDto;
 import trendravel.photoravel_be.domain.location.dto.response.LocationMultiReadResponseDto;
@@ -62,6 +63,21 @@ public class LocationController {
         return Api.READ(locationService.readMultiLocation(
                 new LocationNowPositionDto(
                         latitude, longitude, range
+                )
+        ));
+    }
+
+
+    @GetMapping(value = "/search/location")
+    public Api<List<LocationMultiReadResponseDto>> locationMultiRead(
+            @RequestParam("latitude") double latitude,
+            @RequestParam("longitude") double longitude,
+            @RequestParam("range") double range,
+            @RequestParam("keyword") String keyword){
+
+        return Api.READ(locationService.readMultiLocation(
+                new LocationKeywordDto(
+                        latitude, longitude, range, keyword
                 )
         ));
     }
