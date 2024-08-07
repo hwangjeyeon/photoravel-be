@@ -3,10 +3,14 @@ package trendravel.photoravel_be.domain.location.service;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.GeometryFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import trendravel.photoravel_be.db.review.Review;
+import trendravel.photoravel_be.domain.location.dto.request.LocationNowPositionDto;
 import trendravel.photoravel_be.domain.location.dto.request.LocationRequestDto;
+import trendravel.photoravel_be.domain.location.dto.response.LocationMultiReadResponseDto;
 import trendravel.photoravel_be.domain.location.dto.response.LocationResponseDto;
 import trendravel.photoravel_be.db.location.Location;
 import trendravel.photoravel_be.db.respository.location.LocationRepository;
@@ -29,9 +33,10 @@ public class LocationService {
     private final LocationRepository locationRepository;
     private final ImageService imageService;
 
+    @Transactional
     public LocationResponseDto createLocation(
             LocationRequestDto locationRequestDto, List<MultipartFile> images) {
-        Location location = locationRepository.save(Location.builder()
+        Location location = Location.builder()
                 .description(locationRequestDto.getDescription())
                 .name(locationRequestDto.getName())
                 .latitude(locationRequestDto.getLatitude())
@@ -39,7 +44,12 @@ public class LocationService {
                 .images(imageService.uploadImages(images))
                 .address(locationRequestDto.getAddress())
                 .views(0)
-                .build());
+                .point(new GeometryFactory().createPoint(
+                                new Coordinate(locationRequestDto.getLatitude()
+                                        , locationRequestDto.getLongitude())))
+                .build();
+        location.getPoint().setSRID(4326);
+        locationRepository.save(location);
 
         return LocationResponseDto
                 .builder()
@@ -55,16 +65,22 @@ public class LocationService {
                 .build();
     }
 
+    @Transactional
     public LocationResponseDto createLocation(
             LocationRequestDto locationRequestDto) {
-        Location location = locationRepository.save(Location.builder()
+        Location location = Location.builder()
                 .description(locationRequestDto.getDescription())
                 .name(locationRequestDto.getName())
                 .latitude(locationRequestDto.getLatitude())
                 .longitude(locationRequestDto.getLongitude())
                 .address(locationRequestDto.getAddress())
                 .views(0)
-                .build());
+                .point(new GeometryFactory().createPoint(
+                        new Coordinate(locationRequestDto.getLatitude()
+                                , locationRequestDto.getLongitude())))
+                .build();
+        location.getPoint().setSRID(4326);
+        locationRepository.save(location);
 
         return LocationResponseDto
                 .builder()
@@ -103,6 +119,25 @@ public class LocationService {
                 .ratingAvg(String.format("%.2f", ratingAverage(location.getReview())))
                 .recentReviewDtos(reviews)
                 .build();
+    }
+
+    @Transactional
+    public List<LocationMultiReadResponseDto> readMultiLocation(LocationNowPositionDto locationNowPositionDto){
+        List<Location> locations = locationRepository.searchNowPosition(locationNowPositionDto);
+
+        if(locations.isEmpty()){
+            //예외처리
+        }
+
+        return locations.stream()
+                .map(p -> new LocationMultiReadResponseDto(
+                        p.getId(), p.getLatitude(), p.getLongitude(),
+                        p.getAddress(), p.getDescription(), p.getName(),
+                        p.getImages(),p.getViews(),
+                        String.format("%.2f",ratingAverage(p.getReview())),
+                        p.getCreatedAt(), p.getUpdatedAt())
+                )
+                .toList();
     }
 
     private double ratingAverage(List<Review> reviews) {
