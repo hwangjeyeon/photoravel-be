@@ -3,10 +3,13 @@ package trendravel.photoravel_be.db.location;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.GeometryFactory;
 import trendravel.photoravel_be.db.BaseEntity;
 import trendravel.photoravel_be.domain.location.dto.request.LocationRequestDto;
 import trendravel.photoravel_be.db.review.Review;
 import trendravel.photoravel_be.db.spot.Spot;
+import org.locationtech.jts.geom.Point;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,7 +34,8 @@ public class Location extends BaseEntity {
     private String description;
     private String name;
 
-
+    @Column(columnDefinition = "POINT SRID 4326", nullable = false)
+    private Point point;
 
     @ElementCollection
     @CollectionTable(
@@ -59,6 +63,9 @@ public class Location extends BaseEntity {
         this.description = location.getDescription();
         this.name = location.getName();
         this.images = images;
+        this.point = new GeometryFactory()
+                .createPoint(new Coordinate(latitude, longitude));
+        this.point.setSRID(4326);
     }
 
     public void updateLocation(LocationRequestDto location){
@@ -67,6 +74,9 @@ public class Location extends BaseEntity {
         this.address = location.getAddress();
         this.description = location.getDescription();
         this.name = location.getName();
+        this.point = new GeometryFactory()
+                .createPoint(new Coordinate(latitude, longitude));
+        this.point.setSRID(4326);
     }
 
     public void increaseViews(){
