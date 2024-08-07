@@ -9,6 +9,7 @@ import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.Point;
 import trendravel.photoravel_be.db.location.Location;
 import trendravel.photoravel_be.db.review.Review;
+import trendravel.photoravel_be.domain.location.dto.request.LocationKeywordDto;
 import trendravel.photoravel_be.domain.location.dto.request.LocationNowPositionDto;
 import trendravel.photoravel_be.domain.review.dto.response.RecentReviewsDto;
 
@@ -52,16 +53,31 @@ public class LocationRepositoryImpl implements LocationRepositoryCustom{
         return queryFactory
                 .select(location)
                 .from(location)
-                .where(inRangeDistance(locationNowPositionDto))
+                .where(inRangeDistance(locationNowPositionDto.getLatitude(),
+                        locationNowPositionDto.getLongitude(),
+                        locationNowPositionDto.getRange()))
                 .fetch();
-
     }
 
+    @Override
+    public List<Location> searchKeyword(LocationKeywordDto locationKeywordDto) {
+        return queryFactory
+                .select(location)
+                .from(location)
+                .where(location.name.contains(locationKeywordDto.getKeyword()),
+                        inRangeDistance(locationKeywordDto.getLatitude(),
+                                locationKeywordDto.getLongitude(),
+                                locationKeywordDto.getRange()))
+                .fetch();
+    }
+
+
+
     private BooleanTemplate inRangeDistance(
-            LocationNowPositionDto locationNowPositionDto) {
+            double latitude, double longitude, double range) {
         Point points = new GeometryFactory()
-                .createPoint(new Coordinate(locationNowPositionDto.getLatitude()
-                        , locationNowPositionDto.getLongitude()));
+                .createPoint(new Coordinate(latitude
+                        , longitude));
 
         if(isNull(points)){
             return null;
@@ -69,7 +85,9 @@ public class LocationRepositoryImpl implements LocationRepositoryCustom{
         points.setSRID(4326);
 
         return Expressions.booleanTemplate("ST_Contains(ST_BUFFER({0}, {1}), {2})",
-                points, locationNowPositionDto.getRange(), location.point);
+                points, range, location.point);
     }
+
+
 
 }
