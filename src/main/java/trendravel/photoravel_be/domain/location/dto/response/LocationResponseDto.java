@@ -32,8 +32,8 @@ public class LocationResponseDto {
     //유저 객체 추가 필요
 
     @Schema(description = "장소 생성일")
-    private LocalDateTime createdTime;
+    private LocalDateTime createdAt;
     @Schema(description = "장소 수정일")
-    private LocalDateTime updatedTime;
+    private LocalDateTime updatedAt;
 
 }

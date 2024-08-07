@@ -37,8 +37,8 @@ public class LocationSingleReadResponseDto {
     private List<RecentReviewsDto> recentReviewDtos;
 
     @Schema(description = "장소 생성일")
-    private LocalDateTime createdTime;
+    private LocalDateTime createdAt;
     @Schema(description = "장소 수정일")
-    private LocalDateTime updatedTime;
+    private LocalDateTime updatedAt;
 
 }

@@ -61,8 +61,8 @@ public class LocationService {
                 .longitude(location.getLongitude())
                 .images(location.getImages())
                 .address(location.getAddress())
-                .createdTime(location.getCreatedAt())
-                .updatedTime(location.getUpdatedAt())
+                .createdAt(location.getCreatedAt())
+                .updatedAt(location.getUpdatedAt())
                 .build();
     }
 
@@ -91,8 +91,8 @@ public class LocationService {
                 .latitude(location.getLatitude())
                 .longitude(location.getLongitude())
                 .address(location.getAddress())
-                .createdTime(location.getCreatedAt())
-                .updatedTime(location.getUpdatedAt())
+                .createdAt(location.getCreatedAt())
+                .updatedAt(location.getUpdatedAt())
                 .build();
     }
 
@@ -113,8 +113,8 @@ public class LocationService {
                 .address(location.getAddress())
                 .name(location.getName())
                 .description(location.getDescription())
-                .updatedTime(location.getUpdatedAt())
-                .createdTime(location.getCreatedAt())
+                .updatedAt(location.getUpdatedAt())
+                .createdAt(location.getCreatedAt())
                 .images(location.getImages())
                 .views(location.getViews())
                 .ratingAvg(String.format("%.2f", ratingAverage(location.getReview())))
@@ -192,8 +192,8 @@ public class LocationService {
                 .longitude(location.get().getLongitude())
                 .images(location.get().getImages())
                 .address(location.get().getAddress())
-                .createdTime(location.get().getCreatedAt())
-                .updatedTime(location.get().getUpdatedAt())
+                .createdAt(location.get().getCreatedAt())
+                .updatedAt(location.get().getUpdatedAt())
                 .build();
     }
 
@@ -218,8 +218,8 @@ public class LocationService {
                 .latitude(location.get().getLatitude())
                 .longitude(location.get().getLongitude())
                 .address(location.get().getAddress())
-                .createdTime(location.get().getCreatedAt())
-                .updatedTime(location.get().getUpdatedAt())
+                .createdAt(location.get().getCreatedAt())
+                .updatedAt(location.get().getUpdatedAt())
                 .build();
     }
 

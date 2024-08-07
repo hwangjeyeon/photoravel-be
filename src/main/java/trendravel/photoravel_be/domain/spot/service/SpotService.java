@@ -56,8 +56,8 @@ public class SpotService {
                 .longitude(spot.getLongitude())
                 .images(spot.getImages())
                 .title(spot.getTitle())
-                .createdTime(spot.getCreatedAt())
-                .updatedTime(spot.getUpdatedAt())
+                .createdAt(spot.getCreatedAt())
+                .updatedAt(spot.getUpdatedAt())
                 .build();
     }
 
@@ -82,8 +82,8 @@ public class SpotService {
                 .latitude(spot.getLatitude())
                 .longitude(spot.getLongitude())
                 .title(spot.getTitle())
-                .createdTime(spot.getCreatedAt())
-                .updatedTime(spot.getUpdatedAt())
+                .createdAt(spot.getCreatedAt())
+                .updatedAt(spot.getUpdatedAt())
                 .build();
     }
 
@@ -103,8 +103,8 @@ public class SpotService {
                 .spotId(spot.getId())
                 .title(spot.getTitle())
                 .description(spot.getDescription())
-                .createdTime(spot.getCreatedAt())
-                .updatedTime(spot.getUpdatedAt())
+                .createdAt(spot.getCreatedAt())
+                .updatedAt(spot.getUpdatedAt())
                 .views(spot.getViews())
                 .latitude(spot.getLatitude())
                 .longitude(spot.getLongitude())
@@ -163,8 +163,8 @@ public class SpotService {
                 .latitude(spot.get().getLatitude())
                 .longitude(spot.get().getLongitude())
                 .images(spot.get().getImages())
-                .createdTime(spot.get().getCreatedAt())
-                .updatedTime(spot.get().getUpdatedAt())
+                .createdAt(spot.get().getCreatedAt())
+                .updatedAt(spot.get().getUpdatedAt())
                 .build();
     }
 
@@ -187,8 +187,8 @@ public class SpotService {
                 .description(spot.get().getDescription())
                 .latitude(spot.get().getLatitude())
                 .longitude(spot.get().getLongitude())
-                .createdTime(spot.get().getCreatedAt())
-                .updatedTime(spot.get().getUpdatedAt())
+                .createdAt(spot.get().getCreatedAt())
+                .updatedAt(spot.get().getUpdatedAt())
                 .build();
     }
 
