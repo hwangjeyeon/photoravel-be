@@ -8,6 +8,7 @@ import trendravel.photoravel_be.db.location.Location;
 import trendravel.photoravel_be.db.review.Review;
 import trendravel.photoravel_be.domain.review.dto.response.RecentReviewsDto;
 import trendravel.photoravel_be.domain.spot.dto.request.SpotRequestDto;
+import trendravel.photoravel_be.domain.spot.dto.response.SpotMultiReadResponseDto;
 import trendravel.photoravel_be.domain.spot.dto.response.SpotResponseDto;
 import trendravel.photoravel_be.db.spot.Spot;
 import trendravel.photoravel_be.db.respository.location.LocationRepository;
@@ -111,6 +112,25 @@ public class SpotService {
                 .ratingAvg(String.format("%.2f", ratingAverage(spot.getReviews())))
                 .recentReviewDtos(reviews)
                 .build();
+    }
+
+    @Transactional
+    public List<SpotMultiReadResponseDto> readMultiSpot(Long locationId) {
+        List<Spot> spots = locationRepository.findById(locationId)
+                .get().getSpot();
+
+        if(spots.isEmpty()){
+            //예외처리 로직
+        }
+
+        return spots.stream()
+                .map(p -> new SpotMultiReadResponseDto(
+                        p.getId(), p.getTitle(), p.getDescription(),
+                        p.getLatitude(),p.getLongitude(),
+                        p.getImages(), p.getViews(),
+                        p.getCreatedAt(), p.getUpdatedAt()
+                ))
+                .toList();
     }
 
     private double ratingAverage(List<Review> reviews) {

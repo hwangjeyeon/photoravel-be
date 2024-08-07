@@ -9,6 +9,7 @@ import org.springframework.web.multipart.MultipartFile;
 import trendravel.photoravel_be.commom.response.Api;
 import trendravel.photoravel_be.commom.response.Result;
 import trendravel.photoravel_be.domain.spot.dto.request.SpotRequestDto;
+import trendravel.photoravel_be.domain.spot.dto.response.SpotMultiReadResponseDto;
 import trendravel.photoravel_be.domain.spot.dto.response.SpotResponseDto;
 import trendravel.photoravel_be.db.respository.spot.SpotRepository;
 import trendravel.photoravel_be.domain.spot.dto.response.SpotSingleReadResponseDto;
@@ -57,7 +58,11 @@ public class SpotController {
         return Api.READ(spotService.readSingleSpot(locationSearchId, spotSearchId));
     }
 
-
+    @GetMapping(value = "/location/{locationSearchId}/spots")
+    public Api<List<SpotMultiReadResponseDto>> spotMultiRead(@PathVariable("locationSearchId")
+                                                       Long locationSearchId){
+        return Api.READ(spotService.readMultiSpot(locationSearchId));
+    }
 
 
     @Schema(description = "스팟 수정 요청 (이미지 미포함)",
