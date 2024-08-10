@@ -2,8 +2,9 @@ package trendravel.photoravel_be.entity;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import trendravel.photoravel_be.dto.request.ReviewRequestDto;
-import trendravel.photoravel_be.entity.enums.ReviewTypes;
+import trendravel.photoravel_be.db.review.Review;
+import trendravel.photoravel_be.domain.review.dto.request.ReviewRequestDto;
+import trendravel.photoravel_be.db.review.enums.ReviewTypes;
 
 import java.util.ArrayList;
 import java.util.List;
