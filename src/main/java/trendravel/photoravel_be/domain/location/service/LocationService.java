@@ -5,6 +5,7 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import trendravel.photoravel_be.db.review.Review;
 import trendravel.photoravel_be.domain.location.dto.request.LocationRequestDto;
 import trendravel.photoravel_be.domain.location.dto.response.LocationResponseDto;
 import trendravel.photoravel_be.db.location.Location;
@@ -99,14 +100,14 @@ public class LocationService {
                 .createdTime(location.getCreatedAt())
                 .images(location.getImages())
                 .views(location.getViews())
-                .ratingAvg(String.format("%.2f", ratingAverage(reviews)))
+                .ratingAvg(String.format("%.2f", ratingAverage(location.getReview())))
                 .recentReviewDtos(reviews)
                 .build();
     }
 
-    private double ratingAverage(List<RecentReviewsDto> reviews) {
+    private double ratingAverage(List<Review> reviews) {
         double sum = 0;
-        for (RecentReviewsDto review : reviews) {
+        for (Review review : reviews) {
             sum += review.getRating();
         }
         return sum / reviews.size();

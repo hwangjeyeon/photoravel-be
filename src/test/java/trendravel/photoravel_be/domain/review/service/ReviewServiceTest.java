@@ -1,10 +1,11 @@
 package trendravel.photoravel_be.domain.review.service;
 
+import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import trendravel.photoravel_be.commom.service.ImageService;
 import trendravel.photoravel_be.db.location.Location;
@@ -15,11 +16,16 @@ import trendravel.photoravel_be.db.review.Review;
 import trendravel.photoravel_be.db.review.enums.ReviewTypes;
 import trendravel.photoravel_be.db.spot.Spot;
 import trendravel.photoravel_be.domain.review.dto.request.ReviewRequestDto;
+import trendravel.photoravel_be.domain.review.dto.response.ReviewResponseDto;
+
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 
-@DataJpaTest
+@SpringBootTest
+@Transactional
 class ReviewServiceTest {
 
     @Autowired
@@ -41,6 +47,11 @@ class ReviewServiceTest {
     Spot spot;
     Review locationReview;
     Review spotReview;
+    Review review1;
+    Review review2;
+    Review review3;
+    Review review4;
+
 
     @BeforeEach
     void before(){
@@ -65,6 +76,7 @@ class ReviewServiceTest {
                 .location(location)
                 .build();
         spotRepository.save(spot);
+        spot.setLocation(location);
         locationReview = Review.builder()
                 .id(1L)
                 .reviewType(ReviewTypes.LOCATION)
@@ -81,6 +93,39 @@ class ReviewServiceTest {
                 .build();
         reviewRepository.save(locationReview);
         reviewRepository.save(spotReview);
+
+        review1 = Review
+                .builder()
+                .reviewType(ReviewTypes.LOCATION)
+                .content("멋지네")
+                .rating(1.5)
+                .locationReview(location)
+                .build();
+        review2 = Review
+                .builder()
+                .reviewType(ReviewTypes.LOCATION)
+                .content("키야")
+                .rating(2.4)
+                .locationReview(location)
+                .build();
+        review3 = Review
+                .builder()
+                .reviewType(ReviewTypes.SPOT)
+                .content("이야")
+                .rating(3.42)
+                .spotReview(spot)
+                .build();
+        review4 = Review
+                .builder()
+                .reviewType(ReviewTypes.SPOT)
+                .content("그저 굿")
+                .rating(4.5)
+                .spotReview(spot)
+                .build();
+        review1.setLocationReview(location);
+        review2.setLocationReview(location);
+        review3.setSpotReview(spot);
+        review4.setSpotReview(spot);
 
         locationReviewRequestDto.setReviewId(reviewRepository.findById(1L).get().getId());
         locationReviewRequestDto.setReviewType(locationReview.getReviewType());
@@ -187,6 +232,29 @@ class ReviewServiceTest {
         assertThat(findLocationReview).isNull();
         assertThat(findSpotReview).isNull();
 
+    }
+
+    @Test
+    @DisplayName("Location Review READ Service가 잘 동작하는지 테스트")
+    void readLocationReviewsTest(){
+        List<ReviewResponseDto> reviews = reviewService.readAllLocationReview(1L);
+
+        assertThat(reviews.size()).isEqualTo(2);
+        assertThat(reviews.get(0).getReviewType()).isEqualTo(review1.getReviewType().toString());
+        assertThat(reviews.get(0).getContent()).isEqualTo(review1.getContent());
+        assertEquals(reviews.get(0).getRating(),review1.getRating());
+    }
+
+    @Test
+    @DisplayName("Spot Review READ Service가 잘 동작하는지 테스트")
+    void readSpotReviewsTest(){
+        List<ReviewResponseDto> reviews = reviewService.readAllSpotReview(1L, 1L);
+
+
+        assertThat(reviews.size()).isEqualTo(2);
+        assertThat(reviews.get(0).getReviewType()).isEqualTo(review3.getReviewType().toString());
+        assertThat(reviews.get(0).getContent()).isEqualTo(review3.getContent());
+        assertEquals(reviews.get(0).getRating(),review3.getRating());
     }
 
 

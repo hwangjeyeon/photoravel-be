@@ -43,6 +43,21 @@ public class ReviewController {
         return Api.CREATED(reviewService.createReview(reviewRequestDto, images));
     }
 
+    @GetMapping(value = "/location/{locationId}/detail/reviews")
+    public Api<List<ReviewResponseDto>> readLocationReviews(@PathVariable("locationId")
+                                                          Long locationId){
+        return Api.READ(reviewService.readAllLocationReview(locationId));
+    }
+
+    @GetMapping(value = "/location/{locationId}/spot/{spotId}/detail/reviews")
+    public Api<List<ReviewResponseDto>> readLocationReviews(@PathVariable("locationId")
+                                                            Long locationId,
+                                                            @PathVariable("spotId")
+                                                            Long spotId){
+        return Api.READ(reviewService.readAllSpotReview(locationId, spotId));
+    }
+
+
     @Schema(description = "리뷰 수정 요청 (이미지 미포함)",
             contentEncoding = MediaType.APPLICATION_JSON_VALUE)
     @PatchMapping(value = "/review/update")

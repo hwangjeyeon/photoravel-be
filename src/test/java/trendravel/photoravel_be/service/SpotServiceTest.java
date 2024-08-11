@@ -83,36 +83,36 @@ class SpotServiceTest {
         spotRepository.save(spot);
         review1 = Review
                 .builder()
-                .reviewType(ReviewTypes.LOCATION)
+                .reviewType(ReviewTypes.SPOT)
                 .content("멋지네")
                 .rating(1.5)
-                .locationReview(location)
+                .spotReview(spot)
                 .build();
         review2 = Review
                 .builder()
-                .reviewType(ReviewTypes.LOCATION)
+                .reviewType(ReviewTypes.SPOT)
                 .content("키야")
                 .rating(2.4)
-                .locationReview(location)
+                .spotReview(spot)
                 .build();
         review3 = Review
                 .builder()
-                .reviewType(ReviewTypes.LOCATION)
+                .reviewType(ReviewTypes.SPOT)
                 .content("이야")
                 .rating(3.42)
-                .locationReview(location)
+                .spotReview(spot)
                 .build();
         review4 = Review
                 .builder()
-                .reviewType(ReviewTypes.LOCATION)
+                .reviewType(ReviewTypes.SPOT)
                 .content("그저 굿")
                 .rating(4.5)
-                .locationReview(location)
+                .spotReview(spot)
                 .build();
-        review1.setLocationReview(location);
-        review2.setLocationReview(location);
-        review3.setLocationReview(location);
-        review4.setLocationReview(location);
+        review1.setSpotReview(spot);
+        review2.setSpotReview(spot);
+        review3.setSpotReview(spot);
+        review4.setSpotReview(spot);
 
         reviewRepository.save(review1);
         reviewRepository.save(review2);
@@ -218,7 +218,7 @@ class SpotServiceTest {
         assertThat(spotSingleReadResponseDto.getRatingAvg())
                 .isEqualTo(String.format("%.2f",
                         (review4.getRating() + review2.getRating()
-                                + review3.getRating()) / 3));
+                                + review3.getRating() + review1.getRating()) / 4));
         assertThat(spotSingleReadResponseDto.getCreatedTime())
                 .isEqualTo(findSpot.getCreatedAt());
         assertThat(spotSingleReadResponseDto.getUpdatedTime())
