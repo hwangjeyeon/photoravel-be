@@ -7,6 +7,7 @@ import trendravel.photoravel_be.db.BaseEntity;
 import trendravel.photoravel_be.db.location.Location;
 import trendravel.photoravel_be.domain.spot.dto.request.SpotRequestDto;
 import trendravel.photoravel_be.db.review.Review;
+import trendravel.photoravel_be.domain.spot.dto.request.SpotUpdatedImagesDto;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -57,12 +58,13 @@ public class Spot extends BaseEntity {
         location.getSpot().add(this);
     }
 
-    public void updateSpot(SpotRequestDto spot, List<String> images){
+    public void updateSpot(SpotUpdatedImagesDto spot, List<String> images){
         this.title = spot.getTitle();
         this.description = spot.getDescription();
         this.latitude = spot.getLatitude();
         this.longitude = spot.getLongitude();
-        this.images = images;
+        this.images.remove(spot.getDeleteImages().stream().toString());
+        this.images.addAll(images);
     }
 
     public void updateSpot(SpotRequestDto spot){
