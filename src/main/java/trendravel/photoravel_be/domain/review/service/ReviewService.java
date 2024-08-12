@@ -8,6 +8,7 @@ import trendravel.photoravel_be.commom.image.service.ImageService;
 import trendravel.photoravel_be.db.location.Location;
 import trendravel.photoravel_be.db.spot.Spot;
 import trendravel.photoravel_be.domain.review.dto.request.ReviewRequestDto;
+import trendravel.photoravel_be.domain.review.dto.request.ReviewUpdateImagesDto;
 import trendravel.photoravel_be.domain.review.dto.response.ReviewResponseDto;
 import trendravel.photoravel_be.db.review.Review;
 import trendravel.photoravel_be.db.review.enums.ReviewTypes;
@@ -144,7 +145,7 @@ public class ReviewService {
 
     @Transactional
     public ReviewResponseDto updateReview(
-            ReviewRequestDto reviewRequestDto, List<MultipartFile> images) {
+            ReviewUpdateImagesDto reviewRequestDto, List<MultipartFile> images) {
 
         Optional<Review> review = reviewRepository.findById(
                 reviewRequestDto.getReviewId());
@@ -153,7 +154,8 @@ public class ReviewService {
         if(review.isEmpty()){
             // 추후 Exception Controller 만들어 처리할 계획
         }
-        review.get().updateReview(reviewRequestDto, imageService.uploadImages(images));
+        review.get().updateReview(reviewRequestDto, imageService.updateImages(images,
+                reviewRequestDto.getDeleteImages()));
 
         return ReviewResponseDto
                 .builder()
@@ -191,7 +193,9 @@ public class ReviewService {
                 .build();
     }
 
+    @Transactional
     public void deleteReview(Long id){
+        imageService.deleteAllImages(reviewRepository.findById(id).get().getImages());
         reviewRepository.deleteById(id);
     }
 
