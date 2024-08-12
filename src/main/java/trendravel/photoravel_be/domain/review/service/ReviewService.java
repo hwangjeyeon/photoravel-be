@@ -63,8 +63,8 @@ public class ReviewService {
                 .rating(review.getRating())
                 .content(review.getContent())
                 .reviewType(review.getReviewType().toString())
-                .createdTime(review.getCreatedAt())
-                .updatedTime(review.getUpdatedAt())
+                .createdAt(review.getCreatedAt())
+                .updatedAt(review.getUpdatedAt())
                 .build();
     }
 
@@ -105,8 +105,8 @@ public class ReviewService {
                 .rating(review.getRating())
                 .content(review.getContent())
                 .reviewType(review.getReviewType().toString())
-                .createdTime(review.getCreatedAt())
-                .updatedTime(review.getUpdatedAt())
+                .createdAt(review.getCreatedAt())
+                .updatedAt(review.getUpdatedAt())
                 .build();
     }
 
@@ -162,8 +162,8 @@ public class ReviewService {
                 .rating(review.get().getRating())
                 .content(review.get().getContent())
                 .reviewType(review.get().getReviewType().toString())
-                .createdTime(review.get().getCreatedAt())
-                .updatedTime(review.get().getUpdatedAt())
+                .createdAt(review.get().getCreatedAt())
+                .updatedAt(review.get().getUpdatedAt())
                 .build();
     }
 
@@ -186,8 +186,8 @@ public class ReviewService {
                 .rating(review.get().getRating())
                 .content(review.get().getContent())
                 .reviewType(review.get().getReviewType().toString())
-                .createdTime(review.get().getCreatedAt())
-                .updatedTime(review.get().getUpdatedAt())
+                .createdAt(review.get().getCreatedAt())
+                .updatedAt(review.get().getUpdatedAt())
                 .build();
     }
 

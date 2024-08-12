@@ -2,17 +2,17 @@ package trendravel.photoravel_be.domain.location.dto.response;
 
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import org.springframework.http.MediaType;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
 @Data
 @Builder
-@Schema(description = "장소 생성/수정 응답 DTO", contentEncoding = MediaType.APPLICATION_JSON_VALUE)
-public class LocationResponseDto {
+@AllArgsConstructor
+public class LocationMultiReadResponseDto {
 
     @Schema(description = "장소ID")
     private Long LocationId;
@@ -29,10 +29,17 @@ public class LocationResponseDto {
     @Schema(description = "장소 이미지들")
     private List<String> images;
 
+    private int views;
+
+    private String ratingAvg;
+
     //유저 객체 추가 필요
 
+    // 프론트엔드측과 의논 후 추가 여부 결정
+    // private List<RecentReviewsDto> recentReviewDtos;
+
     @Schema(description = "장소 생성일")
-    private LocalDateTime createdAt;
+    private LocalDateTime createAt;
     @Schema(description = "장소 수정일")
     private LocalDateTime updatedAt;
 

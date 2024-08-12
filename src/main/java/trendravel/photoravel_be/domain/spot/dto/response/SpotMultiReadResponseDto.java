@@ -1,6 +1,8 @@
 package trendravel.photoravel_be.domain.spot.dto.response;
 
+
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 
@@ -9,7 +11,8 @@ import java.util.List;
 
 @Data
 @Builder
-public class SpotResponseDto {
+@AllArgsConstructor
+public class SpotMultiReadResponseDto {
 
     @Schema(description = "스팟 ID")
     private Long spotId;
@@ -24,9 +27,18 @@ public class SpotResponseDto {
     @Schema(description = "스팟 이미지들")
     private List<String> images;
 
+    private int views;
+
+    //유저 객체 추가 필요
+
+
+    // 프론트엔드측과 의논 후 추가 여부 결정
+    //private List<RecentReviewsDto> recentReviewDtos;
+
+
     // 유저 객체 전달 필요
     @Schema(description = "스팟 생성일")
-    private LocalDateTime createdAt;
+    private LocalDateTime createAt;
     @Schema(description = "스팟 수정일")
     private LocalDateTime updatedAt;
 

@@ -37,8 +37,8 @@ public class SpotSingleReadResponseDto {
 
     // 유저 객체 전달 필요
     @Schema(description = "스팟 생성일")
-    private LocalDateTime createdTime;
+    private LocalDateTime createdAt;
     @Schema(description = "스팟 수정일")
-    private LocalDateTime updatedTime;
+    private LocalDateTime updatedAt;
 
 }

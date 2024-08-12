@@ -31,8 +31,8 @@ public class ReviewResponseDto {
 
     // 유저 객체 추가 필요
     @Schema(description = "리뷰 생성일")
-    private LocalDateTime createdTime;
+    private LocalDateTime createdAt;
     @Schema(description = "리뷰 수정일")
-    private LocalDateTime updatedTime;
+    private LocalDateTime updatedAt;
 
 }
