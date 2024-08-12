@@ -63,7 +63,9 @@ public class Spot extends BaseEntity {
         this.description = spot.getDescription();
         this.latitude = spot.getLatitude();
         this.longitude = spot.getLongitude();
-        this.images.remove(spot.getDeleteImages().stream().toString());
+        for (String deleteImage : spot.getDeleteImages()) {
+            this.images.remove(deleteImage);
+        }
         this.images.addAll(images);
     }
 

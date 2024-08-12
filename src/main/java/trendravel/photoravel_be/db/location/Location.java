@@ -66,8 +66,9 @@ public class Location extends BaseEntity {
         this.point = new GeometryFactory()
                 .createPoint(new Coordinate(latitude, longitude));
         this.point.setSRID(4326);
-        System.out.println(location.getDeleteImages().stream().toString());
-        this.images.remove(location.getDeleteImages().stream().toString());
+        for (String deleteImage : location.getDeleteImages()) {
+            this.images.remove(deleteImage);
+        }
         this.images.addAll(newImages);
     }
 

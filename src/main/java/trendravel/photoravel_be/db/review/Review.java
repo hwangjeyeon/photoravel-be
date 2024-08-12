@@ -63,7 +63,9 @@ public class Review extends BaseEntity {
     public void updateReview(ReviewUpdateImagesDto review, List<String> newImages) {
         this.content = review.getContent();
         this.rating = review.getRating();
-        this.images.remove(review.getDeleteImages().stream().toString());
+        for (String deleteImage : review.getDeleteImages()) {
+            this.images.remove(deleteImage);
+        }
         this.images.addAll(newImages);
     }
 
