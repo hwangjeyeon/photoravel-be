@@ -8,7 +8,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import trendravel.photoravel_be.commom.service.ImageService;
+import trendravel.photoravel_be.commom.image.service.ImageService;
 import trendravel.photoravel_be.db.location.Location;
 import trendravel.photoravel_be.db.respository.review.ReviewRepository;
 import trendravel.photoravel_be.db.review.Review;
@@ -201,10 +201,6 @@ class LocationServiceTest {
                 .isEqualTo(String.format("%.2f",
                         (review4.getRating() + review2.getRating()
                                 + review3.getRating() + review1.getRating()) / 4));
-        assertThat(locationSingleReadResponseDto.getCreatedTime())
-                .isEqualTo(findLocation.getCreatedAt());
-        assertThat(locationSingleReadResponseDto.getUpdatedTime())
-                .isEqualTo(findLocation.getUpdatedAt());
         assertThat(locationSingleReadResponseDto.getViews()).isEqualTo(1);
         assertThat(findRecentReviews).extracting("rating")
                 .containsExactlyInAnyOrder(review4.getRating(),

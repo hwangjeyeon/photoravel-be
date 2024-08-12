@@ -15,9 +15,9 @@ import trendravel.photoravel_be.domain.location.dto.response.LocationMultiReadRe
 import trendravel.photoravel_be.domain.location.dto.response.LocationResponseDto;
 import trendravel.photoravel_be.db.location.Location;
 import trendravel.photoravel_be.db.respository.location.LocationRepository;
-import trendravel.photoravel_be.commom.service.ImageService;
 import trendravel.photoravel_be.domain.location.dto.response.LocationSingleReadResponseDto;
 import trendravel.photoravel_be.domain.review.dto.response.RecentReviewsDto;
+import trendravel.photoravel_be.commom.image.service.ImageService;
 
 import java.util.List;
 import java.util.Optional;
