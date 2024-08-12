@@ -11,6 +11,7 @@ import trendravel.photoravel_be.db.review.Review;
 import trendravel.photoravel_be.domain.location.dto.request.LocationKeywordDto;
 import trendravel.photoravel_be.domain.location.dto.request.LocationNowPositionDto;
 import trendravel.photoravel_be.domain.location.dto.request.LocationRequestDto;
+import trendravel.photoravel_be.domain.location.dto.request.LocationUpdateImagesDto;
 import trendravel.photoravel_be.domain.location.dto.response.LocationMultiReadResponseDto;
 import trendravel.photoravel_be.domain.location.dto.response.LocationResponseDto;
 import trendravel.photoravel_be.db.location.Location;
@@ -123,8 +124,10 @@ public class LocationService {
     }
 
     @Transactional
-    public List<LocationMultiReadResponseDto> readMultiLocation(LocationNowPositionDto locationNowPositionDto){
-        List<Location> locations = locationRepository.searchNowPosition(locationNowPositionDto);
+    public List<LocationMultiReadResponseDto> readMultiLocation(
+            LocationNowPositionDto locationNowPositionDto){
+        List<Location> locations =
+                locationRepository.searchNowPosition(locationNowPositionDto);
 
         if(locations.isEmpty()){
             //예외처리
@@ -142,7 +145,8 @@ public class LocationService {
     }
 
     @Transactional
-    public List<LocationMultiReadResponseDto> readMultiLocation(LocationKeywordDto locationKeywordDto){
+    public List<LocationMultiReadResponseDto> readMultiLocation(
+            LocationKeywordDto locationKeywordDto){
         List<Location> locations = locationRepository.searchKeyword(locationKeywordDto);
 
         if(locations.isEmpty()){
@@ -172,7 +176,7 @@ public class LocationService {
 
     @Transactional
     public LocationResponseDto updateLocation(
-            LocationRequestDto locationRequestDto, List<MultipartFile> images) {
+            LocationUpdateImagesDto locationRequestDto, List<MultipartFile> images) {
 
         Optional<Location> location = locationRepository.findById(
                 locationRequestDto.getLocationId());
@@ -180,7 +184,8 @@ public class LocationService {
         if(location.isEmpty()){
             // 추후 Exception Controller 만들어 처리할 계획
         }
-        location.get().updateLocation(locationRequestDto, imageService.uploadImages(images));
+        location.get().updateLocation(locationRequestDto,
+                imageService.updateImages(images, locationRequestDto.getDeleteImages()));
 
 
         return LocationResponseDto
@@ -223,7 +228,9 @@ public class LocationService {
                 .build();
     }
 
+    @Transactional
     public void deleteLocation(Long id){
+        imageService.deleteAllImages(locationRepository.findById(id).get().getImages());
         locationRepository.deleteById(id);
     }
 

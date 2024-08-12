@@ -10,6 +10,7 @@ import trendravel.photoravel_be.domain.location.dto.request.LocationRequestDto;
 import trendravel.photoravel_be.db.review.Review;
 import trendravel.photoravel_be.db.spot.Spot;
 import org.locationtech.jts.geom.Point;
+import trendravel.photoravel_be.domain.location.dto.request.LocationUpdateImagesDto;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -56,16 +57,18 @@ public class Location extends BaseEntity {
     @Builder.Default
     private List<Review> review = new ArrayList<>();
 
-    public void updateLocation(LocationRequestDto location, List<String> images){
+    public void updateLocation(LocationUpdateImagesDto location, List<String> newImages){
         this.longitude = location.getLongitude();
         this.latitude = location.getLatitude();
         this.address = location.getAddress();
         this.description = location.getDescription();
         this.name = location.getName();
-        this.images = images;
         this.point = new GeometryFactory()
                 .createPoint(new Coordinate(latitude, longitude));
         this.point.setSRID(4326);
+        System.out.println(location.getDeleteImages().stream().toString());
+        this.images.remove(location.getDeleteImages().stream().toString());
+        this.images.addAll(newImages);
     }
 
     public void updateLocation(LocationRequestDto location){
