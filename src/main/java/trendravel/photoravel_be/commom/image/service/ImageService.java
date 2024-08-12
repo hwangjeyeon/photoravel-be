@@ -32,22 +32,59 @@ public class ImageService {
             // 예외 처리
         }
 
+        return uploadImagesAndReturnUrl(images);
+    }
+
+    private List<String> uploadImagesAndReturnUrl(List<MultipartFile> images) {
         List<String> rebuildImageName = getImagesName(images);
         List<String> urlList = new ArrayList<>();
         for (int i = 0; i < images.size(); i++) {
             try{
                 InputStream inputStream = images.get(i).getInputStream();
-                urlList.add(s3Template.upload(bucketName, rebuildImageName.get(i), inputStream).getURL().toString());
+                urlList.add(s3Template.upload(bucketName,
+                        rebuildImageName.get(i), inputStream).getURL().toString());
             }catch(IOException e){
                 throw new RuntimeException();
             }
         }
-
         return urlList;
     }
 
+    public List<String> updateImages(List<MultipartFile> newImages,
+                                     List<String> deleteImages){
+        if(deleteImages.isEmpty()){
+            // 예외 처리
+        }
+
+        List<String> imageNames = sliceUrlAndGetImageNames(deleteImages);
+        for (String imageName : imageNames) {
+            s3Template.deleteObject(bucketName, imageName);
+        }
+
+        if(newImages.isEmpty()){
+            // 예외 처리
+        }
 
 
+        return uploadImagesAndReturnUrl(newImages);
+    }
+
+
+    public void deleteAllImages(List<String> deleteImages){
+        if(deleteImages.isEmpty()){
+            // 예외 처리
+        }
+        List<String> imageNames = sliceUrlAndGetImageNames(deleteImages);
+        for (String imageName : imageNames) {
+            s3Template.deleteObject(bucketName, imageName);
+        }
+    }
+
+    private List<String> sliceUrlAndGetImageNames(List<String> imageUrls) {
+        return imageUrls.stream()
+                .map(p -> p.substring(p.lastIndexOf("/")+1))
+                .toList();
+    }
 
 
     public List<String> getImagesName(List<MultipartFile> multipartFiles){
