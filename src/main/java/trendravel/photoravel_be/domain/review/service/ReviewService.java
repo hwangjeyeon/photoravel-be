@@ -96,8 +96,17 @@ public class ReviewService {
                         ? spot : null)
                 .build());
 
-        review.setLocationReview(location);
-        review.setSpotReview(spot);
+
+        /**
+         * 리팩토링 필요.
+         */
+        if(review.getLocationReview() == null){
+            review.setSpotReview(spot);
+        }else if(review.getSpotReview() == null){
+            review.setLocationReview(location);
+        }
+
+
 
 
         return ReviewResponseDto
