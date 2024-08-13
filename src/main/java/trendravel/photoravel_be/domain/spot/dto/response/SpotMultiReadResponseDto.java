@@ -5,6 +5,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import org.springframework.http.MediaType;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -12,6 +13,8 @@ import java.util.List;
 @Data
 @Builder
 @AllArgsConstructor
+@Schema(description = "여러 스팟에 대한 READ 응답 DTO",
+        contentEncoding = MediaType.APPLICATION_JSON_VALUE)
 public class SpotMultiReadResponseDto {
 
     @Schema(description = "스팟 ID")
@@ -26,7 +29,7 @@ public class SpotMultiReadResponseDto {
     private double longitude;
     @Schema(description = "스팟 이미지들")
     private List<String> images;
-
+    @Schema(description = "각 스팟별 조회수")
     private int views;
 
     //유저 객체 추가 필요

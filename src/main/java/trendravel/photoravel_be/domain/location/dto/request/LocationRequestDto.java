@@ -5,7 +5,8 @@ import lombok.*;
 import org.springframework.http.MediaType;
 
 
-@Schema(description = "장소 생성/수정 요청 DTO", contentEncoding = MediaType.APPLICATION_JSON_VALUE)
+@Schema(description = "장소 CREATE/UPDATE(이미지 미포함) 요청 DTO",
+        contentEncoding = MediaType.APPLICATION_JSON_VALUE)
 @Data
 public class LocationRequestDto {
 
