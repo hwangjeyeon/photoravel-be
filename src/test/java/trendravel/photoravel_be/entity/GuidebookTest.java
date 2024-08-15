@@ -4,9 +4,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import trendravel.photoravel_be.db.enums.Region;
 import trendravel.photoravel_be.db.guidebook.Guidebook;
-import trendravel.photoravel_be.domain.guide.dto.request.GuideRequestDto;
 import trendravel.photoravel_be.domain.guidebook.dto.request.GuidebookRequestDto;
-import trendravel.photoravel_be.domain.location.dto.request.LocationRequestDto;
 
 import java.util.ArrayList;
 import java.util.List;

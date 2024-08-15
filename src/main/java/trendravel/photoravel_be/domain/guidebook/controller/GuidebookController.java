@@ -2,7 +2,6 @@ package trendravel.photoravel_be.domain.guidebook.controller;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -10,7 +9,6 @@ import trendravel.photoravel_be.commom.response.Api;
 import trendravel.photoravel_be.commom.response.Result;
 import trendravel.photoravel_be.domain.guidebook.dto.request.GuidebookRequestDto;
 import trendravel.photoravel_be.domain.guidebook.dto.response.GuidebookResponseDto;
-import trendravel.photoravel_be.db.guidebook.Guidebook;
 import trendravel.photoravel_be.domain.guidebook.service.GuidebookService;
 
 import java.util.List;

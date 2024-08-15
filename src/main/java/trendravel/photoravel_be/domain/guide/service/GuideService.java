@@ -12,7 +12,6 @@ import trendravel.photoravel_be.db.respository.guide.GuideRepository;
 import trendravel.photoravel_be.db.review.Review;
 import trendravel.photoravel_be.domain.guide.dto.request.GuideRequestDto;
 import trendravel.photoravel_be.domain.guide.dto.response.GuideResponseDto;
-import trendravel.photoravel_be.domain.review.dto.response.RecentReviewsDto;
 
 import java.util.ArrayList;
 import java.util.List;
