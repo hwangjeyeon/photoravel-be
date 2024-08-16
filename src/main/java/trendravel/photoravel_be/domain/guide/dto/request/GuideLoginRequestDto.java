@@ -8,6 +8,9 @@ import org.springframework.http.MediaType;
         contentEncoding = MediaType.APPLICATION_JSON_VALUE)
 @Data
 public class GuideLoginRequestDto {
+    
+    @Schema(description = "가이드 ID")
     private String username;
+    @Schema(description = "가이드 비밀번호")
     private String password;
 }

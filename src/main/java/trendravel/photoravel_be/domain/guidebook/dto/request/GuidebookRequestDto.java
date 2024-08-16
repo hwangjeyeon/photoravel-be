@@ -4,7 +4,7 @@ import lombok.Data;
 import org.springframework.http.MediaType;
 import trendravel.photoravel_be.db.enums.Region;
 
-@Schema(description = "가이드북 생성 수정 요청 DTO", 
+@Schema(description = "가이드북 생성 조회 수정 요청 DTO", 
         contentEncoding = MediaType.APPLICATION_JSON_VALUE)
 @Data
 public class GuidebookRequestDto {

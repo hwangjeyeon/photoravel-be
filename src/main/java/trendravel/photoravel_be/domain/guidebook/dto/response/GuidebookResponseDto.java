@@ -10,7 +10,7 @@ import java.util.List;
 
 @Data
 @Builder
-@Schema(description = "가이드북 응답 DTO", 
+@Schema(description = "가이드북 생성 조회 수정 응답 DTO", 
         contentEncoding = MediaType.APPLICATION_JSON_VALUE)
 public class GuidebookResponseDto {
     
