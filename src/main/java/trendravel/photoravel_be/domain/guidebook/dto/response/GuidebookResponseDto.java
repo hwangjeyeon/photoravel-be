@@ -16,7 +16,7 @@ public class GuidebookResponseDto {
     
     @Schema(description = "가이드북 ID")
     private Long id;
-    @Schema(description = "유저 ID (FK)")
+    @Schema(description = "유저 ID")
     private Long userId;
     @Schema(description = "제목")
     private String title;

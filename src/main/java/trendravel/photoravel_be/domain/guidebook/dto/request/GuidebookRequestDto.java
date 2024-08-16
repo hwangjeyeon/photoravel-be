@@ -11,7 +11,7 @@ public class GuidebookRequestDto {
     
     @Schema(description = "가이드북 ID")
     private Long id;
-    @Schema(description = "유저 아이디(FK)")
+    @Schema(description = "유저 아이디")
     private Long userId;
     @Schema(description = "제목")
     private String title;
