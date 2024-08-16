@@ -15,7 +15,7 @@ public interface GuideRepository extends JpaRepository<Guide, Long> {
     
     List<Guide> findByNameContaining(String name);
     
-    void deleteByAccountId(String guideId);
+    void deleteByAccountId(String accountId);
     
     //List<RecentReviewsDto> recentReviews(Long id);
     
