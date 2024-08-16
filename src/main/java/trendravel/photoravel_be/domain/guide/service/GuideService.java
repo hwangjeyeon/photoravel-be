@@ -16,6 +16,7 @@ import trendravel.photoravel_be.domain.guide.dto.response.GuideResponseDto;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -29,20 +30,14 @@ public class GuideService {
         
         List<Guide> guides = guideRepository.findByNameContaining(keyword);
         
-        List<GuideResponseDto> responseDtoList = new ArrayList<>();
-        
-        for (Guide guide : guides) {
-            GuideResponseDto dto = GuideResponseDto.builder()
-                    .accountId(guide.getAccountId())
-                    .region(guide.getRegion())
-                    .ratingAvg(String.format("%.2f", ratingAverage(guide.getReviews())))
-                    .reviewCount(guide.getReviews().size())
-                    .build();
-            
-            responseDtoList.add(dto);
-        }
-        
-        return responseDtoList;
+        return guides.stream()
+                .map(guide -> GuideResponseDto.builder()
+                        .accountId(guide.getAccountId())
+                        .region(guide.getRegion())
+                        .ratingAvg(String.format("%.2f", ratingAverage(guide.getReviews())))
+                        .reviewCount(guide.getReviews().size())
+                        .build())
+                .collect(Collectors.toList());
     }
     
     @Transactional
