@@ -58,6 +58,7 @@ public class GuideService {
                 .description(guide.getDescription())
                 .profileImg(guide.getProfileImg())
                 .createdAt(guide.getCreatedAt())
+                .updatedAt(guide.getUpdatedAt())
                 .ratingAvg(String.format("%.2f", ratingAverage(guide.getReviews())))
                 //.recentReviewDtos(reviews)
                 .build();
@@ -111,6 +112,7 @@ public class GuideService {
                 .description(guide.getDescription())
                 .profileImg(guide.getProfileImg())
                 .createdAt(guide.getCreatedAt())
+                .updatedAt(guide.getUpdatedAt())
                 .ratingAvg(String.format("%.2f", ratingAverage(guide.getReviews())))
                 //.recentReviewDtos(reviews)
                 .build();
