@@ -82,7 +82,7 @@ public class GuideService {
         
     }
     @Transactional
-    public GuideResponseDto authenticate(String username, String password) {
+    public void authenticate(String username, String password) {
         
         //인증 로직 필요
         Optional<Guide> guideOpt = guideRepository.findByAccountId(username);
@@ -91,9 +91,6 @@ public class GuideService {
             throw new ApiException(ErrorCode.BAD_REQUEST);
         }
         
-        return GuideResponseDto.builder()
-                .name(guideOpt.get().getName())
-                .build();
     }
     
     @Transactional

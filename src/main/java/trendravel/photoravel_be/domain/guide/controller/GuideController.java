@@ -43,11 +43,12 @@ public class GuideController {
     }
     
     @PostMapping("/login")
-    public Api<GuideResponseDto> guideLogin(@RequestBody GuideLoginRequestDto loginRequestDto) {
+    public Result guideLogin(@RequestBody GuideLoginRequestDto loginRequestDto) {
         
-        return Api.OK(guideService.authenticate(
-                loginRequestDto.getUsername(), 
-                loginRequestDto.getPassword()));
+        guideService.authenticate(loginRequestDto.getUsername(), 
+                loginRequestDto.getPassword());
+                
+        return Result.OK();
     }
     
     @PatchMapping("/{guideId}/update")
