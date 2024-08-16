@@ -39,6 +39,7 @@ public class GuidebookService {
         
         
         return GuidebookResponseDto.builder()
+                .id(guidebook.getId())
                 .userId(guidebook.getUserId())
                 .title(guidebook.getTitle())
                 .content(guidebook.getContent())
