@@ -9,6 +9,7 @@ import org.springframework.web.multipart.MultipartFile;
 import trendravel.photoravel_be.commom.response.Api;
 import trendravel.photoravel_be.commom.response.Result;
 import trendravel.photoravel_be.domain.spot.dto.request.SpotRequestDto;
+import trendravel.photoravel_be.domain.spot.dto.request.SpotUpdatedImagesDto;
 import trendravel.photoravel_be.domain.spot.dto.response.SpotMultiReadResponseDto;
 import trendravel.photoravel_be.domain.spot.dto.response.SpotResponseDto;
 import trendravel.photoravel_be.db.respository.spot.SpotRepository;
@@ -80,7 +81,7 @@ public class SpotController {
             consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
     public Api<SpotResponseDto> spotUpdate(@RequestPart(value = "data")
-                                           SpotRequestDto spotRequestDto,
+                                               SpotUpdatedImagesDto spotRequestDto,
                                            @RequestPart(value = "images", required = false)
                                            List<MultipartFile> images) {
 

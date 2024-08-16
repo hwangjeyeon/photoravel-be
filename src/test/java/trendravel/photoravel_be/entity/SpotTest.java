@@ -71,7 +71,7 @@ class SpotTest {
         spotRequestDto.setUserId("Messi");
 
         //when
-        spot.updateSpot(spotRequestDto, image);
+        spot.updateSpot(spotRequestDto);
 
         //then
         assertThat(spot.getId()).isEqualTo(1L);
@@ -79,9 +79,6 @@ class SpotTest {
         assertThat(spot.getLongitude()).isEqualTo(32.53);
         assertThat(spot.getTitle()).isEqualTo("우리집 근처 고기집");
         assertThat(spot.getDescription()).isEqualTo("우리집 근처 고기집입니다");
-        for (String locationImage : spot.getImages()) {
-            assertThat(locationImage).isIn(image);
-        }
         assertThat(spot.getViews()).isEqualTo(0);
 
 

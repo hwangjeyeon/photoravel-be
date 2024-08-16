@@ -9,6 +9,7 @@ import org.springframework.web.multipart.MultipartFile;
 import trendravel.photoravel_be.commom.response.Api;
 import trendravel.photoravel_be.commom.response.Result;
 import trendravel.photoravel_be.domain.review.dto.request.ReviewRequestDto;
+import trendravel.photoravel_be.domain.review.dto.request.ReviewUpdateImagesDto;
 import trendravel.photoravel_be.domain.review.dto.response.ReviewResponseDto;
 import trendravel.photoravel_be.domain.review.service.ReviewService;
 
@@ -73,7 +74,7 @@ public class ReviewController {
             consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
     public Api<ReviewResponseDto> updateReview(@RequestPart(value = "data")
-                                             ReviewRequestDto reviewRequestDto,
+                                                   ReviewUpdateImagesDto reviewRequestDto,
                                          @RequestPart(value = "images", required = false)
                                             List<MultipartFile> images){
 

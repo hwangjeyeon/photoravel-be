@@ -4,16 +4,17 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import trendravel.photoravel_be.commom.image.service.ImageService;
 import trendravel.photoravel_be.db.location.Location;
 import trendravel.photoravel_be.db.review.Review;
 import trendravel.photoravel_be.domain.review.dto.response.RecentReviewsDto;
 import trendravel.photoravel_be.domain.spot.dto.request.SpotRequestDto;
+import trendravel.photoravel_be.domain.spot.dto.request.SpotUpdatedImagesDto;
 import trendravel.photoravel_be.domain.spot.dto.response.SpotMultiReadResponseDto;
 import trendravel.photoravel_be.domain.spot.dto.response.SpotResponseDto;
 import trendravel.photoravel_be.db.spot.Spot;
 import trendravel.photoravel_be.db.respository.location.LocationRepository;
 import trendravel.photoravel_be.db.respository.spot.SpotRepository;
-import trendravel.photoravel_be.commom.service.ImageService;
 import trendravel.photoravel_be.domain.spot.dto.response.SpotSingleReadResponseDto;
 
 import java.util.List;
@@ -145,7 +146,7 @@ public class SpotService {
 
     @Transactional
     public SpotResponseDto updateSpot(
-            SpotRequestDto spotRequestDto, List<MultipartFile> images) {
+            SpotUpdatedImagesDto spotRequestDto, List<MultipartFile> images) {
 
         Optional<Spot> spot = spotRepository.findById(
                 spotRequestDto.getSpotId());
@@ -153,7 +154,8 @@ public class SpotService {
         if(spot.isEmpty()){
             // 추후 Exception Controller 만들어 처리할 계획
         }
-        spot.get().updateSpot(spotRequestDto, imageService.uploadImages(images));
+        spot.get().updateSpot(spotRequestDto, imageService.updateImages(
+                images, spotRequestDto.getDeleteImages()));
 
         return SpotResponseDto
                 .builder()
@@ -192,7 +194,9 @@ public class SpotService {
                 .build();
     }
 
+    @Transactional
     public void deleteSpot(Long id){
+        imageService.deleteAllImages(spotRepository.findById(id).get().getImages());
         spotRepository.deleteById(id);
     }
 

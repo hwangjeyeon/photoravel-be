@@ -11,6 +11,7 @@ import trendravel.photoravel_be.commom.response.Result;
 import trendravel.photoravel_be.domain.location.dto.request.LocationKeywordDto;
 import trendravel.photoravel_be.domain.location.dto.request.LocationNowPositionDto;
 import trendravel.photoravel_be.domain.location.dto.request.LocationRequestDto;
+import trendravel.photoravel_be.domain.location.dto.request.LocationUpdateImagesDto;
 import trendravel.photoravel_be.domain.location.dto.response.LocationMultiReadResponseDto;
 import trendravel.photoravel_be.domain.location.dto.response.LocationResponseDto;
 import trendravel.photoravel_be.domain.location.dto.response.LocationSingleReadResponseDto;
@@ -101,7 +102,7 @@ public class LocationController {
             consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
     public Api<LocationResponseDto> locationUpdate(@RequestPart(value = "data")
-                                               LocationRequestDto locationRequestDto,
+                                                       LocationUpdateImagesDto locationRequestDto,
                                            @RequestPart(value = "images", required = false)
                                                 List<MultipartFile> images) {
 

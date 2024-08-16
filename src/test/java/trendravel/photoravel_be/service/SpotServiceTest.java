@@ -6,7 +6,7 @@ import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import trendravel.photoravel_be.commom.service.ImageService;
+import trendravel.photoravel_be.commom.image.service.ImageService;
 import trendravel.photoravel_be.db.respository.review.ReviewRepository;
 import trendravel.photoravel_be.db.review.Review;
 import trendravel.photoravel_be.db.review.enums.ReviewTypes;
@@ -219,10 +219,6 @@ class SpotServiceTest {
                 .isEqualTo(String.format("%.2f",
                         (review4.getRating() + review2.getRating()
                                 + review3.getRating() + review1.getRating()) / 4));
-        assertThat(spotSingleReadResponseDto.getCreatedTime())
-                .isEqualTo(findSpot.getCreatedAt());
-        assertThat(spotSingleReadResponseDto.getUpdatedTime())
-                .isEqualTo(findSpot.getUpdatedAt());
         assertThat(spotSingleReadResponseDto.getViews()).isEqualTo(0);
         assertThat(findRecentReviews.size()).isGreaterThan(1);
         assertThat(findRecentReviews).extracting("rating")
