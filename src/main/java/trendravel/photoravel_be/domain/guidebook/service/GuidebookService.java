@@ -140,6 +140,7 @@ public class GuidebookService {
         guidebook.updateGuidebook(guidebookRequestDto, imageService.uploadImages(images));
         
         return GuidebookResponseDto.builder()
+                .id(guidebook.getId())
                 .userId(guidebook.getUserId())
                 .title(guidebook.getTitle())
                 .content(guidebook.getContent())
@@ -165,6 +166,7 @@ public class GuidebookService {
         guidebook.updateGuidebook(guidebookRequestDto);
         
         return GuidebookResponseDto.builder()
+                .id(guidebook.getId())
                 .userId(guidebook.getUserId())
                 .title(guidebook.getTitle())
                 .content(guidebook.getContent())
