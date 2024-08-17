@@ -58,25 +58,23 @@ public class GuidebookController {
     
     @Schema(description = "가이드북 수정 요청 (이미지 미포함)",
             contentEncoding = MediaType.APPLICATION_JSON_VALUE)
-    @PatchMapping("/{guidebookId}/update")
+    @PatchMapping("/update")
     public Api<GuidebookResponseDto> guidebookUpdate(
-            @PathVariable Long guidebookId,
             @RequestPart(value = "data") GuidebookRequestDto guidebookRequestDto) {
         
-        return Api.UPDATED(guidebookService.updateGuidebook(guidebookId, guidebookRequestDto));
+        return Api.UPDATED(guidebookService.updateGuidebook(guidebookRequestDto));
     }
     
     @Schema(description = "가이드북 수정 요청 (이미지 미포함)",
             contentEncoding = MediaType.APPLICATION_JSON_VALUE)
-    @PatchMapping(value = "/{guidebookId}/update",
+    @PatchMapping(value = "/update",
             consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
     public Api<GuidebookResponseDto> guidebookUpdate(
-            @PathVariable Long guidebookId,
             @RequestPart(value = "data") GuidebookRequestDto guidebookRequestDto,
             @RequestPart(value = "images", required = false) List<MultipartFile> images) {
         
-        return Api.UPDATED(guidebookService.updateGuidebook(guidebookId, guidebookRequestDto, images));
+        return Api.UPDATED(guidebookService.updateGuidebook(guidebookRequestDto, images));
     }
     
     @Schema(description = "가이드북 삭제 요청")

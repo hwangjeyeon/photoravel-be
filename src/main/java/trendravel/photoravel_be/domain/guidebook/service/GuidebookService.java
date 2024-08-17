@@ -108,7 +108,9 @@ public class GuidebookService {
     @Transactional
     public GuidebookResponseDto getGuidebook(Long guidebookId) {
         Guidebook guidebook = guidebookRepository.findById(guidebookId)
-                .orElseThrow(() -> new NoSuchElementException("Guidebook ID: " + guidebookId + " does not exist"));
+                .orElseThrow(() -> new NoSuchElementException(
+                        "Guidebook ID: " 
+                                + guidebookId + " does not exist"));
         
         guidebook.increaseView();
         
@@ -125,11 +127,11 @@ public class GuidebookService {
     }
     
     @Transactional
-    public GuidebookResponseDto updateGuidebook(Long guidebookId, 
-                                     GuidebookRequestDto guidebookRequestDto,
+    public GuidebookResponseDto updateGuidebook(GuidebookRequestDto guidebookRequestDto,
                                      List<MultipartFile> images) {
         
-        Optional<Guidebook> guidebookOpt = guidebookRepository.findById(guidebookId);
+        Optional<Guidebook> guidebookOpt = 
+                guidebookRepository.findById(guidebookRequestDto.getId());
         if (guidebookOpt.isEmpty()) {
             // 검색 실패
         }
@@ -150,10 +152,11 @@ public class GuidebookService {
     }
     
     @Transactional
-    public GuidebookResponseDto updateGuidebook(Long guidebookId,
-                                                GuidebookRequestDto guidebookRequestDto) {
+    public GuidebookResponseDto updateGuidebook(GuidebookRequestDto guidebookRequestDto) {
         
-        Optional<Guidebook> guidebookOpt = guidebookRepository.findById(guidebookId);
+        Optional<Guidebook> guidebookOpt = 
+                guidebookRepository.findById(guidebookRequestDto.getId());
+        
         if (guidebookOpt.isEmpty()) {
             // 검색 실패
         }
