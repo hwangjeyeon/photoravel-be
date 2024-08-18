@@ -11,7 +11,8 @@ import java.util.List;
 
 @Data
 @Builder
-@Schema(description = "장소 생성/수정 응답 DTO", contentEncoding = MediaType.APPLICATION_JSON_VALUE)
+@Schema(description = "장소 생성/수정(이미지 미포함) 응답 DTO",
+        contentEncoding = MediaType.APPLICATION_JSON_VALUE)
 public class LocationResponseDto {
 
     @Schema(description = "장소ID")

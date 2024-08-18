@@ -48,7 +48,7 @@ public class Spot extends BaseEntity {
     @JoinColumn(name = "location_id")
     private Location location;
 
-    @OneToMany(mappedBy = "spotReview")
+    @OneToMany(mappedBy = "spotReview", orphanRemoval = true)
     @Builder.Default
     private List<Review> reviews = new ArrayList<>();
 

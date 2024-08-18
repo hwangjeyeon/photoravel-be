@@ -17,12 +17,13 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
+@Schema(description = "리뷰 CRUD API 명세서")
 public class ReviewController {
 
     private final ReviewService reviewService;
 
 
-    @Schema(description = "리뷰 생성 요청 (이미지 미포함)",
+    @Schema(description = "리뷰 CREATE 요청/응답 (이미지 미포함)",
             contentEncoding = MediaType.APPLICATION_JSON_VALUE)
     @PostMapping(value = "/review/create")
     public Api<ReviewResponseDto> createReview(@RequestBody
@@ -31,7 +32,7 @@ public class ReviewController {
         return Api.CREATED(reviewService.createReview(reviewRequestDto));
     }
 
-    @Schema(description = "리뷰 생성 요청 (이미지 포함)",
+    @Schema(description = "리뷰 CREATE 요청/응답 (이미지 포함)",
             contentEncoding = MediaType.MULTIPART_FORM_DATA_VALUE)
     @PostMapping(value = "/review/create",
             consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
@@ -44,12 +45,14 @@ public class ReviewController {
         return Api.CREATED(reviewService.createReview(reviewRequestDto, images));
     }
 
+    @Schema(description = "특정 장소의 모든 리뷰 READ 요청/응답")
     @GetMapping(value = "/location/{locationId}/detail/reviews")
     public Api<List<ReviewResponseDto>> readLocationReviews(@PathVariable("locationId")
                                                           Long locationId){
         return Api.READ(reviewService.readAllLocationReview(locationId));
     }
 
+    @Schema(description = "특정 스팟의 모든 리뷰 READ 요청/응답")
     @GetMapping(value = "/location/{locationId}/spot/{spotId}/detail/reviews")
     public Api<List<ReviewResponseDto>> readLocationReviews(@PathVariable("locationId")
                                                             Long locationId,
@@ -59,7 +62,7 @@ public class ReviewController {
     }
 
 
-    @Schema(description = "리뷰 수정 요청 (이미지 미포함)",
+    @Schema(description = "리뷰 UPDATE 요청 (이미지 미포함)",
             contentEncoding = MediaType.APPLICATION_JSON_VALUE)
     @PatchMapping(value = "/review/update")
     public Api<ReviewResponseDto> updateReview(@RequestBody
@@ -68,7 +71,7 @@ public class ReviewController {
         return Api.UPDATED(reviewService.updateReview(reviewRequestDto));
     }
 
-    @Schema(description = "리뷰 수정 요청 (이미지 포함)",
+    @Schema(description = "리뷰 UPDATE 요청 (이미지 포함)",
             contentEncoding = MediaType.MULTIPART_FORM_DATA_VALUE)
     @PatchMapping(value = "/review/update",
             consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
@@ -81,7 +84,7 @@ public class ReviewController {
         return Api.UPDATED(reviewService.updateReview(reviewRequestDto, images));
     }
 
-    @Schema(description = "리뷰 삭제 요청")
+    @Schema(description = "리뷰 DELETE 요청")
     @DeleteMapping(value ="/review/{reviewId}/delete")
     public Result locationDelete(@PathVariable("reviewId") Long reviewId) {
         reviewService.deleteReview(reviewId);

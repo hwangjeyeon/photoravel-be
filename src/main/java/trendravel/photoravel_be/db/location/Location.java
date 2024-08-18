@@ -49,11 +49,11 @@ public class Location extends BaseEntity {
     //유저 엔티티 생성 후, 연관관계 필드 추가 필요
 
 
-    @OneToMany(mappedBy = "location")
+    @OneToMany(mappedBy = "location", orphanRemoval = true)
     @Builder.Default
     private List<Spot> spot = new ArrayList<>();
 
-    @OneToMany(mappedBy = "locationReview")
+    @OneToMany(mappedBy = "locationReview", orphanRemoval = true)
     @Builder.Default
     private List<Review> review = new ArrayList<>();
 

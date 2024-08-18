@@ -22,11 +22,12 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
+@Schema(description = "장소 CRUD API 명세서")
 public class LocationController {
 
     private final LocationService locationService;
 
-    @Schema(description = "장소 생성 요청 (이미지 미포함)",
+    @Schema(description = "장소 CREATE 요청/응답 (이미지 미포함)",
             contentEncoding = MediaType.APPLICATION_JSON_VALUE)
     @PostMapping(value = "/location/create")
     public Api<LocationResponseDto> locationCreate(@RequestBody
@@ -35,7 +36,7 @@ public class LocationController {
         return Api.CREATED(locationService.createLocation(locationRequestDto));
     }
 
-    @Schema(description = "장소 생성 요청 (이미지 포함)",
+    @Schema(description = "장소 CREATE 요청/응답 (이미지 포함)",
             contentEncoding = MediaType.MULTIPART_FORM_DATA_VALUE)
     @PostMapping(value = "/location/create",
             consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
@@ -48,13 +49,14 @@ public class LocationController {
         return Api.CREATED(locationService.createLocation(locationRequestDto, images));
     }
 
-
+    @Schema(description = "단일 장소 모든 정보 READ 요청/응답")
     @GetMapping(value = "/location/{locationId}/detail")
     public Api<LocationSingleReadResponseDto> locationSingleRead(@PathVariable("locationId")
                                                            Long locationId){
         return Api.READ(locationService.readSingleLocation(locationId));
     }
 
+    @Schema(description = "주변 범위 내 모든 장소 READ 요청/응답")
     @GetMapping(value = "/nowPosition")
     public Api<List<LocationMultiReadResponseDto>> locationMultiRead(
             @RequestParam("latitude") double latitude,
@@ -68,7 +70,7 @@ public class LocationController {
         ));
     }
 
-
+    @Schema(description = "(주변 범위 + 검색 키워드) 기반 모든 장소 READ 요청/응답")
     @GetMapping(value = "/search/location")
     public Api<List<LocationMultiReadResponseDto>> locationMultiRead(
             @RequestParam("latitude") double latitude,
@@ -86,7 +88,7 @@ public class LocationController {
 
 
 
-    @Schema(description = "장소 수정 요청 (이미지 미포함)",
+    @Schema(description = "장소 UPDATE 요청/응답 (이미지 미포함)",
             contentEncoding = MediaType.APPLICATION_JSON_VALUE)
     @PatchMapping(value = "/location/update")
     public Api<LocationResponseDto> locationUpdate(@RequestBody
@@ -96,7 +98,7 @@ public class LocationController {
     }
 
 
-    @Schema(description = "장소 수정 요청 (이미지 포함)",
+    @Schema(description = "장소 UPDATE 요청/응답 (이미지 포함)",
             contentEncoding = MediaType.MULTIPART_FORM_DATA_VALUE)
     @PatchMapping(value = "/location/update",
             consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
@@ -111,7 +113,7 @@ public class LocationController {
 
 
 
-    @Schema(description = "장소 삭제 요청")
+    @Schema(description = "장소 DELETE 요청/응답")
     @DeleteMapping("/location/{locationId}/delete")
     public Result locationDelete(@PathVariable("locationId") Long locationId) {
         locationService.deleteLocation(locationId);

@@ -3,12 +3,15 @@ package trendravel.photoravel_be.domain.spot.dto.response;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 import lombok.Data;
+import org.springframework.http.MediaType;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
 @Data
 @Builder
+@Schema(description = "스팟 CREATE/UPDATE 응답 DTO",
+        contentEncoding = MediaType.APPLICATION_JSON_VALUE)
 public class SpotResponseDto {
 
     @Schema(description = "스팟 ID")
