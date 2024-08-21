@@ -28,6 +28,7 @@ public class Review extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private ReviewTypes reviewType;
 
+    @Column(columnDefinition = "TEXT")
     private String content;
     private double rating;
 
