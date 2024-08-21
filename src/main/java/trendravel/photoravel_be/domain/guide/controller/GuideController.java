@@ -61,7 +61,7 @@ public class GuideController {
     }
     
     @DeleteMapping("/{guideId}/delete")
-    public Result guidebookDelete(@PathVariable String guideId) {
+    public Result guideDelete(@PathVariable String guideId) {
         
         guideService.deleteGuide(guideId);
         return Result.DELETED();
