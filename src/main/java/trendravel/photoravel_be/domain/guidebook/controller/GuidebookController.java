@@ -20,7 +20,7 @@ public class GuidebookController {
     
     private final GuidebookService guidebookService;
     
-    @Schema(description = "가이드북 생성 요청 (이미지 미포함)",
+    @Schema(description = "가이드북 CREATE 요청 (이미지 미포함)",
             contentEncoding = MediaType.APPLICATION_JSON_VALUE)
     @PostMapping("/create")
     public Api<GuidebookResponseDto> guidebookCreate(
@@ -29,7 +29,7 @@ public class GuidebookController {
         return Api.CREATED(guidebookService.createGuidebook(guidebookRequestDto));
     }
     
-    @Schema(description = "가이드북 생성 요청 (이미지 포함)",
+    @Schema(description = "가이드북 CREATE 요청 (이미지 포함)",
             contentEncoding = MediaType.MULTIPART_FORM_DATA_VALUE)
     @PostMapping(value = "/create",
             consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
@@ -42,6 +42,7 @@ public class GuidebookController {
     }
     
     
+    @Schema(description = "가이드북 목록 READ 요청")
     @GetMapping
     public Api<List<GuidebookResponseDto>> guidebooksList(
             @RequestParam String region,
@@ -50,13 +51,14 @@ public class GuidebookController {
         return Api.READ(guidebookService.getGuidebookList(region, keyword));
     }
     
+    @Schema(description = "가이드북 상제 정보 READ 요청")
     @GetMapping("/{guidebookId}/detail")
     public Api<GuidebookResponseDto> guidebookDetail(@PathVariable Long guidebookId) {
         
         return Api.READ(guidebookService.getGuidebook(guidebookId));
     }
     
-    @Schema(description = "가이드북 수정 요청 (이미지 미포함)",
+    @Schema(description = "가이드북 UPDATE 요청 (이미지 미포함)",
             contentEncoding = MediaType.APPLICATION_JSON_VALUE)
     @PatchMapping("/update")
     public Api<GuidebookResponseDto> guidebookUpdate(
@@ -65,7 +67,7 @@ public class GuidebookController {
         return Api.UPDATED(guidebookService.updateGuidebook(guidebookRequestDto));
     }
     
-    @Schema(description = "가이드북 수정 요청 (이미지 포함)",
+    @Schema(description = "가이드북 UPDATE 요청 (이미지 포함)",
             contentEncoding = MediaType.APPLICATION_JSON_VALUE)
     @PatchMapping(value = "/update",
             consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
@@ -77,7 +79,7 @@ public class GuidebookController {
         return Api.UPDATED(guidebookService.updateGuidebook(guidebookRequestDto, images));
     }
     
-    @Schema(description = "가이드북 삭제 요청")
+    @Schema(description = "가이드북 DELETE 요청")
     @DeleteMapping("/{guidebookId}/delete")
     public Result guidebookDelete(@PathVariable Long guidebookId) {
         
