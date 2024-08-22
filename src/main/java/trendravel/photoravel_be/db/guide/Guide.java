@@ -53,6 +53,13 @@ public class Guide extends BaseEntity {
         this.profileImg = images.get(0);
     }
     
+    public void updateGuide(GuideRequestDto guideRequestDto) {
+        this.password = guideRequestDto.getPassword();
+        this.name = guideRequestDto.getName();
+        this.region = guideRequestDto.getRegion();
+        this.description = guideRequestDto.getDescription();
+    }
+    
     @OneToMany(mappedBy = "guideReview")
     @Builder.Default
     private List<Review> reviews = new ArrayList<>();

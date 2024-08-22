@@ -22,8 +22,10 @@ public class GuideController {
     private final GuideService guideService;
     
     @Schema(description = "가이드 회원 가입(CREATE) 요청",
-            contentEncoding = MediaType.APPLICATION_JSON_VALUE)
-    @PostMapping("/join")
+            contentEncoding = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PostMapping(value = "/join",
+            consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE)
     public Result createGuide(
             @RequestPart(value = "data") GuideRequestDto guideRequestDto,
             @RequestPart(value = "image", required = false) String image) {
@@ -60,9 +62,21 @@ public class GuideController {
     }
     
     
-    @Schema(description = "가이드 정보 UPDATE 요청",
+    @Schema(description = "가이드 정보 UPDATE 요청 (이미지 미포함)",
             contentEncoding = MediaType.APPLICATION_JSON_VALUE)
     @PatchMapping("/{guideId}/update")
+    public Api<GuideResponseDto> updateGuide(
+            @PathVariable String guideId,
+            @RequestBody GuideRequestDto guideRequestDto) {
+        
+        return Api.UPDATED(guideService.updateGuide(guideId, guideRequestDto));
+    }
+    
+    @Schema(description = "가이드 정보 UPDATE 요청 (이미지 포함)",
+            contentEncoding = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PatchMapping(value = "/{guideId}/update",
+            consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE)
     public Api<GuideResponseDto> updateGuide(
             @PathVariable String guideId,
             @RequestPart(value = "data") GuideRequestDto guideRequestDto,
@@ -70,6 +84,8 @@ public class GuideController {
         
         return Api.UPDATED(guideService.updateGuide(guideId, guideRequestDto, images));
     }
+    
+    
     
     @Schema(description = "가이드 정보 DELETE 요청",
             contentEncoding = MediaType.APPLICATION_JSON_VALUE)

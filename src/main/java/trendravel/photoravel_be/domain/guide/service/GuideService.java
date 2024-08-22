@@ -117,6 +117,36 @@ public class GuideService {
                 //.recentReviewDtos(reviews)
                 .build();
     }
+    
+    @Transactional
+    public GuideResponseDto updateGuide(String accountId,
+                                        GuideRequestDto guideRequestDto) {
+        
+        Optional<Guide> guideOpt = guideRepository.findByAccountId(accountId);
+        
+        if (guideOpt.isEmpty()) {
+            
+        }
+        
+        Guide guide = guideOpt.get();
+        guide.updateGuide(guideRequestDto);
+        
+        //List<RecentReviewsDto> reviews = guideRepository.recentReviews(guide.getId());
+        
+        return GuideResponseDto.builder()
+                .accountId(guide.getAccountId())
+                .name(guide.getName())
+                .region(guide.getRegion())
+                .description(guide.getDescription())
+                .profileImg(guide.getProfileImg())
+                .createdAt(guide.getCreatedAt())
+                .updatedAt(guide.getUpdatedAt())
+                .ratingAvg(String.format("%.2f", ratingAverage(guide.getReviews())))
+                //.recentReviewDtos(reviews)
+                .build();
+    }
+    
+    
     @Transactional
     public void deleteGuide(String guideId) {
         guideRepository.deleteByAccountId(guideId);
