@@ -67,16 +67,16 @@ public class GuideService {
     @Transactional
     public void createGuide(GuideRequestDto guideRequestDto, String image) {
         
-        Guide guide = guideRepository.save(Guide.builder()
-                        .accountId(guideRequestDto.getAccountId())
-                        .password(guideRequestDto.getPassword())
-                        .name(guideRequestDto.getName())
-                        .region(guideRequestDto.getRegion())
-                        .description(guideRequestDto.getDescription())
-                        .profileImg(guideRequestDto.getProfileImg())
-                        .build());
-        
+        guideRepository.save(Guide.builder()
+                .accountId(guideRequestDto.getAccountId())
+                .password(guideRequestDto.getPassword())
+                .name(guideRequestDto.getName())
+                .region(guideRequestDto.getRegion())
+                .description(guideRequestDto.getDescription())
+                .profileImg(guideRequestDto.getProfileImg())
+                .build());
     }
+    
     @Transactional
     public void authenticate(String username, String password) {
         
