@@ -64,25 +64,23 @@ public class GuideController {
     
     @Schema(description = "가이드 정보 UPDATE 요청 (이미지 미포함)",
             contentEncoding = MediaType.APPLICATION_JSON_VALUE)
-    @PatchMapping("/{guideId}/update")
+    @PatchMapping("/update")
     public Api<GuideResponseDto> updateGuide(
-            @PathVariable String guideId,
             @RequestBody GuideRequestDto guideRequestDto) {
         
-        return Api.UPDATED(guideService.updateGuide(guideId, guideRequestDto));
+        return Api.UPDATED(guideService.updateGuide(guideRequestDto));
     }
     
     @Schema(description = "가이드 정보 UPDATE 요청 (이미지 포함)",
             contentEncoding = MediaType.MULTIPART_FORM_DATA_VALUE)
-    @PatchMapping(value = "/{guideId}/update",
+    @PatchMapping(value = "/update",
             consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
     public Api<GuideResponseDto> updateGuide(
-            @PathVariable String guideId,
             @RequestPart(value = "data") GuideRequestDto guideRequestDto,
             @RequestPart(value = "image", required = false) List<MultipartFile> images) {
         
-        return Api.UPDATED(guideService.updateGuide(guideId, guideRequestDto, images));
+        return Api.UPDATED(guideService.updateGuide(guideRequestDto, images));
     }
     
     

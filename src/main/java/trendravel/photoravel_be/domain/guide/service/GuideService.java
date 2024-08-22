@@ -86,15 +86,13 @@ public class GuideService {
         if (guideOpt.isPresent()) {
             throw new ApiException(ErrorCode.BAD_REQUEST);
         }
-        
     }
     
     @Transactional
-    public GuideResponseDto updateGuide(String accountId,
-                                        GuideRequestDto guideRequestDto,
+    public GuideResponseDto updateGuide(GuideRequestDto guideRequestDto,
                                         List<MultipartFile> images) {
         
-        Optional<Guide> guideOpt = guideRepository.findByAccountId(accountId);
+        Optional<Guide> guideOpt = guideRepository.findByAccountId(guideRequestDto.getAccountId());
         
         if (guideOpt.isEmpty()) {
             
@@ -119,10 +117,9 @@ public class GuideService {
     }
     
     @Transactional
-    public GuideResponseDto updateGuide(String accountId,
-                                        GuideRequestDto guideRequestDto) {
+    public GuideResponseDto updateGuide(GuideRequestDto guideRequestDto) {
         
-        Optional<Guide> guideOpt = guideRepository.findByAccountId(accountId);
+        Optional<Guide> guideOpt = guideRepository.findByAccountId(guideRequestDto.getAccountId());
         
         if (guideOpt.isEmpty()) {
             
