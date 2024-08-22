@@ -61,18 +61,18 @@ public class GuidebookController {
     @Schema(description = "가이드북 UPDATE 요청 (이미지 미포함)",
             contentEncoding = MediaType.APPLICATION_JSON_VALUE)
     @PatchMapping("/update")
-    public Api<GuidebookResponseDto> guidebookUpdate(
+    public Api<GuidebookResponseDto> updateGuidebook(
             @RequestBody GuidebookRequestDto guidebookRequestDto) {
         
         return Api.UPDATED(guidebookService.updateGuidebook(guidebookRequestDto));
     }
     
     @Schema(description = "가이드북 UPDATE 요청 (이미지 포함)",
-            contentEncoding = MediaType.APPLICATION_JSON_VALUE)
+            contentEncoding = MediaType.MULTIPART_FORM_DATA_VALUE)
     @PatchMapping(value = "/update",
             consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public Api<GuidebookResponseDto> guidebookUpdate(
+    public Api<GuidebookResponseDto> updateGuidebook(
             @RequestPart(value = "data") GuidebookRequestDto guidebookRequestDto,
             @RequestPart(value = "images", required = false) List<MultipartFile> images) {
         
