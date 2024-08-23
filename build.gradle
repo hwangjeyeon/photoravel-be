@@ -31,8 +31,8 @@ dependencies {
 	implementation 'com.querydsl:querydsl-spatial'
 	implementation 'org.locationtech.jts:jts-core:1.18.2'
 	implementation 'mysql:mysql-connector-java:8.0.32'
-	implementation platform("io.awspring.cloud:spring-cloud-aws-dependencies:${'3.1.1'}")
-	implementation 'io.awspring.cloud:spring-cloud-aws-starter-s3'
+	implementation 'io.minio:minio:8.5.11'
+	implementation 'io.findify:s3mock_2.13:0.2.6'
 
 	//Querydsl 추가
 	implementation 'com.querydsl:querydsl-jpa:5.0.0:jakarta'
