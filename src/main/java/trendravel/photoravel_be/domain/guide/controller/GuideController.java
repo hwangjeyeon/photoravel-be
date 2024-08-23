@@ -28,9 +28,9 @@ public class GuideController {
             produces = MediaType.APPLICATION_JSON_VALUE)
     public Result createGuide(
             @RequestPart(value = "data") GuideRequestDto guideRequestDto,
-            @RequestPart(value = "image", required = false) String image) {
+            @RequestPart(value = "image", required = false) List<MultipartFile> images) {
         
-        guideService.createGuide(guideRequestDto, image);
+        guideService.createGuide(guideRequestDto, images);
         
         return Result.CREATED();
     }

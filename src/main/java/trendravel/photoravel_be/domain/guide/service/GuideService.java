@@ -64,8 +64,13 @@ public class GuideService {
                 .build();
     }
     
+    
+    /*
+    이미지 타입 변경
+     */
+    
     @Transactional
-    public void createGuide(GuideRequestDto guideRequestDto, String image) {
+    public void createGuide(GuideRequestDto guideRequestDto, List<MultipartFile> images) {
         
         guideRepository.save(Guide.builder()
                 .accountId(guideRequestDto.getAccountId())
@@ -73,7 +78,8 @@ public class GuideService {
                 .name(guideRequestDto.getName())
                 .region(guideRequestDto.getRegion())
                 .description(guideRequestDto.getDescription())
-                .profileImg(guideRequestDto.getProfileImg())
+                //이미지 업로드 처리는 List이고 엔티티는 문자열이기에 get(0)으로 처리 
+                .profileImg(imageService.uploadImages(images).get(0))
                 .build());
     }
     
