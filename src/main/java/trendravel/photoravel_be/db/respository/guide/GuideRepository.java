@@ -13,7 +13,7 @@ public interface GuideRepository extends JpaRepository<Guide, Long> {
     
     Optional<Guide> findByAccountId(String accountId);
     
-    List<Guide> findByNameContaining(String name);
+    Optional<List<Guide>> findByNameContaining(String name);
     
     void deleteByAccountId(String accountId);
     

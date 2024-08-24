@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import trendravel.photoravel_be.commom.error.ErrorCode;
+import trendravel.photoravel_be.commom.error.GuideErrorCode;
 import trendravel.photoravel_be.commom.exception.ApiException;
 import trendravel.photoravel_be.commom.service.ImageService;
 import trendravel.photoravel_be.db.guide.Guide;
@@ -13,9 +14,7 @@ import trendravel.photoravel_be.db.review.Review;
 import trendravel.photoravel_be.domain.guide.dto.request.GuideRequestDto;
 import trendravel.photoravel_be.domain.guide.dto.response.GuideResponseDto;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -28,7 +27,9 @@ public class GuideService {
     @Transactional
     public List<GuideResponseDto> getGuideList(String keyword) {
         
-        List<Guide> guides = guideRepository.findByNameContaining(keyword);
+        List<Guide> guides = guideRepository.findByNameContaining(keyword).orElseThrow(() ->
+                new ApiException(GuideErrorCode.GUIDE_NOT_FOUND));
+        
         
         return guides.stream()
                 .map(guide -> GuideResponseDto.builder()
@@ -43,11 +44,8 @@ public class GuideService {
     @Transactional
     public GuideResponseDto getGuide(String guideId) {
         
-        Optional<Guide> guideOpt = guideRepository.findByAccountId(guideId);
-        if (guideOpt.isEmpty()) {
-            
-        }
-        Guide guide = guideOpt.get();
+        Guide guide = guideRepository.findByAccountId(guideId).orElseThrow(() ->
+                new ApiException(GuideErrorCode.GUIDE_NOT_FOUND));
         
         //List<RecentReviewsDto> reviews = guideRepository.recentReviews(guide.getId());
         
@@ -86,25 +84,20 @@ public class GuideService {
     @Transactional
     public void authenticate(String username, String password) {
         
-        //인증 로직 필요
-        Optional<Guide> guideOpt = guideRepository.findByAccountId(username);
+        Guide guide = guideRepository.findByAccountId(username).orElseThrow(() ->
+                new ApiException(GuideErrorCode.GUIDE_NOT_FOUND));
         
-        if (guideOpt.isPresent()) {
-            throw new ApiException(ErrorCode.BAD_REQUEST);
-        }
+        //인증 로직 필요
+        
     }
     
     @Transactional
     public GuideResponseDto updateGuide(GuideRequestDto guideRequestDto,
                                         List<MultipartFile> images) {
         
-        Optional<Guide> guideOpt = guideRepository.findByAccountId(guideRequestDto.getAccountId());
+        Guide guide = guideRepository.findByAccountId(guideRequestDto.getAccountId()).orElseThrow(
+                () -> new ApiException(GuideErrorCode.GUIDE_NOT_FOUND));
         
-        if (guideOpt.isEmpty()) {
-            
-        }
-        
-        Guide guide = guideOpt.get();
         guide.updateGuide(guideRequestDto, imageService.uploadImages(images));
         
         //List<RecentReviewsDto> reviews = guideRepository.recentReviews(guide.getId());
@@ -125,13 +118,9 @@ public class GuideService {
     @Transactional
     public GuideResponseDto updateGuide(GuideRequestDto guideRequestDto) {
         
-        Optional<Guide> guideOpt = guideRepository.findByAccountId(guideRequestDto.getAccountId());
+        Guide guide = guideRepository.findByAccountId(guideRequestDto.getAccountId()).orElseThrow(
+                () -> new ApiException(GuideErrorCode.GUIDE_NOT_FOUND));
         
-        if (guideOpt.isEmpty()) {
-            
-        }
-        
-        Guide guide = guideOpt.get();
         guide.updateGuide(guideRequestDto);
         
         //List<RecentReviewsDto> reviews = guideRepository.recentReviews(guide.getId());
@@ -148,7 +137,6 @@ public class GuideService {
                 //.recentReviewDtos(reviews)
                 .build();
     }
-    
     
     @Transactional
     public void deleteGuide(String guideId) {
