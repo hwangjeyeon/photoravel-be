@@ -4,6 +4,8 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import trendravel.photoravel_be.commom.error.GuidebookErrorCode;
+import trendravel.photoravel_be.commom.exception.ApiException;
 import trendravel.photoravel_be.domain.guidebook.dto.request.GuidebookRequestDto;
 import trendravel.photoravel_be.domain.guidebook.dto.response.GuidebookResponseDto;
 import trendravel.photoravel_be.db.guidebook.Guidebook;
@@ -15,6 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -25,7 +28,7 @@ public class GuidebookService {
     
     @Transactional
     public GuidebookResponseDto createGuidebook(
-            GuidebookRequestDto guidebookRequestDto, 
+            GuidebookRequestDto guidebookRequestDto,
             List<MultipartFile> images) {
         
         Guidebook guidebook = guidebookRepository.save(Guidebook.builder()
@@ -82,39 +85,41 @@ public class GuidebookService {
         List<Guidebook> guidebooks;
         
         if (keyword == null || keyword.isEmpty()) {
-            guidebooks = guidebookRepository.findByRegion(Region.valueOf(region));
+            System.out.println("리전");
+            guidebooks = guidebookRepository.findByRegion(Region.valueOf(region)).orElseThrow(
+                    () -> new ApiException(GuidebookErrorCode.GUIDEBOOK_NOT_FOUND));
         } else {
-            guidebooks = guidebookRepository.findByTitleContaining(keyword);
+            System.out.println("키워드");
+            guidebooks = guidebookRepository.findByTitleContaining(keyword).orElseThrow(
+                    () -> new ApiException(GuidebookErrorCode.GUIDEBOOK_NOT_FOUND));
         }
         
-        List<GuidebookResponseDto> responseDtoList = new ArrayList<>();
-        
-        for (Guidebook guidebook : guidebooks) {
-            GuidebookResponseDto dto = GuidebookResponseDto.builder()
-                    .id(guidebook.getId())
-                    .userId(guidebook.getUserId())
-                    .title(guidebook.getTitle())
-                    .region(guidebook.getRegion())
-                    .views(guidebook.getViews())
-                    .createdAt(guidebook.getCreatedAt())
-                    .updatedAt(guidebook.getUpdatedAt())
-                    .build();
-            responseDtoList.add(dto);
-        }
-        
-        return responseDtoList;
+        //테스트 필요
+        return guidebooks.stream()
+                .map(guidebook -> GuidebookResponseDto.builder()
+                        .id(guidebook.getId())
+                        .userId(guidebook.getUserId())
+                        .title(guidebook.getTitle())
+                        .region(guidebook.getRegion())
+                        .views(guidebook.getViews())
+                        .images(guidebook.getImages())
+                        .createdAt(guidebook.getCreatedAt())
+                        .updatedAt(guidebook.getUpdatedAt())
+                        .build())
+                .collect(Collectors.toList());
     }
+    
     
     @Transactional
     public GuidebookResponseDto getGuidebook(Long guidebookId) {
-        Guidebook guidebook = guidebookRepository.findById(guidebookId)
-                .orElseThrow(() -> new NoSuchElementException(
-                        "Guidebook ID: " 
-                                + guidebookId + " does not exist"));
+        
+        Guidebook guidebook = guidebookRepository.findById(guidebookId).orElseThrow(
+                () -> new ApiException(GuidebookErrorCode.GUIDEBOOK_NOT_FOUND));
         
         guidebook.increaseView();
         
         return GuidebookResponseDto.builder()
+                .id(guidebook.getId())
                 .userId(guidebook.getUserId())
                 .title(guidebook.getTitle())
                 .content(guidebook.getContent())
@@ -128,15 +133,11 @@ public class GuidebookService {
     
     @Transactional
     public GuidebookResponseDto updateGuidebook(GuidebookRequestDto guidebookRequestDto,
-                                     List<MultipartFile> images) {
+                                                List<MultipartFile> images) {
         
-        Optional<Guidebook> guidebookOpt = 
-                guidebookRepository.findById(guidebookRequestDto.getId());
-        if (guidebookOpt.isEmpty()) {
-            // 검색 실패
-        }
+        Guidebook guidebook = guidebookRepository.findById(guidebookRequestDto.getId()) .orElseThrow(
+                () -> new ApiException(GuidebookErrorCode.GUIDEBOOK_NOT_FOUND));
         
-        Guidebook guidebook = guidebookOpt.get();
         guidebook.updateGuidebook(guidebookRequestDto, imageService.uploadImages(images));
         
         return GuidebookResponseDto.builder()
@@ -155,14 +156,9 @@ public class GuidebookService {
     @Transactional
     public GuidebookResponseDto updateGuidebook(GuidebookRequestDto guidebookRequestDto) {
         
-        Optional<Guidebook> guidebookOpt = 
-                guidebookRepository.findById(guidebookRequestDto.getId());
+        Guidebook guidebook = guidebookRepository.findById(guidebookRequestDto.getId()) .orElseThrow(
+                () -> new ApiException(GuidebookErrorCode.GUIDEBOOK_NOT_FOUND));
         
-        if (guidebookOpt.isEmpty()) {
-            // 검색 실패
-        }
-        
-        Guidebook guidebook = guidebookOpt.get();
         guidebook.updateGuidebook(guidebookRequestDto);
         
         return GuidebookResponseDto.builder()
@@ -176,7 +172,6 @@ public class GuidebookService {
                 .updatedAt(guidebook.getUpdatedAt())
                 .build();
     }
-    
     
     
     public void deleteGuidebook(Long guidebookId) {
