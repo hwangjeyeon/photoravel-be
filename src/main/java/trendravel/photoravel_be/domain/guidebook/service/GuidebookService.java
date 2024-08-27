@@ -7,6 +7,8 @@ import org.springframework.web.multipart.MultipartFile;
 import trendravel.photoravel_be.commom.error.GuidebookErrorCode;
 import trendravel.photoravel_be.commom.exception.ApiException;
 import trendravel.photoravel_be.domain.guidebook.dto.request.GuidebookRequestDto;
+import trendravel.photoravel_be.domain.guidebook.dto.request.GuidebookUpdateDto;
+import trendravel.photoravel_be.domain.guidebook.dto.request.GuidebookUpdateImageDto;
 import trendravel.photoravel_be.domain.guidebook.dto.response.GuidebookListResponseDto;
 import trendravel.photoravel_be.domain.guidebook.dto.response.GuidebookResponseDto;
 import trendravel.photoravel_be.db.guidebook.Guidebook;
@@ -139,13 +141,15 @@ public class GuidebookService {
     }
     
     @Transactional
-    public GuidebookResponseDto updateGuidebook(GuidebookRequestDto guidebookRequestDto,
+    public GuidebookResponseDto updateGuidebook(GuidebookUpdateImageDto guidebookUpdateImageDto,
                                                 List<MultipartFile> images) {
         
-        Guidebook guidebook = guidebookRepository.findById(guidebookRequestDto.getId()) .orElseThrow(
+        Guidebook guidebook = guidebookRepository.findById(guidebookUpdateImageDto.getId()).orElseThrow(
                 () -> new ApiException(GuidebookErrorCode.GUIDEBOOK_NOT_FOUND));
         
-        guidebook.updateGuidebook(guidebookRequestDto, imageService.uploadImages(images));
+        
+        guidebook.updateGuidebook(guidebookUpdateImageDto,
+                imageService.updateImages(images, guidebookUpdateImageDto.getDeleteImages()));
         
         return GuidebookResponseDto.builder()
                 .id(guidebook.getId())
@@ -161,12 +165,12 @@ public class GuidebookService {
     }
     
     @Transactional
-    public GuidebookResponseDto updateGuidebook(GuidebookRequestDto guidebookRequestDto) {
+    public GuidebookResponseDto updateGuidebook(GuidebookUpdateDto guidebookUpdateDto) {
         
-        Guidebook guidebook = guidebookRepository.findById(guidebookRequestDto.getId()) .orElseThrow(
+        Guidebook guidebook = guidebookRepository.findById(guidebookUpdateDto.getId()).orElseThrow(
                 () -> new ApiException(GuidebookErrorCode.GUIDEBOOK_NOT_FOUND));
         
-        guidebook.updateGuidebook(guidebookRequestDto);
+        guidebook.updateGuidebook(guidebookUpdateDto);
         
         return GuidebookResponseDto.builder()
                 .id(guidebook.getId())

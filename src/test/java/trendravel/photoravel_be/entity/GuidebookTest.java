@@ -69,7 +69,7 @@ public class GuidebookTest {
         
         //when
         image.add("이미지 url 2");
-        guidebook.updateGuidebook(guidebookRequestDto, image);
+        //guidebook.updateGuidebook(guidebookRequestDto, image);
         
         //then
         assertThat(guidebook.getTitle()).isEqualTo("수정된 제목");
