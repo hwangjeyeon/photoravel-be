@@ -8,6 +8,7 @@ import org.springframework.web.multipart.MultipartFile;
 import trendravel.photoravel_be.commom.response.Api;
 import trendravel.photoravel_be.commom.response.Result;
 import trendravel.photoravel_be.domain.guidebook.dto.request.GuidebookRequestDto;
+import trendravel.photoravel_be.domain.guidebook.dto.response.GuidebookListResponseDto;
 import trendravel.photoravel_be.domain.guidebook.dto.response.GuidebookResponseDto;
 import trendravel.photoravel_be.domain.guidebook.service.GuidebookService;
 
@@ -44,11 +45,10 @@ public class GuidebookController {
     
     @Schema(description = "가이드북 목록 READ 요청")
     @GetMapping
-    public Api<List<GuidebookResponseDto>> guidebooksList(
-            @RequestParam String region,
-            @RequestParam String keyword) {
+    public Api<List<GuidebookListResponseDto>> guidebooksList(
+            @RequestParam String region) {
         
-        return Api.READ(guidebookService.getGuidebookList(region, keyword));
+        return Api.READ(guidebookService.getGuidebookList(region));
     }
     
     @Schema(description = "가이드북 상제 정보 READ 요청")

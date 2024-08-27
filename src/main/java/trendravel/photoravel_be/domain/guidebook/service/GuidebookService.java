@@ -7,6 +7,7 @@ import org.springframework.web.multipart.MultipartFile;
 import trendravel.photoravel_be.commom.error.GuidebookErrorCode;
 import trendravel.photoravel_be.commom.exception.ApiException;
 import trendravel.photoravel_be.domain.guidebook.dto.request.GuidebookRequestDto;
+import trendravel.photoravel_be.domain.guidebook.dto.response.GuidebookListResponseDto;
 import trendravel.photoravel_be.domain.guidebook.dto.response.GuidebookResponseDto;
 import trendravel.photoravel_be.db.guidebook.Guidebook;
 import trendravel.photoravel_be.db.enums.Region;
@@ -80,23 +81,29 @@ public class GuidebookService {
     
     
     @Transactional
-    public List<GuidebookResponseDto> getGuidebookList(String region, String keyword) {
+    public List<GuidebookListResponseDto> getGuidebookList(String region) {
         
         List<Guidebook> guidebooks;
         
-        if (keyword == null || keyword.isEmpty()) {
-            System.out.println("리전");
-            guidebooks = guidebookRepository.findByRegion(Region.valueOf(region)).orElseThrow(
-                    () -> new ApiException(GuidebookErrorCode.GUIDEBOOK_NOT_FOUND));
+        /*
+        region이 all로 들어오면 모든 가이드북 반환
+        region이 지역으로 들어오면 해당 지역으로 검색
+        
+        키워드 기반 가이드북은 프론트 측과 상의하여 잠시 보류
+         */
+        
+        if (region.equals("all")) {
+            guidebooks = guidebookRepository.findAll();
         } else {
-            System.out.println("키워드");
-            guidebooks = guidebookRepository.findByTitleContaining(keyword).orElseThrow(
-                    () -> new ApiException(GuidebookErrorCode.GUIDEBOOK_NOT_FOUND));
+            guidebooks = guidebookRepository.findByRegion(Region.valueOf(region));
         }
         
-        //테스트 필요
+        if (guidebooks.isEmpty()) {
+            throw new ApiException(GuidebookErrorCode.GUIDEBOOK_NOT_FOUND);
+        } 
+        
         return guidebooks.stream()
-                .map(guidebook -> GuidebookResponseDto.builder()
+                .map(guidebook -> GuidebookListResponseDto.builder()
                         .id(guidebook.getId())
                         .userId(guidebook.getUserId())
                         .title(guidebook.getTitle())

@@ -11,9 +11,7 @@ import java.util.Optional;
 @Repository
 public interface GuidebookRepository extends JpaRepository<Guidebook, Long> {
     
-    Optional<List<Guidebook>> findByTitleContaining(String title);
-    
-    Optional<List<Guidebook>> findByRegion(Region region);
+    List<Guidebook> findByRegion(Region region);
 
     
 }
