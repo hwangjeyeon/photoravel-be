@@ -71,6 +71,7 @@ class SpotServiceTest {
                 .latitude(35.24)
                 .longitude(46.61)
                 .address("아산시 신창면 순천향로46")
+                .description("순천향대학교입니다.")
                 .point(new GeometryFactory().createPoint(
                         new Coordinate(35.24
                                 , 46.61)))
@@ -229,7 +230,7 @@ class SpotServiceTest {
                 .isEqualTo(String.format("%.2f",
                         (review4.getRating() + review2.getRating()
                                 + review3.getRating() + review1.getRating()) / 4));
-        assertThat(spotSingleReadResponseDto.getViews()).isEqualTo(0);
+        assertThat(spotSingleReadResponseDto.getViews()).isEqualTo(1);
         assertThat(findRecentReviews.size()).isGreaterThan(1);
         assertThat(findRecentReviews).extracting("rating")
                 .containsExactlyInAnyOrder(review4.getRating(),
