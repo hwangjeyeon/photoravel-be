@@ -1,8 +1,7 @@
 package trendravel.photoravel_be.domain.location.service;
 
-
-
 import lombok.RequiredArgsConstructor;
+import org.jetbrains.annotations.NotNull;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.GeometryFactory;
 import org.springframework.stereotype.Service;
@@ -45,8 +44,8 @@ public class LocationService {
                 .name(locationRequestDto.getName())
                 .latitude(locationRequestDto.getLatitude())
                 .longitude(locationRequestDto.getLongitude())
-                .images(imageService.uploadImages(images))
                 .address(locationRequestDto.getAddress())
+                .images(imageService.uploadImages(images))
                 .views(0)
                 .point(new GeometryFactory().createPoint(
                                 new Coordinate(locationRequestDto.getLatitude()
@@ -119,7 +118,10 @@ public class LocationService {
                 .createdAt(location.getCreatedAt())
                 .images(location.getImages())
                 .views(location.getViews())
-                .ratingAvg(String.format("%.2f", ratingAverage(location.getReview())))
+                .ratingAvg(Double.parseDouble(String.format("%.2f",
+                        ratingAverage(location.getReview()))))
+                .reviewCounts(location.getReview().size() < 100
+                        ? location.getReview().size() : 99)
                 .recentReviewDtos(reviews)
                 .build();
     }
@@ -130,15 +132,7 @@ public class LocationService {
         List<Location> locations =
                 locationRepository.searchNowPosition(locationNowPositionDto);
 
-        return locations.stream()
-                .map(p -> new LocationMultiReadResponseDto(
-                        p.getId(), p.getLatitude(), p.getLongitude(),
-                        p.getAddress(), p.getDescription(), p.getName(),
-                        p.getImages(),p.getViews(),
-                        String.format("%.2f",ratingAverage(p.getReview())),
-                        p.getCreatedAt(), p.getUpdatedAt())
-                )
-                .toList();
+        return getLocationResponseLists(locations);
     }
 
     @Transactional(readOnly = true)
@@ -146,15 +140,7 @@ public class LocationService {
             LocationKeywordDto locationKeywordDto){
         List<Location> locations = locationRepository.searchKeyword(locationKeywordDto);
 
-        return locations.stream()
-                .map(p -> new LocationMultiReadResponseDto(
-                        p.getId(), p.getLatitude(), p.getLongitude(),
-                        p.getAddress(), p.getDescription(), p.getName(),
-                        p.getImages(),p.getViews(),
-                        String.format("%.2f",ratingAverage(p.getReview())),
-                        p.getCreatedAt(), p.getUpdatedAt())
-                )
-                .toList();
+        return getLocationResponseLists(locations);
     }
 
 
@@ -165,6 +151,22 @@ public class LocationService {
         }
         return sum / reviews.size();
     }
+
+    @NotNull
+    private List<LocationMultiReadResponseDto> getLocationResponseLists(List<Location> locations) {
+        return locations.stream()
+                .map(p -> new LocationMultiReadResponseDto(
+                        p.getId(), p.getLatitude(), p.getLongitude(),
+                        p.getAddress(), p.getDescription(), p.getName(),
+                        p.getImages(),p.getViews(),
+                        Double.parseDouble(String.format("%.2f",
+                                ratingAverage(p.getReview()))),
+                        p.getReview().size() < 100 ? p.getReview().size() : 99,
+                        p.getCreatedAt(), p.getUpdatedAt())
+                )
+                .toList();
+    }
+
 
 
     @Transactional

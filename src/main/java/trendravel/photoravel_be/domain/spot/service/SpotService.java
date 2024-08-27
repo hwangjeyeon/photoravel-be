@@ -121,8 +121,10 @@ public class SpotService {
                 .latitude(spot.getLatitude())
                 .longitude(spot.getLongitude())
                 .images(spot.getImages())
-                .ratingAvg(String.format("%.2f", ratingAverage(spot.getReviews())))
+                .ratingAvg(Double.parseDouble
+                        (String.format("%.2f", ratingAverage(spot.getReviews()))))
                 .recentReviewDtos(reviews)
+                .reviewCounts(spot.getReviews().size() < 100 ? spot.getReviews().size(): 99)
                 .build();
     }
 
