@@ -226,9 +226,9 @@ class LocationServiceTest {
         assertThat(locationSingleReadResponseDto.getAddress())
                 .isEqualTo(findLocation.getAddress());
         assertThat(locationSingleReadResponseDto.getRatingAvg())
-                .isEqualTo(String.format("%.2f",
+                .isEqualTo(Double.parseDouble(String.format("%.2f",
                         (review4.getRating() + review2.getRating()
-                                + review3.getRating() + review1.getRating()) / 4));
+                                + review3.getRating() + review1.getRating()) / 4)));
         assertThat(locationSingleReadResponseDto.getViews()).isEqualTo(1);
         assertThat(findRecentReviews).extracting("rating")
                 .containsExactlyInAnyOrder(review4.getRating(),
@@ -315,6 +315,31 @@ class LocationServiceTest {
                 .hasMessageContaining(LocationErrorCode.LOCATION_NOT_FOUND.getErrorDescription());
     }
 
+    @DisplayName("LOCATION의 리뷰 수가 100개 이상일 때, 99개로 변경하여 잘 보내는지 테스트")
+    @Test
+    @Transactional
+    @Order(9)
+    void locationReviewCountsMoreThanOneHundredTest(){
+
+        for (int i = 0; i < 1000; i++) {
+            review1.setLocationReview(location);
+            reviewRepository.save(review1);
+        }
+        Long id = locationRepository.save(location).getId();
+
+        assertThat(locationService.readSingleLocation(id).getReviewCounts()).isEqualTo(99);
+    }
+
+    @DisplayName("LOCATION의 리뷰 수가 100개 이하일 때, 그 개수를 그대로 READ하는지 테스트")
+    @Test
+    @Transactional
+    @Order(10)
+    void locationReviewCountsLessThanOneHundredTest(){
+        Long id = locationRepository.save(location).getId();
+
+        assertThat(locationService.readSingleLocation(id).getReviewCounts())
+                .isEqualTo(location.getReview().size());
+    }
 
 
 }

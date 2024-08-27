@@ -227,9 +227,9 @@ class SpotServiceTest {
         assertThat(spotSingleReadResponseDto.getTitle())
                 .isEqualTo(findSpot.getTitle());
         assertThat(spotSingleReadResponseDto.getRatingAvg())
-                .isEqualTo(String.format("%.2f",
+                .isEqualTo(Double.parseDouble(String.format("%.2f",
                         (review4.getRating() + review2.getRating()
-                                + review3.getRating() + review1.getRating()) / 4));
+                                + review3.getRating() + review1.getRating()) / 4)));
         assertThat(spotSingleReadResponseDto.getViews()).isEqualTo(1);
         assertThat(findRecentReviews.size()).isGreaterThan(1);
         assertThat(findRecentReviews).extracting("rating")
@@ -289,6 +289,36 @@ class SpotServiceTest {
         assertThatThrownBy(() -> spotService.deleteSpot(100L))
                 .isInstanceOf(ApiException.class)
                 .hasMessageContaining(SpotErrorCode.SPOT_NOT_FOUND.getErrorDescription());
+    }
+
+    @DisplayName("SPOT의 리뷰 수가 100개 이상일 때, 99개로 변경하여 잘 보내는지 테스트")
+    @Test
+    @Transactional
+    @Order(10)
+    void locationReviewCountsMoreThanOneHundredTest(){
+        Long locationId = locationRepository.save(location).getId();
+        for (int i = 0; i < 1000; i++) {
+            review1.setSpotReview(spot);
+            reviewRepository.save(review1);
+        }
+        spot.setLocation(location);
+        Long id = spotRepository.save(spot).getId();
+
+        assertThat(spotService.readSingleSpot(locationId, id).getReviewCounts())
+                .isEqualTo(99);
+    }
+
+    @DisplayName("SPOT의 리뷰 수가 100개 이하일 때, 그 개수를 그대로 READ하는지 테스트")
+    @Test
+    @Transactional
+    @Order(11)
+    void locationReviewCountsLessThanOneHundredTest(){
+        Long locationId = locationRepository.save(location).getId();
+        spot.setLocation(location);
+        Long id = spotRepository.save(spot).getId();
+
+        assertThat(spotService.readSingleSpot(locationId, id).getReviewCounts())
+                .isEqualTo(location.getReview().size());
     }
 
 
