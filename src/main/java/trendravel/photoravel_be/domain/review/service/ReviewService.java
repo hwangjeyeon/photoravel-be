@@ -1,10 +1,10 @@
 package trendravel.photoravel_be.domain.review.service;
 
-import jakarta.transaction.Transactional;
+
 import lombok.RequiredArgsConstructor;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-import trendravel.photoravel_be.commom.error.ErrorCode;
 import trendravel.photoravel_be.commom.error.LocationErrorCode;
 import trendravel.photoravel_be.commom.error.ReviewErrorCode;
 import trendravel.photoravel_be.commom.error.SpotErrorCode;
@@ -32,6 +32,7 @@ public class ReviewService {
     private final LocationRepository locationRepository;
     private final ImageService imageService;
 
+    @Transactional
     public ReviewResponseDto createReview(
             ReviewRequestDto reviewRequestDto, List<MultipartFile> images) {
 
@@ -79,6 +80,7 @@ public class ReviewService {
                 .build();
     }
 
+    @Transactional
     public ReviewResponseDto createReview(
             ReviewRequestDto reviewRequestDto) {
 
@@ -132,7 +134,7 @@ public class ReviewService {
                 .build();
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public List<ReviewResponseDto> readAllLocationReview(Long locationId){
         List<Review> reviews = locationRepository.findById(locationId)
                 .map(Location::getReview)
@@ -145,7 +147,7 @@ public class ReviewService {
                 .toList();
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public List<ReviewResponseDto> readAllSpotReview(Long locationId, Long spotId){
         List<Spot> spots = locationRepository.findById(locationId)
                 .map(Location::getSpot)

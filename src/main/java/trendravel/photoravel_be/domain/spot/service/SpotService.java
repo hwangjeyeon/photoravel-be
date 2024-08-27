@@ -1,10 +1,9 @@
 package trendravel.photoravel_be.domain.spot.service;
 
-import jakarta.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-import trendravel.photoravel_be.commom.error.ErrorCode;
 import trendravel.photoravel_be.commom.error.LocationErrorCode;
 import trendravel.photoravel_be.commom.error.SpotErrorCode;
 import trendravel.photoravel_be.commom.exception.ApiException;
@@ -35,6 +34,7 @@ public class SpotService {
     private final LocationRepository locationRepository;
     private final ImageService imageService;
 
+    @Transactional
     public SpotResponseDto createSpot(
             SpotRequestDto spotRequestDto, List<MultipartFile> images) {
 
@@ -67,6 +67,7 @@ public class SpotService {
                 .build();
     }
 
+    @Transactional
     public SpotResponseDto createSpot(
             SpotRequestDto spotRequestDto) {
         Location location = locationRepository.findById(spotRequestDto.
@@ -97,16 +98,16 @@ public class SpotService {
     }
 
 
-    @Transactional
+    @Transactional(readOnly = true)
     public SpotSingleReadResponseDto readSingleSpot(Long locationId, Long spotId) {
         List<Spot> spots = locationRepository.findById(locationId)
                 .map(Location::getSpot)
                 .orElseThrow(() -> new ApiException(LocationErrorCode.LOCATION_NOT_FOUND));
 
-
         Spot spot = spots.stream().
                 filter(s -> s.getId().equals(spotId)).findFirst()
                 .orElseThrow(() -> new ApiException(SpotErrorCode.SPOT_NOT_FOUND));
+        spot.increaseViews();
 
         List<RecentReviewsDto> reviews = spotRepository.recentReviews(spot.getId());
 
@@ -125,7 +126,7 @@ public class SpotService {
                 .build();
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public List<SpotMultiReadResponseDto> readMultiSpot(Long locationId) {
         List<Spot> spots = locationRepository.findById(locationId)
                 .map(Location::getSpot)

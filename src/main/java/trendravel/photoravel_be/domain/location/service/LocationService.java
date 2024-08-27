@@ -1,11 +1,12 @@
 package trendravel.photoravel_be.domain.location.service;
 
 
-import jakarta.transaction.Transactional;
+
 import lombok.RequiredArgsConstructor;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.GeometryFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import trendravel.photoravel_be.commom.error.LocationErrorCode;
 import trendravel.photoravel_be.commom.exception.ApiException;
@@ -98,7 +99,7 @@ public class LocationService {
                 .build();
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public LocationSingleReadResponseDto readSingleLocation(Long id){
         Location location = locationRepository.findById(id)
                 .orElseThrow(() -> new ApiException(LocationErrorCode.LOCATION_NOT_FOUND));
@@ -123,7 +124,7 @@ public class LocationService {
                 .build();
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public List<LocationMultiReadResponseDto> readMultiLocation(
             LocationNowPositionDto locationNowPositionDto){
         List<Location> locations =
@@ -140,7 +141,7 @@ public class LocationService {
                 .toList();
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public List<LocationMultiReadResponseDto> readMultiLocation(
             LocationKeywordDto locationKeywordDto){
         List<Location> locations = locationRepository.searchKeyword(locationKeywordDto);
