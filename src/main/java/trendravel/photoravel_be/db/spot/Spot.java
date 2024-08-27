@@ -2,6 +2,9 @@ package trendravel.photoravel_be.db.spot;
 
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.*;
 import trendravel.photoravel_be.db.BaseEntity;
 import trendravel.photoravel_be.db.location.Location;
@@ -15,7 +18,7 @@ import java.util.List;
 @Entity
 @Getter
 @AllArgsConstructor
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Builder
 @Table(name = "SPOT")
 public class Spot extends BaseEntity {
@@ -25,13 +28,17 @@ public class Spot extends BaseEntity {
     @Column(name = "spot_id")
     private Long id;
 
-
+    @NotBlank(message = "공백/null 입력은 미허용됩니다.")
     private String title;
 
     @Column(columnDefinition = "TEXT")
+    @NotBlank(message = "공백/null 입력은 미허용됩니다.")
     private String description;
-    private double latitude;
-    private double longitude;
+
+    @NotNull(message = "필수 입력사항입니다.")
+    private Double latitude;
+    @NotNull(message = "필수 입력사항입니다.")
+    private Double longitude;
     private int views;
 
     @ElementCollection
@@ -39,6 +46,7 @@ public class Spot extends BaseEntity {
             name = "spot_image",
             joinColumns = @JoinColumn(name = "spot_id")
     )
+    @Size(max = 10, message = "한번에 들어올 수 있는 이미지는 10개입니다")
     private List<String> images;
 
 
