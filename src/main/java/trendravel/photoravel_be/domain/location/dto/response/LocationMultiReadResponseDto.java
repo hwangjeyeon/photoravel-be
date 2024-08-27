@@ -34,7 +34,9 @@ public class LocationMultiReadResponseDto {
     @Schema(description = "장소별 조회수")
     private int views;
     @Schema(description = "장소 리뷰 평균 평점")
-    private String ratingAvg;
+    private Double ratingAvg;
+    @Schema(description = "장소 리뷰 수")
+    private Integer reviewCounts;
 
     //유저 객체 추가 필요
 

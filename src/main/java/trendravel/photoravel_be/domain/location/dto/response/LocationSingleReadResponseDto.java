@@ -33,7 +33,9 @@ public class LocationSingleReadResponseDto {
     @Schema(description = "장소 조회수")
     private int views;
     @Schema(description = "장소 리뷰 평균 평점")
-    private String ratingAvg;
+    private Double ratingAvg;
+    @Schema(description = "장소 리뷰 수")
+    private Integer reviewCounts;
 
     //유저 객체 추가 필요
     @Schema(description = "최근 업데이트된 리뷰 목록 (최대 3개)")
