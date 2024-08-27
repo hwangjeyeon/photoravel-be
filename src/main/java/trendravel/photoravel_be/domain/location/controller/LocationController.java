@@ -29,7 +29,7 @@ public class LocationController {
 
     @Schema(description = "장소 CREATE 요청/응답 (이미지 미포함)",
             contentEncoding = MediaType.APPLICATION_JSON_VALUE)
-    @PostMapping(value = "/location/create")
+    @PostMapping(value = "/private/location/create")
     public Api<LocationResponseDto> locationCreate(@RequestBody
                                            LocationRequestDto locationRequestDto) {
 
@@ -38,7 +38,7 @@ public class LocationController {
 
     @Schema(description = "장소 CREATE 요청/응답 (이미지 포함)",
             contentEncoding = MediaType.MULTIPART_FORM_DATA_VALUE)
-    @PostMapping(value = "/location/create",
+    @PostMapping(value = "/private/location/create",
             consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
     public Api<LocationResponseDto> locationCreate(@RequestPart(value = "data")
@@ -90,7 +90,7 @@ public class LocationController {
 
     @Schema(description = "장소 UPDATE 요청/응답 (이미지 미포함)",
             contentEncoding = MediaType.APPLICATION_JSON_VALUE)
-    @PatchMapping(value = "/location/update")
+    @PatchMapping(value = "/private/location/update")
     public Api<LocationResponseDto> locationUpdate(@RequestBody
                                                        LocationRequestDto locationRequestDto) {
 
@@ -100,7 +100,7 @@ public class LocationController {
 
     @Schema(description = "장소 UPDATE 요청/응답 (이미지 포함)",
             contentEncoding = MediaType.MULTIPART_FORM_DATA_VALUE)
-    @PatchMapping(value = "/location/update",
+    @PatchMapping(value = "/private/location/update",
             consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
     public Api<LocationResponseDto> locationUpdate(@RequestPart(value = "data")
@@ -114,7 +114,7 @@ public class LocationController {
 
 
     @Schema(description = "장소 DELETE 요청/응답")
-    @DeleteMapping("/location/{locationId}/delete")
+    @DeleteMapping("/private/location/{locationId}/delete")
     public Result locationDelete(@PathVariable("locationId") Long locationId) {
         locationService.deleteLocation(locationId);
 

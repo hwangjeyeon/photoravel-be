@@ -25,7 +25,7 @@ public class ReviewController {
 
     @Schema(description = "리뷰 CREATE 요청/응답 (이미지 미포함)",
             contentEncoding = MediaType.APPLICATION_JSON_VALUE)
-    @PostMapping(value = "/review/create")
+    @PostMapping(value = "/private/review/create")
     public Api<ReviewResponseDto> createReview(@RequestBody
                                                    ReviewRequestDto reviewRequestDto){
 
@@ -34,7 +34,7 @@ public class ReviewController {
 
     @Schema(description = "리뷰 CREATE 요청/응답 (이미지 포함)",
             contentEncoding = MediaType.MULTIPART_FORM_DATA_VALUE)
-    @PostMapping(value = "/review/create",
+    @PostMapping(value = "/private/review/create",
             consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
     public Api<ReviewResponseDto> createReview(@RequestPart(value = "data")
@@ -64,7 +64,7 @@ public class ReviewController {
 
     @Schema(description = "리뷰 UPDATE 요청 (이미지 미포함)",
             contentEncoding = MediaType.APPLICATION_JSON_VALUE)
-    @PatchMapping(value = "/review/update")
+    @PatchMapping(value = "/private/review/update")
     public Api<ReviewResponseDto> updateReview(@RequestBody
                                                ReviewRequestDto reviewRequestDto){
 
@@ -73,7 +73,7 @@ public class ReviewController {
 
     @Schema(description = "리뷰 UPDATE 요청 (이미지 포함)",
             contentEncoding = MediaType.MULTIPART_FORM_DATA_VALUE)
-    @PatchMapping(value = "/review/update",
+    @PatchMapping(value = "/private/review/update",
             consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
     public Api<ReviewResponseDto> updateReview(@RequestPart(value = "data")
@@ -85,7 +85,7 @@ public class ReviewController {
     }
 
     @Schema(description = "리뷰 DELETE 요청")
-    @DeleteMapping(value ="/review/{reviewId}/delete")
+    @DeleteMapping(value ="/private/review/{reviewId}/delete")
     public Result locationDelete(@PathVariable("reviewId") Long reviewId) {
         reviewService.deleteReview(reviewId);
 
