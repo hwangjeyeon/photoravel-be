@@ -1,15 +1,17 @@
 package trendravel.photoravel_be.commom.image.service;
 
-import io.awspring.cloud.s3.S3Template;
+import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.model.ObjectMetadata;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import trendravel.photoravel_be.commom.error.ErrorCode;
+import trendravel.photoravel_be.commom.exception.ImageSystemException;
 import trendravel.photoravel_be.commom.image.util.ImageNameRebuildUtils;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,8 +21,8 @@ import java.util.List;
 public class ImageService {
 
 
-
-    private final S3Template s3Template;
+    private final AmazonS3 amazonS3;
+    private final AmazonS3 minioClient;
 
     @Value("${spring.cloud.aws.s3.bucket}")
     private String bucketName;
@@ -28,23 +30,27 @@ public class ImageService {
 
     public List<String> uploadImages(List<MultipartFile> images){
 
-        if(images.isEmpty()){
-            // 예외 처리
+        if(images == null){
+            return null;
         }
 
-        return uploadImagesAndReturnUrl(images);
+//        return uploadImagesAndReturnUrl(images, amazonS3);
+        return uploadImagesAndReturnUrl(images, minioClient);
     }
 
-    private List<String> uploadImagesAndReturnUrl(List<MultipartFile> images) {
+
+    private List<String> uploadImagesAndReturnUrl(List<MultipartFile> images, AmazonS3 storage) {
         List<String> rebuildImageName = getImagesName(images);
         List<String> urlList = new ArrayList<>();
         for (int i = 0; i < images.size(); i++) {
             try{
-                InputStream inputStream = images.get(i).getInputStream();
-                urlList.add(s3Template.upload(bucketName,
-                        rebuildImageName.get(i), inputStream).getURL().toString());
+                ObjectMetadata metadata = new ObjectMetadata();
+                metadata.setContentLength(images.get(i).getInputStream().available());
+                storage.putObject(bucketName, rebuildImageName.get(i),
+                        images.get(i).getInputStream(), metadata);
+                urlList.add(storage.getUrl(bucketName, rebuildImageName.get(i)).toString());
             }catch(IOException e){
-                throw new RuntimeException();
+                throw new ImageSystemException(ErrorCode.IMAGES_UPLOAD_ERROR,e);
             }
         }
         return urlList;
@@ -52,31 +58,31 @@ public class ImageService {
 
     public List<String> updateImages(List<MultipartFile> newImages,
                                      List<String> deleteImages){
-        if(deleteImages.isEmpty()){
-            // 예외 처리
-        }
 
         List<String> imageNames = sliceUrlAndGetImageNames(deleteImages);
         for (String imageName : imageNames) {
-            s3Template.deleteObject(bucketName, imageName);
-        }
-
-        if(newImages.isEmpty()){
-            // 예외 처리
+//            amazonS3.deleteObject(bucketName, imageName);
+            minioClient.deleteObject(bucketName, imageName);
         }
 
 
-        return uploadImagesAndReturnUrl(newImages);
+        if(newImages == null){
+            return new ArrayList<>();
+        }
+
+
+//        return uploadImagesAndReturnUrl(newImages, amazonS3);
+        return uploadImagesAndReturnUrl(newImages, minioClient);
     }
 
 
     public void deleteAllImages(List<String> deleteImages){
-        if(deleteImages.isEmpty()){
-            // 예외 처리
-        }
         List<String> imageNames = sliceUrlAndGetImageNames(deleteImages);
+        log.info("{}", imageNames.get(0));
         for (String imageName : imageNames) {
-            s3Template.deleteObject(bucketName, imageName);
+//            amazonS3.deleteObject(bucketName, imageName);
+            log.info("{}", imageName);
+            minioClient.deleteObject(bucketName, imageName);
         }
     }
 
