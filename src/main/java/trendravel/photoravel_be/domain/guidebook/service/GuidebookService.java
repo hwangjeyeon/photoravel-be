@@ -184,9 +184,16 @@ public class GuidebookService {
                 .build();
     }
     
-    
+    @Transactional
     public void deleteGuidebook(Long guidebookId) {
+        Guidebook guidebook = guidebookRepository.findById(guidebookId).orElseThrow(
+                () -> new ApiException(GuidebookErrorCode.GUIDEBOOK_NOT_FOUND));
         guidebookRepository.deleteById(guidebookId);
+        
+        if (guidebook.getImages() != null) {
+            imageService.deleteAllImages(guidebook.getImages());
+        }
+        
     }
     
     
