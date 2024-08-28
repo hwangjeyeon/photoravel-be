@@ -15,14 +15,11 @@ import java.util.List;
 @Builder
 @Schema(description = "사진작가 생성 조회 수정 응답 DTO",
         contentEncoding = MediaType.APPLICATION_JSON_VALUE)
-public class PhotographerResponseDto {
+public class PhotographerSingleResponseDto {
     
-    @Schema(description = "사진작가 ID")
-    private Long id;
+
     @Schema(description = "가이드 계정 ID")
     private String accountId;
-    @Schema(description = "비밀번호")
-    private String password;
     @Schema(description = "이름")
     private String name;
     @Schema(description = "지역")
