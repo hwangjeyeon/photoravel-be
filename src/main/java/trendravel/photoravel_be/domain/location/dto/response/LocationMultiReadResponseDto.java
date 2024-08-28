@@ -40,8 +40,6 @@ public class LocationMultiReadResponseDto {
 
     //유저 객체 추가 필요
 
-    // 프론트엔드측과 의논 후 추가 여부 결정
-    // private List<RecentReviewsDto> recentReviewDtos;
 
     @Schema(description = "장소 생성일")
     private LocalDateTime createAt;
