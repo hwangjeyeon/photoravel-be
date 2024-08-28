@@ -7,12 +7,15 @@ import org.springframework.web.multipart.MultipartFile;
 import trendravel.photoravel_be.commom.error.PhotographerErrorCode;
 import trendravel.photoravel_be.commom.exception.ApiException;
 import trendravel.photoravel_be.commom.service.ImageService;
+import trendravel.photoravel_be.db.enums.Region;
 import trendravel.photoravel_be.db.photographer.Photographer;
 import trendravel.photoravel_be.db.respository.photographer.PhotographerRepository;
 import trendravel.photoravel_be.db.review.Review;
 import trendravel.photoravel_be.domain.photographer.dto.request.PhotographerRequestDto;
+import trendravel.photoravel_be.domain.photographer.dto.request.PhotographerUpdateDto;
 import trendravel.photoravel_be.domain.photographer.dto.response.PhotographerResponseDto;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -24,16 +27,29 @@ public class PhotographerService {
     private final ImageService imageService;
     
     @Transactional
-    public List<PhotographerResponseDto> getPhotographerList(String keyword) {
+    public List<PhotographerResponseDto> getPhotographerList(String region) {
         
-        List<Photographer> photographers = photographerRepository.findByNameContaining(keyword).orElseThrow(() ->
-                new ApiException(PhotographerErrorCode.PHOTOGRAPHER_NOT_FOUND));
+        List<Photographer> photographers;
         
+        if (region.equals("all")) {
+            photographers = photographerRepository.findAll();
+        } else { // 지역으로 검색
+            photographers = photographerRepository.findByRegion(Region.valueOf(region));
+        }
+        
+        if (photographers.isEmpty()) {
+            throw new ApiException(PhotographerErrorCode.PHOTOGRAPHER_NOT_FOUND);
+        }
         
         return photographers.stream()
                 .map(photographer -> PhotographerResponseDto.builder()
                         .accountId(photographer.getAccountId())
+                        .name(photographer.getName())
+                        .profileImg(photographer.getProfileImg())
                         .region(photographer.getRegion())
+                        .description(photographer.getDescription())
+                        .createdAt(photographer.getCreatedAt())
+                        .updatedAt(photographer.getUpdatedAt())
                         .ratingAvg(String.format("%.2f", ratingAverage(photographer.getReviews())))
                         .reviewCount(photographer.getReviews().size())
                         .build())
@@ -91,13 +107,18 @@ public class PhotographerService {
     }
     
     @Transactional
-    public PhotographerResponseDto updatePhotographer(PhotographerRequestDto photographerRequestDto,
+    public PhotographerResponseDto updatePhotographer(PhotographerUpdateDto photographerUpdateDto,
                                                       List<MultipartFile> images) {
         
-        Photographer photographer = photographerRepository.findByAccountId(photographerRequestDto.getAccountId()).orElseThrow(
+        Photographer photographer = photographerRepository.findByAccountId(photographerUpdateDto.getAccountId()).orElseThrow(
                 () -> new ApiException(PhotographerErrorCode.PHOTOGRAPHER_NOT_FOUND));
         
-        photographer.updatePhotographer(photographerRequestDto, imageService.uploadImages(images));
+        //기존 이미지 삭제
+        List<String> originImage = new ArrayList<>();
+        originImage.add(photographer.getProfileImg());
+        imageService.deleteAllImages(originImage);
+        
+        photographer.updatePhotographer(photographerUpdateDto, imageService.uploadImages(images));
         
         //List<RecentReviewsDto> reviews = guideRepository.recentReviews(guide.getId());
         
@@ -115,12 +136,12 @@ public class PhotographerService {
     }
     
     @Transactional
-    public PhotographerResponseDto updatePhotographer(PhotographerRequestDto photographerRequestDto) {
+    public PhotographerResponseDto updatePhotographer(PhotographerUpdateDto photographerUpdateDto) {
         
-        Photographer photographer = photographerRepository.findByAccountId(photographerRequestDto.getAccountId()).orElseThrow(
+        Photographer photographer = photographerRepository.findByAccountId(photographerUpdateDto.getAccountId()).orElseThrow(
                 () -> new ApiException(PhotographerErrorCode.PHOTOGRAPHER_NOT_FOUND));
         
-        photographer.updatePhotographer(photographerRequestDto);
+        photographer.updatePhotographer(photographerUpdateDto);
         
         //List<RecentReviewsDto> reviews = guideRepository.recentReviews(guide.getId());
         

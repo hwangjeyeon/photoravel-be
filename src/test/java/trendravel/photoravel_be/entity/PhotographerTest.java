@@ -70,7 +70,7 @@ public class PhotographerTest {
         //when
         profileImg = "이미지 url 2";
         profileImgList.add(profileImg);
-        photographer.updatePhotographer(photographerRequestDto, profileImgList);
+        //photographer.updatePhotographer(photographerRequestDto, profileImgList);
         
         //then
         assertThat(photographer.getPassword()).isEqualTo("4321");

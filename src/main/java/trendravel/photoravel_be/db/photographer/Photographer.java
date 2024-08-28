@@ -7,6 +7,7 @@ import trendravel.photoravel_be.db.BaseEntity;
 import trendravel.photoravel_be.db.enums.Region;
 import trendravel.photoravel_be.db.review.Review;
 import trendravel.photoravel_be.domain.photographer.dto.request.PhotographerRequestDto;
+import trendravel.photoravel_be.domain.photographer.dto.request.PhotographerUpdateDto;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -45,19 +46,19 @@ public class Photographer extends BaseEntity {
     private String profileImg;
     
     //images 타입에 대해 수정 필요 imageService 단에서 하나의 이미지를 처리하는 메서드 필요
-    public void updatePhotographer(PhotographerRequestDto photographerRequestDto, List<String> images) {
-        this.password = photographerRequestDto.getPassword();
-        this.name = photographerRequestDto.getName();
-        this.region = photographerRequestDto.getRegion();
-        this.description = photographerRequestDto.getDescription();
+    public void updatePhotographer(PhotographerUpdateDto photographerUpdateDto, List<String> images) {
+        this.password = photographerUpdateDto.getPassword();
+        this.name = photographerUpdateDto.getName();
+        this.region = photographerUpdateDto.getRegion();
+        this.description = photographerUpdateDto.getDescription();
         this.profileImg = images.get(0);
     }
     
-    public void updatePhotographer(PhotographerRequestDto photographerRequestDto) {
-        this.password = photographerRequestDto.getPassword();
-        this.name = photographerRequestDto.getName();
-        this.region = photographerRequestDto.getRegion();
-        this.description = photographerRequestDto.getDescription();
+    public void updatePhotographer(PhotographerUpdateDto photographerUpdateDto) {
+        this.password = photographerUpdateDto.getPassword();
+        this.name = photographerUpdateDto.getName();
+        this.region = photographerUpdateDto.getRegion();
+        this.description = photographerUpdateDto.getDescription();
     }
     
     @OneToMany(mappedBy = "photographerReview")

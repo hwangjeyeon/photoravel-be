@@ -9,6 +9,7 @@ import trendravel.photoravel_be.commom.response.Api;
 import trendravel.photoravel_be.commom.response.Result;
 import trendravel.photoravel_be.domain.photographer.dto.request.PhotographerLoginRequestDto;
 import trendravel.photoravel_be.domain.photographer.dto.request.PhotographerRequestDto;
+import trendravel.photoravel_be.domain.photographer.dto.request.PhotographerUpdateDto;
 import trendravel.photoravel_be.domain.photographer.dto.response.PhotographerResponseDto;
 import trendravel.photoravel_be.domain.photographer.service.PhotographerService;
 
@@ -49,9 +50,9 @@ public class PhotographerController {
     @Schema(description = "사진작가 목록 READ 요청",
             contentEncoding = MediaType.APPLICATION_JSON_VALUE)
     @GetMapping
-    public Api<List<PhotographerResponseDto>> getPhotographerList(@RequestParam String keyword) {
+    public Api<List<PhotographerResponseDto>> getPhotographerList(@RequestParam String region) {
         
-        return Api.READ(photographerService.getPhotographerList(keyword));
+        return Api.READ(photographerService.getPhotographerList(region));
     }
     
     @Schema(description = "사진작가 상세 정보 READ 요청")
@@ -66,9 +67,9 @@ public class PhotographerController {
             contentEncoding = MediaType.APPLICATION_JSON_VALUE)
     @PatchMapping("/update")
     public Api<PhotographerResponseDto> updatePhotographer(
-            @RequestBody PhotographerRequestDto photographerRequestDto) {
+            @RequestBody PhotographerUpdateDto photographerUpdateDto) {
         
-        return Api.UPDATED(photographerService.updatePhotographer(photographerRequestDto));
+        return Api.UPDATED(photographerService.updatePhotographer(photographerUpdateDto));
     }
     
     @Schema(description = "사진작가 정보 UPDATE 요청 (이미지 포함)",
@@ -77,10 +78,10 @@ public class PhotographerController {
             consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
     public Api<PhotographerResponseDto> updatePhotographer(
-            @RequestPart(value = "data") PhotographerRequestDto photographerRequestDto,
+            @RequestPart(value = "data") PhotographerUpdateDto photographerUpdateDto,
             @RequestPart(value = "image", required = false) List<MultipartFile> images) {
         
-        return Api.UPDATED(photographerService.updatePhotographer(photographerRequestDto, images));
+        return Api.UPDATED(photographerService.updatePhotographer(photographerUpdateDto, images));
     }
     
     
