@@ -26,7 +26,7 @@ public class Photographer extends BaseEntity {
     private Long id;
     
     //이름 수정 필요
-    @Column(length = 50, nullable = false)
+    @Column(length = 50, nullable = false, unique = true)
     private String accountId;
     
     @Column(length = 50, nullable = false)
