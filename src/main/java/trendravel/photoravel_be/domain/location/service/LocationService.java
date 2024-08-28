@@ -7,6 +7,8 @@ import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.GeometryFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import trendravel.photoravel_be.commom.error.LocationErrorCode;
+import trendravel.photoravel_be.commom.exception.ApiException;
 import trendravel.photoravel_be.db.review.Review;
 import trendravel.photoravel_be.domain.location.dto.request.LocationKeywordDto;
 import trendravel.photoravel_be.domain.location.dto.request.LocationNowPositionDto;
@@ -21,7 +23,6 @@ import trendravel.photoravel_be.domain.review.dto.response.RecentReviewsDto;
 import trendravel.photoravel_be.commom.image.service.ImageService;
 
 import java.util.List;
-import java.util.Optional;
 
 
 /**
@@ -99,11 +100,10 @@ public class LocationService {
 
     @Transactional
     public LocationSingleReadResponseDto readSingleLocation(Long id){
-        Location location = locationRepository.findById(id).orElse(null);
+        Location location = locationRepository.findById(id)
+                .orElseThrow(() -> new ApiException(LocationErrorCode.LOCATION_NOT_FOUND));
 
-        if(location == null){
-            //예외처리
-        }
+
         location.increaseViews();
         List<RecentReviewsDto> reviews = locationRepository.recentReviews(location.getId());
 
@@ -129,10 +129,6 @@ public class LocationService {
         List<Location> locations =
                 locationRepository.searchNowPosition(locationNowPositionDto);
 
-        if(locations.isEmpty()){
-            //예외처리
-        }
-
         return locations.stream()
                 .map(p -> new LocationMultiReadResponseDto(
                         p.getId(), p.getLatitude(), p.getLongitude(),
@@ -148,10 +144,6 @@ public class LocationService {
     public List<LocationMultiReadResponseDto> readMultiLocation(
             LocationKeywordDto locationKeywordDto){
         List<Location> locations = locationRepository.searchKeyword(locationKeywordDto);
-
-        if(locations.isEmpty()){
-            //예외처리
-        }
 
         return locations.stream()
                 .map(p -> new LocationMultiReadResponseDto(
@@ -178,27 +170,26 @@ public class LocationService {
     public LocationResponseDto updateLocation(
             LocationUpdateImagesDto locationRequestDto, List<MultipartFile> images) {
 
-        Optional<Location> location = locationRepository.findById(
-                locationRequestDto.getLocationId());
+        Location location = locationRepository.findById(
+                locationRequestDto.getLocationId())
+                .orElseThrow(() -> new ApiException(LocationErrorCode.LOCATION_NOT_FOUND));
 
-        if(location.isEmpty()){
-            // 추후 Exception Controller 만들어 처리할 계획
-        }
-        location.get().updateLocation(locationRequestDto,
+
+        location.updateLocation(locationRequestDto,
                 imageService.updateImages(images, locationRequestDto.getDeleteImages()));
 
 
         return LocationResponseDto
                 .builder()
-                .LocationId(location.get().getId())
-                .description(location.get().getDescription())
-                .name(location.get().getName())
-                .latitude(location.get().getLatitude())
-                .longitude(location.get().getLongitude())
-                .images(location.get().getImages())
-                .address(location.get().getAddress())
-                .createdAt(location.get().getCreatedAt())
-                .updatedAt(location.get().getUpdatedAt())
+                .LocationId(location.getId())
+                .description(location.getDescription())
+                .name(location.getName())
+                .latitude(location.getLatitude())
+                .longitude(location.getLongitude())
+                .images(location.getImages())
+                .address(location.getAddress())
+                .createdAt(location.getCreatedAt())
+                .updatedAt(location.getUpdatedAt())
                 .build();
     }
 
@@ -206,32 +197,32 @@ public class LocationService {
     public LocationResponseDto updateLocation(
             LocationRequestDto locationRequestDto) {
 
-        Optional<Location> location = locationRepository.findById(
-                locationRequestDto.getLocationId());
+        Location location = locationRepository.findById(
+                locationRequestDto.getLocationId())
+                .orElseThrow(() -> new ApiException(LocationErrorCode.LOCATION_NOT_FOUND));
 
-        if(location.isEmpty()){
-            // 추후 Exception Controller 만들어 처리할 계획
-        }
-        location.get().updateLocation(locationRequestDto);
+        location.updateLocation(locationRequestDto);
 
 
         return LocationResponseDto
                 .builder()
-                .LocationId(location.get().getId())
-                .description(location.get().getDescription())
-                .name(location.get().getName())
-                .latitude(location.get().getLatitude())
-                .longitude(location.get().getLongitude())
-                .address(location.get().getAddress())
-                .createdAt(location.get().getCreatedAt())
-                .updatedAt(location.get().getUpdatedAt())
+                .LocationId(location.getId())
+                .description(location.getDescription())
+                .name(location.getName())
+                .latitude(location.getLatitude())
+                .longitude(location.getLongitude())
+                .address(location.getAddress())
+                .createdAt(location.getCreatedAt())
+                .updatedAt(location.getUpdatedAt())
                 .build();
     }
 
     @Transactional
     public void deleteLocation(Long id){
-        imageService.deleteAllImages(locationRepository.findById(id).get().getImages());
-        locationRepository.deleteById(id);
+        Location findLocation = locationRepository.findById(id)
+                .orElseThrow(() -> new ApiException(LocationErrorCode.LOCATION_NOT_FOUND));
+        locationRepository.deleteById(findLocation.getId());
+        imageService.deleteAllImages(findLocation.getImages());
     }
 
 

@@ -32,6 +32,8 @@ public class Location extends BaseEntity {
     private double latitude;
     private double longitude;
     private String address;
+
+    @Column(columnDefinition = "TEXT")
     private String description;
     private String name;
 

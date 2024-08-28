@@ -27,6 +27,8 @@ public class Spot extends BaseEntity {
 
 
     private String title;
+
+    @Column(columnDefinition = "TEXT")
     private String description;
     private double latitude;
     private double longitude;

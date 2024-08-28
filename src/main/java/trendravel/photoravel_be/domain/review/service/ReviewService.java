@@ -4,6 +4,11 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import trendravel.photoravel_be.commom.error.ErrorCode;
+import trendravel.photoravel_be.commom.error.LocationErrorCode;
+import trendravel.photoravel_be.commom.error.ReviewErrorCode;
+import trendravel.photoravel_be.commom.error.SpotErrorCode;
+import trendravel.photoravel_be.commom.exception.ApiException;
 import trendravel.photoravel_be.commom.image.service.ImageService;
 import trendravel.photoravel_be.db.location.Location;
 import trendravel.photoravel_be.db.spot.Spot;
@@ -17,7 +22,6 @@ import trendravel.photoravel_be.db.respository.review.ReviewRepository;
 import trendravel.photoravel_be.db.respository.spot.SpotRepository;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -31,15 +35,20 @@ public class ReviewService {
     public ReviewResponseDto createReview(
             ReviewRequestDto reviewRequestDto, List<MultipartFile> images) {
 
-        Location location = locationRepository.
-                findById(reviewRequestDto.getTypeId())
-                .orElse(null);
+        /**
+         * 왜 orElseThrow에서 ()로 보내야지만 가능할까..? 고민해볼것.
+         */
+        Location location = null;
+        if(reviewRequestDto.getReviewType().equals(ReviewTypes.LOCATION)){
+            location = locationRepository.
+                    findById(reviewRequestDto.getTypeId())
+                    .orElseThrow(() -> new ApiException(LocationErrorCode.LOCATION_NOT_FOUND));
+        }
 
-        Spot spot = spotRepository.findById(reviewRequestDto.getTypeId())
-                .orElse(null);
-
-        if(location == null && spot == null){
-            // 예외처리 로직 추가 필요
+        Spot spot = null;
+        if(reviewRequestDto.getReviewType().equals(ReviewTypes.SPOT)){
+            spot = spotRepository.findById(reviewRequestDto.getTypeId())
+                    .orElseThrow(() -> new ApiException(SpotErrorCode.SPOT_NOT_FOUND));
         }
 
         Review review = reviewRepository.save(Review.builder()
@@ -54,6 +63,7 @@ public class ReviewService {
                         reviewRequestDto.getReviewType()
                         ? spot : null)
                 .build());
+
         review.setLocationReview(location);
         review.setSpotReview(spot);
 
@@ -72,15 +82,17 @@ public class ReviewService {
     public ReviewResponseDto createReview(
             ReviewRequestDto reviewRequestDto) {
 
-        Location location = locationRepository.
-                findById(reviewRequestDto.getTypeId())
-                .orElse(null);
+        Location location = null;
+        if(reviewRequestDto.getReviewType().equals(ReviewTypes.LOCATION)){
+            location = locationRepository.
+                    findById(reviewRequestDto.getTypeId())
+                    .orElseThrow(() -> new ApiException(LocationErrorCode.LOCATION_NOT_FOUND));
+        }
 
-        Spot spot = spotRepository.findById(reviewRequestDto.getTypeId())
-                .orElse(null);
-
-        if(location == null && spot == null){
-            // 예외처리 로직 추가 필요
+        Spot spot = null;
+        if(reviewRequestDto.getReviewType().equals(ReviewTypes.SPOT)){
+            spot = spotRepository.findById(reviewRequestDto.getTypeId())
+                    .orElseThrow(() -> new ApiException(SpotErrorCode.SPOT_NOT_FOUND));
         }
 
 
@@ -122,8 +134,9 @@ public class ReviewService {
 
     @Transactional
     public List<ReviewResponseDto> readAllLocationReview(Long locationId){
-        List<Review> reviews = locationRepository.findById(locationId).get().getReview();
-
+        List<Review> reviews = locationRepository.findById(locationId)
+                .map(Location::getReview)
+                .orElseThrow(() -> new ApiException(LocationErrorCode.LOCATION_NOT_FOUND));
 
         return reviews.stream()
                 .map(p -> new ReviewResponseDto(p.getId(), p.getReviewType().toString(),
@@ -134,14 +147,14 @@ public class ReviewService {
 
     @Transactional
     public List<ReviewResponseDto> readAllSpotReview(Long locationId, Long spotId){
-        List<Spot> spots = locationRepository.findById(locationId).get().getSpot();
-
-        if(spots.isEmpty()){
-            // 예외 처리 로직
-        }
+        List<Spot> spots = locationRepository.findById(locationId)
+                .map(Location::getSpot)
+                .orElseThrow(() -> new ApiException(LocationErrorCode.LOCATION_NOT_FOUND));
 
         Spot spot = spots.stream()
-                .filter(s -> s.getId().equals(spotId)).findFirst().get();
+                .filter(s -> s.getId().equals(spotId)).findFirst()
+                .orElseThrow(() -> new ApiException(SpotErrorCode.SPOT_NOT_FOUND));
+
 
         return spot.getReviews().stream()
                 .map(p -> new ReviewResponseDto(p.getId(), p.getReviewType().toString(),
@@ -156,25 +169,22 @@ public class ReviewService {
     public ReviewResponseDto updateReview(
             ReviewUpdateImagesDto reviewRequestDto, List<MultipartFile> images) {
 
-        Optional<Review> review = reviewRepository.findById(
-                reviewRequestDto.getReviewId());
+        Review review = reviewRepository.findById(
+                reviewRequestDto.getReviewId())
+                .orElseThrow(() -> new ApiException(ReviewErrorCode.REVIEW_NOT_FOUND));
 
-
-        if(review.isEmpty()){
-            // 추후 Exception Controller 만들어 처리할 계획
-        }
-        review.get().updateReview(reviewRequestDto, imageService.updateImages(images,
+        review.updateReview(reviewRequestDto, imageService.updateImages(images,
                 reviewRequestDto.getDeleteImages()));
 
         return ReviewResponseDto
                 .builder()
-                .ReviewId(review.get().getId())
-                .images(review.get().getImages())
-                .rating(review.get().getRating())
-                .content(review.get().getContent())
-                .reviewType(review.get().getReviewType().toString())
-                .createdAt(review.get().getCreatedAt())
-                .updatedAt(review.get().getUpdatedAt())
+                .ReviewId(review.getId())
+                .images(review.getImages())
+                .rating(review.getRating())
+                .content(review.getContent())
+                .reviewType(review.getReviewType().toString())
+                .createdAt(review.getCreatedAt())
+                .updatedAt(review.getUpdatedAt())
                 .build();
     }
 
@@ -182,30 +192,30 @@ public class ReviewService {
     public ReviewResponseDto updateReview(
             ReviewRequestDto reviewRequestDto) {
 
-        Optional<Review> review = reviewRepository.findById(
-                reviewRequestDto.getReviewId());
+        Review review = reviewRepository.findById(
+                reviewRequestDto.getReviewId())
+                .orElseThrow(() -> new ApiException(ReviewErrorCode.REVIEW_NOT_FOUND));
 
 
-        if(review.isEmpty()){
-            // 추후 Exception Controller 만들어 처리할 계획
-        }
-        review.get().updateReview(reviewRequestDto);
+        review.updateReview(reviewRequestDto);
 
         return ReviewResponseDto
                 .builder()
-                .ReviewId(review.get().getId())
-                .rating(review.get().getRating())
-                .content(review.get().getContent())
-                .reviewType(review.get().getReviewType().toString())
-                .createdAt(review.get().getCreatedAt())
-                .updatedAt(review.get().getUpdatedAt())
+                .ReviewId(review.getId())
+                .rating(review.getRating())
+                .content(review.getContent())
+                .reviewType(review.getReviewType().toString())
+                .createdAt(review.getCreatedAt())
+                .updatedAt(review.getUpdatedAt())
                 .build();
     }
 
     @Transactional
     public void deleteReview(Long id){
-        imageService.deleteAllImages(reviewRepository.findById(id).get().getImages());
-        reviewRepository.deleteById(id);
+        Review findReview = reviewRepository.findById(id)
+                .orElseThrow(() -> new ApiException(ReviewErrorCode.REVIEW_NOT_FOUND));
+        reviewRepository.deleteById(findReview.getId());
+        imageService.deleteAllImages(findReview.getImages());
     }
 
 }
