@@ -23,7 +23,5 @@ public class PhotographerRequestDto {
     private Region region;
     @Schema(description = "설명")
     private String description;
-    @Schema(description = "프로필 이미지")
-    private String profileImg;
     
 }
