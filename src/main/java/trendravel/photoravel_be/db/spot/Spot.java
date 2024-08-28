@@ -6,6 +6,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.*;
+import org.hibernate.validator.constraints.Length;
 import trendravel.photoravel_be.db.BaseEntity;
 import trendravel.photoravel_be.db.location.Location;
 import trendravel.photoravel_be.domain.spot.dto.request.SpotRequestDto;
@@ -28,7 +29,9 @@ public class Spot extends BaseEntity {
     @Column(name = "spot_id")
     private Long id;
 
+    @Column(length = 50)
     @NotBlank(message = "공백/null 입력은 미허용됩니다.")
+    @Length(max = 50, message="최대 길이는 50자 입니다.")
     private String title;
 
     @Column(columnDefinition = "TEXT")
@@ -47,7 +50,7 @@ public class Spot extends BaseEntity {
             joinColumns = @JoinColumn(name = "spot_id")
     )
     @Size(max = 10, message = "한번에 들어올 수 있는 이미지는 10개입니다")
-    private List<String> images;
+    private List<String> images = new ArrayList<>();
 
 
 

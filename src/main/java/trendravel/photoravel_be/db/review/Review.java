@@ -12,6 +12,7 @@ import trendravel.photoravel_be.domain.review.dto.request.ReviewRequestDto;
 import trendravel.photoravel_be.db.review.enums.ReviewTypes;
 import trendravel.photoravel_be.domain.review.dto.request.ReviewUpdateImagesDto;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -45,8 +46,8 @@ public class Review extends BaseEntity {
             name = "review_images",
             joinColumns = @JoinColumn(name = "review_id")
     )
-    @Size(max = 10)
-    private List<String> images;
+    @Size(max = 10, message = "한번에 들어올 수 있는 이미지는 10개입니다")
+    private List<String> images = new ArrayList<>();
 
     // 회원, 가이드 관련 연관관계 필드 추가 필요
 
