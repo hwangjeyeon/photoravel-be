@@ -1,0 +1,154 @@
+package trendravel.photoravel_be.domain.photographer.service;
+
+import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+import trendravel.photoravel_be.commom.error.PhotographerErrorCode;
+import trendravel.photoravel_be.commom.exception.ApiException;
+import trendravel.photoravel_be.commom.service.ImageService;
+import trendravel.photoravel_be.db.photographer.Photographer;
+import trendravel.photoravel_be.db.respository.photographer.PhotographerRepository;
+import trendravel.photoravel_be.db.review.Review;
+import trendravel.photoravel_be.domain.photographer.dto.request.PhotographerRequestDto;
+import trendravel.photoravel_be.domain.photographer.dto.response.PhotographerResponseDto;
+
+import java.util.List;
+import java.util.stream.Collectors;
+
+@Service
+@RequiredArgsConstructor
+public class PhotographerService {
+    
+    private final PhotographerRepository photographerRepository;
+    private final ImageService imageService;
+    
+    @Transactional
+    public List<PhotographerResponseDto> getPhotographerList(String keyword) {
+        
+        List<Photographer> photographers = photographerRepository.findByNameContaining(keyword).orElseThrow(() ->
+                new ApiException(PhotographerErrorCode.PHOTOGRAPHER_NOT_FOUND));
+        
+        
+        return photographers.stream()
+                .map(photographer -> PhotographerResponseDto.builder()
+                        .accountId(photographer.getAccountId())
+                        .region(photographer.getRegion())
+                        .ratingAvg(String.format("%.2f", ratingAverage(photographer.getReviews())))
+                        .reviewCount(photographer.getReviews().size())
+                        .build())
+                .collect(Collectors.toList());
+    }
+    
+    @Transactional
+    public PhotographerResponseDto getPhotographer(String photographerId) {
+        
+        Photographer photographer = photographerRepository.findByAccountId(photographerId).orElseThrow(() ->
+                new ApiException(PhotographerErrorCode.PHOTOGRAPHER_NOT_FOUND));
+        
+        //List<RecentReviewsDto> reviews = guideRepository.recentReviews(guide.getId());
+        
+        return PhotographerResponseDto.builder()
+                .accountId(photographer.getAccountId())
+                .name(photographer.getName())
+                .region(photographer.getRegion())
+                .description(photographer.getDescription())
+                .profileImg(photographer.getProfileImg())
+                .createdAt(photographer.getCreatedAt())
+                .updatedAt(photographer.getUpdatedAt())
+                .ratingAvg(String.format("%.2f", ratingAverage(photographer.getReviews())))
+                //.recentReviewDtos(reviews)
+                .build();
+    }
+    
+    
+    /*
+    이미지 타입 변경
+     */
+    
+    @Transactional
+    public void createPhotographer(PhotographerRequestDto photographerRequestDto, List<MultipartFile> images) {
+        
+        photographerRepository.save(Photographer.builder()
+                .accountId(photographerRequestDto.getAccountId())
+                .password(photographerRequestDto.getPassword())
+                .name(photographerRequestDto.getName())
+                .region(photographerRequestDto.getRegion())
+                .description(photographerRequestDto.getDescription())
+                //이미지 업로드 처리는 List이고 엔티티는 문자열이기에 get(0)으로 처리 
+                .profileImg(imageService.uploadImages(images).get(0))
+                .build());
+    }
+    
+    @Transactional
+    public void authenticate(String username, String password) {
+        
+        Photographer photographer = photographerRepository.findByAccountId(username).orElseThrow(() ->
+                new ApiException(PhotographerErrorCode.PHOTOGRAPHER_NOT_FOUND));
+        
+        //인증 로직 필요
+        
+    }
+    
+    @Transactional
+    public PhotographerResponseDto updatePhotographer(PhotographerRequestDto photographerRequestDto,
+                                                      List<MultipartFile> images) {
+        
+        Photographer photographer = photographerRepository.findByAccountId(photographerRequestDto.getAccountId()).orElseThrow(
+                () -> new ApiException(PhotographerErrorCode.PHOTOGRAPHER_NOT_FOUND));
+        
+        photographer.updatePhotographer(photographerRequestDto, imageService.uploadImages(images));
+        
+        //List<RecentReviewsDto> reviews = guideRepository.recentReviews(guide.getId());
+        
+        return PhotographerResponseDto.builder()
+                .accountId(photographer.getAccountId())
+                .name(photographer.getName())
+                .region(photographer.getRegion())
+                .description(photographer.getDescription())
+                .profileImg(photographer.getProfileImg())
+                .createdAt(photographer.getCreatedAt())
+                .updatedAt(photographer.getUpdatedAt())
+                .ratingAvg(String.format("%.2f", ratingAverage(photographer.getReviews())))
+                //.recentReviewDtos(reviews)
+                .build();
+    }
+    
+    @Transactional
+    public PhotographerResponseDto updatePhotographer(PhotographerRequestDto photographerRequestDto) {
+        
+        Photographer photographer = photographerRepository.findByAccountId(photographerRequestDto.getAccountId()).orElseThrow(
+                () -> new ApiException(PhotographerErrorCode.PHOTOGRAPHER_NOT_FOUND));
+        
+        photographer.updatePhotographer(photographerRequestDto);
+        
+        //List<RecentReviewsDto> reviews = guideRepository.recentReviews(guide.getId());
+        
+        return PhotographerResponseDto.builder()
+                .accountId(photographer.getAccountId())
+                .name(photographer.getName())
+                .region(photographer.getRegion())
+                .description(photographer.getDescription())
+                .profileImg(photographer.getProfileImg())
+                .createdAt(photographer.getCreatedAt())
+                .updatedAt(photographer.getUpdatedAt())
+                .ratingAvg(String.format("%.2f", ratingAverage(photographer.getReviews())))
+                //.recentReviewDtos(reviews)
+                .build();
+    }
+    
+    @Transactional
+    public void deletePhotographer(String photographerId) {
+        photographerRepository.deleteByAccountId(photographerId);
+    }
+    
+    private double ratingAverage(List<Review> reviews) {
+        double sum = 0;
+        for (Review review : reviews) {
+            sum += review.getRating();
+        }
+        return sum / reviews.size();
+    }
+    
+    
+}

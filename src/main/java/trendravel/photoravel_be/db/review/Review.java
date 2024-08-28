@@ -4,7 +4,7 @@ package trendravel.photoravel_be.db.review;
 import jakarta.persistence.*;
 import lombok.*;
 import trendravel.photoravel_be.db.BaseEntity;
-import trendravel.photoravel_be.db.guide.Guide;
+import trendravel.photoravel_be.db.photographer.Photographer;
 import trendravel.photoravel_be.db.location.Location;
 import trendravel.photoravel_be.db.spot.Spot;
 import trendravel.photoravel_be.domain.review.dto.request.ReviewRequestDto;
@@ -50,8 +50,8 @@ public class Review extends BaseEntity {
     private Spot spotReview;
     
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "guide_id")
-    private Guide guideReview;
+    @JoinColumn(name = "photographer_id")
+    private Photographer photographerReview;
     
     //연관관계 편의 메소드
     public void setSpotReview(Spot spot) {

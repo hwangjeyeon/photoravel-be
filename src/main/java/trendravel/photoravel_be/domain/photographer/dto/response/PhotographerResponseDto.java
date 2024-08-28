@@ -1,4 +1,4 @@
-package trendravel.photoravel_be.domain.guide.dto.response;
+package trendravel.photoravel_be.domain.photographer.dto.response;
 
 
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -13,11 +13,11 @@ import java.util.List;
 
 @Data
 @Builder
-@Schema(description = "가이드 생성 조회 수정 응답 DTO",
+@Schema(description = "사진작가 생성 조회 수정 응답 DTO",
         contentEncoding = MediaType.APPLICATION_JSON_VALUE)
-public class GuideResponseDto {
+public class PhotographerResponseDto {
     
-    @Schema(description = "가이드 ID")
+    @Schema(description = "사진작가 ID")
     private Long id;
     @Schema(description = "가이드 계정 ID")
     private String accountId;
@@ -37,9 +37,9 @@ public class GuideResponseDto {
     @Schema(description = "리뷰 수")
     private Integer reviewCount;
     
-    @Schema(description = "가이드 계정 생성일")
+    @Schema(description = "사진작가 계정 생성일")
     private LocalDateTime createdAt;
-    @Schema(description = "가이드 계정 수정일")
+    @Schema(description = "사진작가 계정 수정일")
     private LocalDateTime updatedAt;
     
     @Schema(description = "최근 리뷰")

@@ -6,9 +6,9 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public enum GuideErrorCode implements ErrorCodeIfs{
+public enum PhotographerErrorCode implements ErrorCodeIfs{
     
-    GUIDE_NOT_FOUND(404, "가이드북을 찾을 수 없음");
+    PHOTOGRAPHER_NOT_FOUND(404, "사진작가를 찾을 수 없음");
 
 
     private final Integer httpStatusCode;
