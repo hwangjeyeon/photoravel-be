@@ -5,7 +5,7 @@ package trendravel.photoravel_be.db.review.enums;
 public enum ReviewTypes {
     LOCATION("관광장소", "1"),
     SPOT("사진스팟","2"),
-    GUIDE("가이드", "3");
+    PHOTOGRAPHER("사진작가", "3");
 
     private final String title;
     private final String typeCode;
