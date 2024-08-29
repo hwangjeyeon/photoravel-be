@@ -4,13 +4,12 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-import trendravel.photoravel_be.commom.error.ErrorCode;
-import trendravel.photoravel_be.commom.error.LocationErrorCode;
-import trendravel.photoravel_be.commom.error.ReviewErrorCode;
-import trendravel.photoravel_be.commom.error.SpotErrorCode;
+import trendravel.photoravel_be.commom.error.*;
 import trendravel.photoravel_be.commom.exception.ApiException;
 import trendravel.photoravel_be.commom.image.service.ImageService;
 import trendravel.photoravel_be.db.location.Location;
+import trendravel.photoravel_be.db.photographer.Photographer;
+import trendravel.photoravel_be.db.respository.photographer.PhotographerRepository;
 import trendravel.photoravel_be.db.spot.Spot;
 import trendravel.photoravel_be.domain.review.dto.request.ReviewRequestDto;
 import trendravel.photoravel_be.domain.review.dto.request.ReviewUpdateImagesDto;
@@ -30,6 +29,7 @@ public class ReviewService {
     private final ReviewRepository reviewRepository;
     private final SpotRepository spotRepository;
     private final LocationRepository locationRepository;
+    private final PhotographerRepository photographerRepository;
     private final ImageService imageService;
 
     public ReviewResponseDto createReview(
@@ -50,6 +50,13 @@ public class ReviewService {
             spot = spotRepository.findById(reviewRequestDto.getTypeId())
                     .orElseThrow(() -> new ApiException(SpotErrorCode.SPOT_NOT_FOUND));
         }
+        
+        Photographer photographer = null;
+        if(reviewRequestDto.getReviewType().equals(ReviewTypes.PHOTOGRAPHER)){
+            photographer = photographerRepository.findById(reviewRequestDto.getTypeId())
+                    .orElseThrow(() -> new ApiException(PhotographerErrorCode.PHOTOGRAPHER_NOT_FOUND));
+        }
+        
 
         Review review = reviewRepository.save(Review.builder()
                 .reviewType(reviewRequestDto.getReviewType())
@@ -62,11 +69,19 @@ public class ReviewService {
                 .spotReview(ReviewTypes.SPOT ==
                         reviewRequestDto.getReviewType()
                         ? spot : null)
+                .photographerReview(ReviewTypes.PHOTOGRAPHER ==
+                        reviewRequestDto.getReviewType()
+                        ? photographer : null)
                 .build());
 
-        review.setLocationReview(location);
-        review.setSpotReview(spot);
-
+        if (ReviewTypes.LOCATION == reviewRequestDto.getReviewType()) {
+            review.setLocationReview(location);
+        } else if (ReviewTypes.SPOT == reviewRequestDto.getReviewType()) {
+            review.setSpotReview(spot);
+        } else if (ReviewTypes.PHOTOGRAPHER == reviewRequestDto.getReviewType()) {
+            review.setPhotographerReview(photographer);
+        }
+        
         return ReviewResponseDto
                 .builder()
                 .ReviewId(review.getId())
@@ -94,8 +109,14 @@ public class ReviewService {
             spot = spotRepository.findById(reviewRequestDto.getTypeId())
                     .orElseThrow(() -> new ApiException(SpotErrorCode.SPOT_NOT_FOUND));
         }
-
-
+        
+        Photographer photographer = null;
+        if(reviewRequestDto.getReviewType().equals(ReviewTypes.PHOTOGRAPHER)){
+            photographer = photographerRepository.findById(reviewRequestDto.getTypeId())
+                    .orElseThrow(() -> new ApiException(PhotographerErrorCode.PHOTOGRAPHER_NOT_FOUND));
+            System.out.println("photographer.getId() = " + photographer.getId());
+        }
+        
         Review review = reviewRepository.save(Review.builder()
                 .reviewType(reviewRequestDto.getReviewType())
                 .content(reviewRequestDto.getContent())
@@ -106,18 +127,22 @@ public class ReviewService {
                 .spotReview(ReviewTypes.SPOT ==
                         reviewRequestDto.getReviewType()
                         ? spot : null)
+                .photographerReview(ReviewTypes.PHOTOGRAPHER ==
+                        reviewRequestDto.getReviewType()
+                        ? photographer : null)
                 .build());
 
 
         /**
          * 리팩토링 필요.
          */
-        if(review.getLocationReview() == null){
-            review.setSpotReview(spot);
-        }else if(review.getSpotReview() == null){
+        if (ReviewTypes.LOCATION == reviewRequestDto.getReviewType()) {
             review.setLocationReview(location);
+        } else if (ReviewTypes.SPOT == reviewRequestDto.getReviewType()) {
+            review.setSpotReview(spot);
+        } else if (ReviewTypes.PHOTOGRAPHER == reviewRequestDto.getReviewType()) {
+            review.setPhotographerReview(photographer);
         }
-
 
 
 
