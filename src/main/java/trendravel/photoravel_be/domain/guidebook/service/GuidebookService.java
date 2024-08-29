@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import trendravel.photoravel_be.commom.error.GuidebookErrorCode;
 import trendravel.photoravel_be.commom.exception.ApiException;
+import trendravel.photoravel_be.commom.image.service.ImageService;
 import trendravel.photoravel_be.domain.guidebook.dto.request.GuidebookRequestDto;
 import trendravel.photoravel_be.domain.guidebook.dto.request.GuidebookUpdateDto;
 import trendravel.photoravel_be.domain.guidebook.dto.request.GuidebookUpdateImageDto;
@@ -14,7 +15,6 @@ import trendravel.photoravel_be.domain.guidebook.dto.response.GuidebookResponseD
 import trendravel.photoravel_be.db.guidebook.Guidebook;
 import trendravel.photoravel_be.db.enums.Region;
 import trendravel.photoravel_be.db.respository.guidebook.GuidebookRepository;
-import trendravel.photoravel_be.commom.service.ImageService;
 
 import java.util.ArrayList;
 import java.util.List;
