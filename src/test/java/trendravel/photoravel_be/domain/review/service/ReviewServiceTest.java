@@ -1,13 +1,17 @@
 package trendravel.photoravel_be.domain.review.service;
 
 import jakarta.transaction.Transactional;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.GeometryFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import trendravel.photoravel_be.commom.service.ImageService;
+import trendravel.photoravel_be.commom.error.LocationErrorCode;
+import trendravel.photoravel_be.commom.error.ReviewErrorCode;
+import trendravel.photoravel_be.commom.error.SpotErrorCode;
+import trendravel.photoravel_be.commom.exception.ApiException;
+import trendravel.photoravel_be.commom.image.service.ImageService;
 import trendravel.photoravel_be.db.location.Location;
 import trendravel.photoravel_be.db.respository.location.LocationRepository;
 import trendravel.photoravel_be.db.respository.review.ReviewRepository;
@@ -21,11 +25,12 @@ import trendravel.photoravel_be.domain.review.dto.response.ReviewResponseDto;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 
 @SpringBootTest
-@Transactional
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class ReviewServiceTest {
 
     @Autowired
@@ -51,7 +56,8 @@ class ReviewServiceTest {
     Review review2;
     Review review3;
     Review review4;
-
+    Long findLocationId;
+    Long findSpotId;
 
     @BeforeEach
     void before(){
@@ -64,8 +70,11 @@ class ReviewServiceTest {
                 .address("아산시 신창면 순천향로46")
                 .description("순천향대학교입니다.")
                 .views(0)
+                .point(new GeometryFactory().createPoint(
+                        new Coordinate(35.24
+                                , 46.61)))
                 .build();
-        locationRepository.save(location);
+        location.getPoint().setSRID(4326);
         spot = Spot
                 .builder()
                 .description("미디어랩스관입니다")
@@ -75,24 +84,23 @@ class ReviewServiceTest {
                 .views(0)
                 .location(location)
                 .build();
-        spotRepository.save(spot);
+        Long locationId = locationRepository.save(location).getId();
+        findLocationId = locationId;
+        Long spotId = spotRepository.save(spot).getId();
+        findSpotId = spotId;
         spot.setLocation(location);
         locationReview = Review.builder()
                 .id(1L)
                 .reviewType(ReviewTypes.LOCATION)
                 .content("우와 멋진 장소네요 ㅋㅋ")
                 .rating(3.4)
-                .locationReview(locationRepository.findById(1L).get())
                 .build();
         spotReview = Review.builder()
                 .id(2L)
                 .reviewType(ReviewTypes.SPOT)
                 .content("내 인생샷 장소임 ㄹㅇ")
                 .rating(1.4)
-                .spotReview(spotRepository.findById(1L).get())
                 .build();
-        reviewRepository.save(locationReview);
-        reviewRepository.save(spotReview);
 
         review1 = Review
                 .builder()
@@ -127,33 +135,33 @@ class ReviewServiceTest {
         review3.setSpotReview(spot);
         review4.setSpotReview(spot);
 
-        locationReviewRequestDto.setReviewId(reviewRepository.findById(1L).get().getId());
+        locationReviewRequestDto.setReviewId(locationId);
         locationReviewRequestDto.setReviewType(locationReview.getReviewType());
         locationReviewRequestDto.setContent(locationReview.getContent());
         locationReviewRequestDto.setRating(locationReview.getRating());
-        locationReviewRequestDto.setTypeId(locationReview.getLocationReview().getId());
+        locationReviewRequestDto.setTypeId(locationId);
 
-        spotReviewRequestDto.setReviewId(reviewRepository.findById(2L).get().getId());
+        spotReviewRequestDto.setReviewId(spotId);
         spotReviewRequestDto.setReviewType(spotReview.getReviewType());
         spotReviewRequestDto.setRating(spotReview.getRating());
         spotReviewRequestDto.setContent(spotReview.getContent());
-        spotReviewRequestDto.setTypeId(spotReview.getSpotReview().getId());
+        spotReviewRequestDto.setTypeId(spotId);
     }
 
     @Test
     @DisplayName("Location/Spot Review CREATE (이미지 미포함) Service가 잘 동작하는지 테스트")
+    @Transactional
+    @Order(1)
     void createReviewTest (){
-        reviewService.createReview(locationReviewRequestDto);
-        reviewService.createReview(spotReviewRequestDto);
+        Long locationId = reviewService.createReview(locationReviewRequestDto).getReviewId();
+        Long spotId = reviewService.createReview(spotReviewRequestDto).getReviewId();
+        locationReviewRequestDto.setReviewId(locationId);
+        spotReviewRequestDto.setReviewId(spotId);
 
-        Review findLocationReview = reviewRepository.findById(locationReviewRequestDto
-                .getReviewId()).orElse(null);
+        Review findLocationReview = reviewRepository.findById(locationId).get();
+        Review findSpotReview = reviewRepository.findById(spotId).get();
 
-        Review findSpotReview = reviewRepository.findById(spotReviewRequestDto
-                .getReviewId()).orElse(null);
 
-        assertThat(findLocationReview.getId())
-                .isEqualTo(locationReviewRequestDto.getReviewId());
         assertThat(findLocationReview.getReviewType())
                 .isEqualTo(locationReviewRequestDto.getReviewType());
         assertThat(findLocationReview.getContent())
@@ -163,8 +171,7 @@ class ReviewServiceTest {
         assertThat(findLocationReview.getLocationReview().getId())
                 .isEqualTo(locationReviewRequestDto.getTypeId());
 
-        assertThat(findSpotReview.getId())
-                .isEqualTo(spotReviewRequestDto.getReviewId());
+
         assertThat(findSpotReview.getReviewType())
                 .isEqualTo(spotReviewRequestDto.getReviewType());
         assertThat(findSpotReview.getContent())
@@ -177,11 +184,16 @@ class ReviewServiceTest {
 
     @Test
     @DisplayName("Location/Spot Review UPDATE (이미지 미포함) Service가 잘 동작하는지 테스트")
+    @Transactional
+    @Order(2)
     void updateReviewTest (){
-        reviewService.createReview(locationReviewRequestDto);
-        reviewService.createReview(spotReviewRequestDto);
+        Long locationId = reviewService.createReview(locationReviewRequestDto).getReviewId();
+        Long spotId = reviewService.createReview(spotReviewRequestDto).getReviewId();
+        locationReviewRequestDto.setReviewId(locationId);
+        spotReviewRequestDto.setReviewId(spotId);
         locationReviewRequestDto.setRating(2.1);
         spotReviewRequestDto.setRating(1.0);
+
         reviewService.updateReview(locationReviewRequestDto);
         reviewService.updateReview(spotReviewRequestDto);
 
@@ -191,8 +203,6 @@ class ReviewServiceTest {
         Review findSpotReview = reviewRepository.findById(spotReviewRequestDto
                 .getReviewId()).orElse(null);
 
-        assertThat(findLocationReview.getId())
-                .isEqualTo(locationReviewRequestDto.getReviewId());
         assertThat(findLocationReview.getReviewType())
                 .isEqualTo(locationReviewRequestDto.getReviewType());
         assertThat(findLocationReview.getContent())
@@ -202,8 +212,6 @@ class ReviewServiceTest {
         assertThat(findLocationReview.getLocationReview().getId())
                 .isEqualTo(locationReviewRequestDto.getTypeId());
 
-        assertThat(findSpotReview.getId())
-                .isEqualTo(spotReviewRequestDto.getReviewId());
         assertThat(findSpotReview.getReviewType())
                 .isEqualTo(spotReviewRequestDto.getReviewType());
         assertThat(findSpotReview.getContent())
@@ -217,11 +225,15 @@ class ReviewServiceTest {
 
     @Test
     @DisplayName("Location/Spot Review DELETE Service가 잘 동작하는지 테스트")
+    @Transactional
+    @Order(3)
     void deleteReviewTest (){
-        reviewService.createReview(locationReviewRequestDto);
-        reviewService.createReview(spotReviewRequestDto);
-        reviewService.deleteReview(1L);
-        reviewService.deleteReview(2L);
+        Long locationId = reviewService.createReview(locationReviewRequestDto).getReviewId();
+        Long spotId = reviewService.createReview(spotReviewRequestDto).getReviewId();
+        locationReviewRequestDto.setReviewId(locationId);
+        spotReviewRequestDto.setReviewId(spotId);
+        reviewService.deleteReview(locationId);
+        reviewService.deleteReview(spotId);
 
         Review findLocationReview = reviewRepository.findById(locationReviewRequestDto
                 .getReviewId()).orElse(null);
@@ -236,10 +248,13 @@ class ReviewServiceTest {
 
     @Test
     @DisplayName("Location Review READ Service가 잘 동작하는지 테스트")
+    @Transactional
+    @Order(4)
     void readLocationReviewsTest(){
-        List<ReviewResponseDto> reviews = reviewService.readAllLocationReview(1L);
+        Long locationId = reviewService.createReview(locationReviewRequestDto).getReviewId();
+        List<ReviewResponseDto> reviews = reviewService.readAllLocationReview(findLocationId);
 
-        assertThat(reviews.size()).isEqualTo(2);
+        assertThat(reviews.size()).isEqualTo(3);
         assertThat(reviews.get(0).getReviewType()).isEqualTo(review1.getReviewType().toString());
         assertThat(reviews.get(0).getContent()).isEqualTo(review1.getContent());
         assertEquals(reviews.get(0).getRating(),review1.getRating());
@@ -247,18 +262,93 @@ class ReviewServiceTest {
 
     @Test
     @DisplayName("Spot Review READ Service가 잘 동작하는지 테스트")
+    @Transactional
+    @Order(5)
     void readSpotReviewsTest(){
-        List<ReviewResponseDto> reviews = reviewService.readAllSpotReview(1L, 1L);
+        Long locationId = reviewService.createReview(locationReviewRequestDto).getReviewId();
+        reviewService.createReview(spotReviewRequestDto).getReviewId();
+        List<ReviewResponseDto> reviews = reviewService.readAllSpotReview(findLocationId, findSpotId);
 
-
-        assertThat(reviews.size()).isEqualTo(2);
+        assertThat(reviews.size()).isEqualTo(3);
         assertThat(reviews.get(0).getReviewType()).isEqualTo(review3.getReviewType().toString());
         assertThat(reviews.get(0).getContent()).isEqualTo(review3.getContent());
         assertEquals(reviews.get(0).getRating(),review3.getRating());
     }
 
 
+    @Test
+    @DisplayName("LOCATION REVIEW CREATE의 EXCEPTION이 잘 동작하는지 테스트")
+    @Transactional
+    @Order(6)
+    void createLocationReviewExceptionTest(){
+        locationReviewRequestDto.setTypeId(5L);
+        assertThatThrownBy(() -> reviewService.createReview(locationReviewRequestDto))
+                .isInstanceOf(ApiException.class)
+                .hasMessageContaining(LocationErrorCode.LOCATION_NOT_FOUND.getErrorDescription());
+    }
 
+    @Test
+    @DisplayName("SPOT REVIEW CREATE의 EXCEPTION이 잘 동작하는지 테스트")
+    @Transactional
+    @Order(7)
+    void createSpotReviewExceptionTest(){
+        spotReviewRequestDto.setTypeId(5L);
+        assertThatThrownBy(() -> reviewService.createReview(spotReviewRequestDto))
+                .isInstanceOf(ApiException.class)
+                .hasMessageContaining(SpotErrorCode.SPOT_NOT_FOUND.getErrorDescription());
+    }
+
+    @Test
+    @DisplayName("LOCATION REVIEW READ의 EXCEPTION이 잘 동작하는지 테스트")
+    @Transactional
+    @Order(8)
+    void readLocationReviewExceptionTest(){
+        assertThatThrownBy(() -> reviewService.readAllLocationReview(5L))
+                .isInstanceOf(ApiException.class)
+                .hasMessageContaining(LocationErrorCode.LOCATION_NOT_FOUND.getErrorDescription());
+    }
+
+
+    @Test
+    @DisplayName("LOCATION이 없을 때, SPOT REVIEW READ의 EXCEPTION이 잘 동작하는지 테스트")
+    @Transactional
+    @Order(9)
+    void readLocationReviewWhenEmptyLocationExceptionTest(){
+        assertThatThrownBy(() -> reviewService.readAllSpotReview(5L, 1L))
+                .isInstanceOf(ApiException.class)
+                .hasMessageContaining(LocationErrorCode.LOCATION_NOT_FOUND.getErrorDescription());
+    }
+
+    @Test
+    @DisplayName("SPOT이 없을 때, SPOT REVIEW READ의 EXCEPTION이 잘 동작하는지 테스트")
+    @Transactional
+    @Order(10)
+    void readSpotReviewWhenEmptySpotExceptionTest(){
+        assertThatThrownBy(() -> reviewService.readAllSpotReview(findLocationId, 5L))
+                .isInstanceOf(ApiException.class)
+                .hasMessageContaining(SpotErrorCode.SPOT_NOT_FOUND.getErrorDescription());
+    }
+
+    @Test
+    @DisplayName("REVIEW UPDATE의 EXCEPTION이 잘 동작하는지 테스트")
+    @Transactional
+    @Order(11)
+    void updateReviewExceptionTest(){
+        locationReviewRequestDto.setReviewId(5L);
+        assertThatThrownBy(() -> reviewService.updateReview(locationReviewRequestDto))
+                .isInstanceOf(ApiException.class)
+                .hasMessageContaining(ReviewErrorCode.REVIEW_NOT_FOUND.getErrorDescription());
+    }
+
+    @Test
+    @DisplayName("REVIEW DELETE의 EXCEPTION이 잘 동작하는지 테스트")
+    @Transactional
+    @Order(12)
+    void deleteReviewExceptionTest(){
+        assertThatThrownBy(() -> reviewService.deleteReview(100L))
+                .isInstanceOf(ApiException.class)
+                .hasMessageContaining(ReviewErrorCode.REVIEW_NOT_FOUND.getErrorDescription());
+    }
 
 
 }

@@ -4,6 +4,7 @@ package trendravel.photoravel_be.domain.location.dto.response;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 import lombok.Data;
+import org.springframework.http.MediaType;
 import trendravel.photoravel_be.domain.review.dto.response.RecentReviewsDto;
 
 import java.time.LocalDateTime;
@@ -11,6 +12,8 @@ import java.util.List;
 
 @Data
 @Builder
+@Schema(description = "단일 장소 READ 응답 DTO",
+        contentEncoding = MediaType.APPLICATION_JSON_VALUE)
 public class LocationSingleReadResponseDto {
 
     @Schema(description = "장소ID")
@@ -27,18 +30,18 @@ public class LocationSingleReadResponseDto {
     private String name;
     @Schema(description = "장소 이미지들")
     private List<String> images;
-
+    @Schema(description = "장소 조회수")
     private int views;
-
+    @Schema(description = "장소 리뷰 평균 평점")
     private String ratingAvg;
 
     //유저 객체 추가 필요
-
+    @Schema(description = "최근 업데이트된 리뷰 목록 (최대 3개)")
     private List<RecentReviewsDto> recentReviewDtos;
 
     @Schema(description = "장소 생성일")
-    private LocalDateTime createdTime;
+    private LocalDateTime createdAt;
     @Schema(description = "장소 수정일")
-    private LocalDateTime updatedTime;
+    private LocalDateTime updatedAt;
 
 }

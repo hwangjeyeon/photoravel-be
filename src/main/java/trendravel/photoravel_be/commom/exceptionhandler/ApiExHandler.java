@@ -19,7 +19,7 @@ public class ApiExHandler {
             ApiException apiException
     ){
 
-        log.error("ApiExceptionHandler", apiException);
+        log.error("{}", apiException.getErrorDescription());
 
         ErrorCodeIfs errorCodeIfs = apiException.getErrorCodeIfs();
         return ResponseEntity
