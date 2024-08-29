@@ -114,7 +114,6 @@ public class ReviewService {
         if(reviewRequestDto.getReviewType().equals(ReviewTypes.PHOTOGRAPHER)){
             photographer = photographerRepository.findById(reviewRequestDto.getTypeId())
                     .orElseThrow(() -> new ApiException(PhotographerErrorCode.PHOTOGRAPHER_NOT_FOUND));
-            System.out.println("photographer.getId() = " + photographer.getId());
         }
         
         Review review = reviewRepository.save(Review.builder()
@@ -187,8 +186,17 @@ public class ReviewService {
                         p.getCreatedAt(), p.getUpdatedAt()))
                 .toList();
     }
-
-
+    @Transactional
+    public List<ReviewResponseDto> readAllPhotographerReview(String photographerId) {
+        List<Review> reviews = photographerRepository.findByAccountId(photographerId).map(Photographer::getReviews)
+                .orElseThrow(() -> new ApiException(PhotographerErrorCode.PHOTOGRAPHER_NOT_FOUND));
+        
+        return reviews.stream()
+                .map(p -> new ReviewResponseDto(p.getId(), p.getReviewType().toString(),
+                        p.getContent(), p.getRating(), p.getImages(),
+                        p.getCreatedAt(), p.getUpdatedAt()))
+                .toList();
+    }
 
     @Transactional
     public ReviewResponseDto updateReview(
@@ -242,5 +250,6 @@ public class ReviewService {
         reviewRepository.deleteById(findReview.getId());
         imageService.deleteAllImages(findReview.getImages());
     }
-
+    
+    
 }
