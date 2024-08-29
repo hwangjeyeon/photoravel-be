@@ -7,7 +7,6 @@ import org.springframework.web.multipart.MultipartFile;
 import trendravel.photoravel_be.commom.error.PhotographerErrorCode;
 import trendravel.photoravel_be.commom.exception.ApiException;
 import trendravel.photoravel_be.commom.image.service.ImageService;
-import trendravel.photoravel_be.commom.service.ImageService;
 import trendravel.photoravel_be.db.enums.Region;
 import trendravel.photoravel_be.db.photographer.Photographer;
 import trendravel.photoravel_be.db.respository.photographer.PhotographerRepository;
@@ -67,6 +66,7 @@ public class PhotographerService {
         //List<RecentReviewsDto> reviews = guideRepository.recentReviews(guide.getId());
         
         return PhotographerSingleResponseDto.builder()
+                .id(photographer.getId())
                 .accountId(photographer.getAccountId())
                 .name(photographer.getName())
                 .region(photographer.getRegion())
