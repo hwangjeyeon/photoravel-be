@@ -248,7 +248,11 @@ public class ReviewService {
         Review findReview = reviewRepository.findById(id)
                 .orElseThrow(() -> new ApiException(ReviewErrorCode.REVIEW_NOT_FOUND));
         reviewRepository.deleteById(findReview.getId());
-        imageService.deleteAllImages(findReview.getImages());
+        
+        //이미지가 있는 경우, refactoring 필요
+        if (!findReview.getImages().isEmpty()) {
+            imageService.deleteAllImages(findReview.getImages());
+        }
     }
     
     
