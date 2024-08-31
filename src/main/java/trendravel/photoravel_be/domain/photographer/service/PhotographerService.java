@@ -15,6 +15,7 @@ import trendravel.photoravel_be.domain.photographer.dto.request.PhotographerRequ
 import trendravel.photoravel_be.domain.photographer.dto.request.PhotographerUpdateDto;
 import trendravel.photoravel_be.domain.photographer.dto.response.PhotographerListResponseDto;
 import trendravel.photoravel_be.domain.photographer.dto.response.PhotographerSingleResponseDto;
+import trendravel.photoravel_be.domain.review.dto.response.RecentReviewsDto;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -63,7 +64,7 @@ public class PhotographerService {
         Photographer photographer = photographerRepository.findByAccountId(photographerId).orElseThrow(() ->
                 new ApiException(PhotographerErrorCode.PHOTOGRAPHER_NOT_FOUND));
         
-        //List<RecentReviewsDto> reviews = guideRepository.recentReviews(guide.getId());
+        List<RecentReviewsDto> reviews = photographerRepository.recentReviews(photographer.getId());
         
         return PhotographerSingleResponseDto.builder()
                 .id(photographer.getId())
@@ -72,6 +73,7 @@ public class PhotographerService {
                 .region(photographer.getRegion())
                 .description(photographer.getDescription())
                 .profileImg(photographer.getProfileImg())
+                .recentReviewDtos(reviews)
                 .createdAt(photographer.getCreatedAt())
                 .updatedAt(photographer.getUpdatedAt())
                 .ratingAvg(String.format("%.2f", ratingAverage(photographer.getReviews())))
