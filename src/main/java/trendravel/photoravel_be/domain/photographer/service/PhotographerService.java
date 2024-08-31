@@ -54,6 +54,7 @@ public class PhotographerService {
                         .updatedAt(photographer.getUpdatedAt())
                         .ratingAvg(String.format("%.2f", ratingAverage(photographer.getReviews())))
                         .reviewCount(photographer.getReviews().size())
+                        .careerYear(photographer.getCareerYear())
                         .build())
                 .collect(Collectors.toList());
     }
@@ -77,6 +78,7 @@ public class PhotographerService {
                 .createdAt(photographer.getCreatedAt())
                 .updatedAt(photographer.getUpdatedAt())
                 .ratingAvg(String.format("%.2f", ratingAverage(photographer.getReviews())))
+                .careerYear(photographer.getCareerYear())
                 .build();
     }
     
@@ -96,6 +98,7 @@ public class PhotographerService {
                 .description(photographerRequestDto.getDescription())
                 //이미지 업로드 처리는 List이고 엔티티는 문자열이기에 get(0)으로 처리 
                 .profileImg(imageService.uploadImages(images).get(0))
+                .careerYear(photographerRequestDto.getCareerYear())
                 .build());
     }
     
@@ -123,7 +126,7 @@ public class PhotographerService {
         
         photographer.updatePhotographer(photographerUpdateDto, imageService.uploadImages(images));
         
-        //List<RecentReviewsDto> reviews = guideRepository.recentReviews(guide.getId());
+        List<RecentReviewsDto> reviews = photographerRepository.recentReviews(photographer.getId());
         
         return PhotographerSingleResponseDto.builder()
                 .accountId(photographer.getAccountId())
@@ -134,7 +137,8 @@ public class PhotographerService {
                 .createdAt(photographer.getCreatedAt())
                 .updatedAt(photographer.getUpdatedAt())
                 .ratingAvg(String.format("%.2f", ratingAverage(photographer.getReviews())))
-                //.recentReviewDtos(reviews)
+                .recentReviewDtos(reviews)
+                .careerYear(photographer.getCareerYear())
                 .build();
     }
     
@@ -146,7 +150,7 @@ public class PhotographerService {
         
         photographer.updatePhotographer(photographerUpdateDto);
         
-        //List<RecentReviewsDto> reviews = guideRepository.recentReviews(guide.getId());
+        List<RecentReviewsDto> reviews = photographerRepository.recentReviews(photographer.getId());
         
         return PhotographerSingleResponseDto.builder()
                 .accountId(photographer.getAccountId())
@@ -157,7 +161,8 @@ public class PhotographerService {
                 .createdAt(photographer.getCreatedAt())
                 .updatedAt(photographer.getUpdatedAt())
                 .ratingAvg(String.format("%.2f", ratingAverage(photographer.getReviews())))
-                //.recentReviewDtos(reviews)
+                .recentReviewDtos(reviews)
+                .careerYear(photographer.getCareerYear())
                 .build();
     }
     

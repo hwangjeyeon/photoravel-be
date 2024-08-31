@@ -45,6 +45,9 @@ public class Photographer extends BaseEntity {
     @Column(nullable = false)
     private String profileImg;
     
+    @Column(nullable = false)
+    private Integer careerYear;
+    
     //images 타입에 대해 수정 필요 imageService 단에서 하나의 이미지를 처리하는 메서드 필요
     public void updatePhotographer(PhotographerUpdateDto photographerUpdateDto, List<String> images) {
         this.password = photographerUpdateDto.getPassword();
