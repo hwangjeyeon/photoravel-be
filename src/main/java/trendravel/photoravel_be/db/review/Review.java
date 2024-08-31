@@ -47,6 +47,7 @@ public class Review extends BaseEntity {
             joinColumns = @JoinColumn(name = "review_id")
     )
     @Size(max = 10, message = "한번에 들어올 수 있는 이미지는 10개입니다")
+    @Builder.Default
     private List<String> images = new ArrayList<>();
 
     // 회원, 가이드 관련 연관관계 필드 추가 필요
@@ -59,6 +60,12 @@ public class Review extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "spot_id")
     private Spot spotReview;
+
+
+    public void createReviewImage(List<String> imageNames){
+        images.addAll(imageNames);
+    }
+
 
     //연관관계 편의 메소드
     public void setSpotReview(Spot spot) {

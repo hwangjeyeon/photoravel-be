@@ -50,8 +50,8 @@ public class Spot extends BaseEntity {
             joinColumns = @JoinColumn(name = "spot_id")
     )
     @Size(max = 10, message = "한번에 들어올 수 있는 이미지는 10개입니다")
+    @Builder.Default
     private List<String> images = new ArrayList<>();
-
 
 
     //유저 엔티티 생성 후, 연관관계 필드 추가 필요
@@ -64,6 +64,10 @@ public class Spot extends BaseEntity {
     @OneToMany(mappedBy = "spotReview", orphanRemoval = true)
     @Builder.Default
     private List<Review> reviews = new ArrayList<>();
+
+    public void createSpotImage(List<String> imageNames){
+        images.addAll(imageNames);
+    }
 
     //연관관계 편의 메소드
     public void setLocation(Location location){
