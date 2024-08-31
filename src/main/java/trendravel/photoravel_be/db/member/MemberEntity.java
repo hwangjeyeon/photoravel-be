@@ -3,6 +3,7 @@ package trendravel.photoravel_be.db.member;
 import jakarta.persistence.*;
 import lombok.*;
 import trendravel.photoravel_be.db.BaseEntity;
+import trendravel.photoravel_be.db.match.Matching;
 
 @Entity
 @Table(name = "member")
@@ -38,5 +39,7 @@ public class MemberEntity extends BaseEntity {
         this.email = email;
         this.profileImg = profileImg;
     }
-
+    
+    @OneToOne(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Matching matching;
 }

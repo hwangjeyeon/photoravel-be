@@ -5,12 +5,14 @@ import lombok.*;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import trendravel.photoravel_be.db.BaseEntity;
 import trendravel.photoravel_be.db.enums.Region;
+import trendravel.photoravel_be.db.match.Matching;
 import trendravel.photoravel_be.db.review.Review;
-import trendravel.photoravel_be.domain.photographer.dto.request.PhotographerRequestDto;
 import trendravel.photoravel_be.domain.photographer.dto.request.PhotographerUpdateDto;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Getter
@@ -67,5 +69,9 @@ public class Photographer extends BaseEntity {
     @OneToMany(mappedBy = "photographerReview")
     @Builder.Default
     private List<Review> reviews = new ArrayList<>();
+    
+    @OneToMany(mappedBy = "photographer", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<Matching> matchings = new HashSet<>();
+    
     
 }
