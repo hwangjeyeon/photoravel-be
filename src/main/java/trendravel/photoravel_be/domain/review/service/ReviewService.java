@@ -52,9 +52,8 @@ public class ReviewService {
                     .orElseThrow(() -> new ApiException(SpotErrorCode.SPOT_NOT_FOUND));
         }
 
-        Review review = reviewRepository.save(Review.builder()
+        Review review = Review.builder()
                 .reviewType(reviewRequestDto.getReviewType())
-                .images(imageService.uploadImages(images))
                 .content(reviewRequestDto.getContent())
                 .rating(reviewRequestDto.getRating())
                 .locationReview(ReviewTypes.LOCATION ==
@@ -63,10 +62,12 @@ public class ReviewService {
                 .spotReview(ReviewTypes.SPOT ==
                         reviewRequestDto.getReviewType()
                         ? spot : null)
-                .build());
+                .build();
 
         review.setLocationReview(location);
         review.setSpotReview(spot);
+        reviewRepository.save(review);
+        review.createReviewImage(imageService.uploadImages(images));
 
         return ReviewResponseDto
                 .builder()
@@ -98,7 +99,7 @@ public class ReviewService {
         }
 
 
-        Review review = reviewRepository.save(Review.builder()
+        Review review = Review.builder()
                 .reviewType(reviewRequestDto.getReviewType())
                 .content(reviewRequestDto.getContent())
                 .rating(reviewRequestDto.getRating())
@@ -108,7 +109,7 @@ public class ReviewService {
                 .spotReview(ReviewTypes.SPOT ==
                         reviewRequestDto.getReviewType()
                         ? spot : null)
-                .build());
+                .build();
 
 
         /**
@@ -120,7 +121,7 @@ public class ReviewService {
             review.setLocationReview(location);
         }
 
-
+        reviewRepository.save(review);
 
 
         return ReviewResponseDto

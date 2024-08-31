@@ -1,5 +1,6 @@
 package trendravel.photoravel_be.domain.location.service;
 
+
 import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 import org.locationtech.jts.geom.Coordinate;
@@ -45,7 +46,6 @@ public class LocationService {
                 .latitude(locationRequestDto.getLatitude())
                 .longitude(locationRequestDto.getLongitude())
                 .address(locationRequestDto.getAddress())
-                .images(imageService.uploadImages(images))
                 .views(0)
                 .point(new GeometryFactory().createPoint(
                                 new Coordinate(locationRequestDto.getLatitude()
@@ -53,6 +53,8 @@ public class LocationService {
                 .build();
         location.getPoint().setSRID(4326);
         locationRepository.save(location);
+        location.createLocationImage(imageService.uploadImages(images));
+
 
         return LocationResponseDto
                 .builder()

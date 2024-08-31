@@ -48,11 +48,11 @@ public class SpotService {
                 .title(spotRequestDto.getTitle())
                 .latitude(spotRequestDto.getLatitude())
                 .longitude(spotRequestDto.getLongitude())
-                .images(imageService.uploadImages(images))
                 .location(location)
                 .build();
         spot.setLocation(location);
         spotRepository.save(spot);
+        spot.createSpotImage(imageService.uploadImages(images));
 
         return SpotResponseDto
                 .builder()
