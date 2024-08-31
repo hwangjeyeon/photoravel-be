@@ -102,7 +102,7 @@ public class GuidebookService {
         
         if (guidebooks.isEmpty()) {
             throw new ApiException(GuidebookErrorCode.GUIDEBOOK_NOT_FOUND);
-        } 
+        }
         
         return guidebooks.stream()
                 .map(guidebook -> GuidebookListResponseDto.builder()
@@ -111,7 +111,7 @@ public class GuidebookService {
                         .title(guidebook.getTitle())
                         .region(guidebook.getRegion())
                         .views(guidebook.getViews())
-                        .images(guidebook.getImages())
+                        .image(!guidebook.getImages().isEmpty() ? guidebook.getImages().get(0) : null)
                         .createdAt(guidebook.getCreatedAt())
                         .updatedAt(guidebook.getUpdatedAt())
                         .build())
