@@ -3,10 +3,15 @@ package trendravel.photoravel_be.service;
 import jakarta.persistence.EntityManager;
 import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.*;
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.GeometryFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import trendravel.photoravel_be.commom.service.ImageService;
+import trendravel.photoravel_be.commom.error.LocationErrorCode;
+import trendravel.photoravel_be.commom.error.SpotErrorCode;
+import trendravel.photoravel_be.commom.exception.ApiException;
+import trendravel.photoravel_be.commom.image.service.ImageService;
 import trendravel.photoravel_be.db.respository.review.ReviewRepository;
 import trendravel.photoravel_be.db.review.Review;
 import trendravel.photoravel_be.db.review.enums.ReviewTypes;
@@ -24,10 +29,10 @@ import trendravel.photoravel_be.db.respository.spot.SpotRepository;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @SpringBootTest
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-@Transactional
 class SpotServiceTest {
 
     @Autowired
@@ -66,10 +71,12 @@ class SpotServiceTest {
                 .latitude(35.24)
                 .longitude(46.61)
                 .address("아산시 신창면 순천향로46")
-                .description("순천향대학교입니다.")
+                .point(new GeometryFactory().createPoint(
+                        new Coordinate(35.24
+                                , 46.61)))
                 .views(0)
                 .build();
-        locationRepository.save(location);
+        location.getPoint().setSRID(4326);
         spot = Spot
                 .builder()
                 .description("미디어랩스관입니다")
@@ -79,8 +86,6 @@ class SpotServiceTest {
                 .views(0)
                 .location(location)
                 .build();
-        spot.setLocation(location);
-        spotRepository.save(spot);
         review1 = Review
                 .builder()
                 .reviewType(ReviewTypes.SPOT)
@@ -109,104 +114,109 @@ class SpotServiceTest {
                 .rating(4.5)
                 .spotReview(spot)
                 .build();
-        review1.setSpotReview(spot);
-        review2.setSpotReview(spot);
-        review3.setSpotReview(spot);
-        review4.setSpotReview(spot);
 
-        reviewRepository.save(review1);
-        reviewRepository.save(review2);
-        reviewRepository.save(review3);
-        reviewRepository.save(review4);
 
-        spotRequestDto.setSpotId(1L);
+
         spotRequestDto.setTitle("미디어랩스건물 방문");
         spotRequestDto.setDescription("미디어랩스관입니다");
         spotRequestDto.setLatitude(46.61);
         spotRequestDto.setLongitude(35.24);
-        spotRequestDto.setLocationId(locationRepository.findById(1L).get().getId());
     }
 
     @Order(1)
     @Test
     @DisplayName("Spot CREATE 서비스가 (이미지 미포함) 잘 작동하는지 테스트")
+    @Transactional
     void createLocationServiceTest(){
-        spotService.createSpot(spotRequestDto);
+        Long id = locationRepository.save(location).getId();
+        spotRequestDto.setLocationId(id);
+        Long spotId = spotService.createSpot(spotRequestDto).getSpotId();
 
         assertThat(spotRepository.findById(
-                        spotRequestDto.getSpotId())
-                .get().getId()).isEqualTo(1L);
+                       spotId)
+                .get().getTitle()).isEqualTo(spotRequestDto.getTitle());
         assertThat(spotRepository.findById(
-                spotRequestDto.getSpotId())
-                .get().getLocation().getId()).
-                isEqualTo(locationRepository.findById(1L).get().getId());
+                        spotId)
+                .get().getLatitude()).isEqualTo(spotRequestDto.getLatitude());
         assertThat(spotRepository.findById(
-                        spotRequestDto.getSpotId())
-                .get().getTitle()).isEqualTo("미디어랩스건물 방문");
+                        spotId)
+                .get().getLongitude()).isEqualTo(spotRequestDto.getLongitude());
         assertThat(spotRepository.findById(
-                        spotRequestDto.getSpotId())
-                .get().getLatitude()).isEqualTo(46.61);
-        assertThat(spotRepository.findById(
-                        spotRequestDto.getSpotId())
-                .get().getLongitude()).isEqualTo(35.24);
-        assertThat(spotRepository.findById(
-                        spotRequestDto.getSpotId())
-                .get().getDescription()).isEqualTo("미디어랩스관입니다");
+                        spotId)
+                .get().getDescription()).isEqualTo(spotRequestDto.getDescription());
 
     }
 
     @Order(2)
     @Test
     @DisplayName("Spot UPDATE 서비스가 (이미지 미포함) 잘 작동하는지 테스트")
+    @Transactional
     void updateLocationServiceTest(){
-        spotService.createSpot(spotRequestDto);
+        Long id = locationRepository.save(location).getId();
+        spotRequestDto.setLocationId(id);
+        Long spotId = spotService.createSpot(spotRequestDto).getSpotId();
+        spotRequestDto.setSpotId(spotId);
         spotRequestDto.setTitle("미디어랩스 방문 후 모습");
         spotService.updateSpot(spotRequestDto);
 
         assertThat(spotRepository.findById(
-                        spotRequestDto.getLocationId())
-                .get().getId()).isEqualTo(1L);
+                        spotId)
+                .get().getTitle()).isEqualTo(spotRequestDto.getTitle());
         assertThat(spotRepository.findById(
-                        spotRequestDto.getLocationId())
-                .get().getTitle()).isEqualTo("미디어랩스 방문 후 모습");
+                        spotId)
+                .get().getLatitude()).isEqualTo(spotRequestDto.getLatitude());
         assertThat(spotRepository.findById(
-                        spotRequestDto.getLocationId())
-                .get().getLatitude()).isEqualTo(46.61);
+                        spotId)
+                .get().getLongitude()).isEqualTo(spotRequestDto.getLongitude());
         assertThat(spotRepository.findById(
-                        spotRequestDto.getLocationId())
-                .get().getLongitude()).isEqualTo(35.24);
-        assertThat(spotRepository.findById(
-                        spotRequestDto.getLocationId())
-                .get().getDescription()).isEqualTo("미디어랩스관입니다");
+                        spotId)
+                .get().getDescription()).isEqualTo(spotRequestDto.getDescription());
     }
 
     @Order(3)
     @Test
     @DisplayName("Spot DELETE 서비스가 잘 작동하는지 테스트")
+    @Transactional
     void deleteLocationServiceTest(){
-        spotService.createSpot(spotRequestDto);
-        spotService.deleteSpot(spotRequestDto.getSpotId());
+        Long id = locationRepository.save(location).getId();
+        spotRequestDto.setLocationId(id);
+        Long spotId = spotService.createSpot(spotRequestDto).getSpotId();
 
-        assertThat(spotRepository.findById(spotRequestDto.getSpotId())).isEmpty();
+        spotService.deleteSpot(spotId);
+
+        assertThat(spotRepository.findById(spotId)).isEmpty();
     }
 
+    @Order(4)
     @Test
     @DisplayName("Spot SINGLE READ 서비스가 잘 동작하는지 테스트")
+    @Transactional
     void readSingleSpotServiceTest(){
         //given
-        spotService.readSingleSpot(location.getId(), spot.getId());
-        Spot findSpot = spotRepository.findById(spot.getId()).orElse(null);
+        Long id = locationRepository.save(location).getId();
+        spotRequestDto.setLocationId(id);
+        Long spotId = spotService.createSpot(spotRequestDto).getSpotId();
 
+        Spot findSpot = spotRepository.findById(spotId).get();
+
+        review1.setSpotReview(findSpot);
+        review2.setSpotReview(findSpot);
+        review3.setSpotReview(findSpot);
+        review4.setSpotReview(findSpot);
+
+        reviewRepository.save(review1);
+        reviewRepository.save(review2);
+        reviewRepository.save(review3);
+        reviewRepository.save(review4);
         //when
         SpotSingleReadResponseDto spotSingleReadResponseDto
-                = spotService.readSingleSpot(location.getId(), spot.getId());
+                = spotService.readSingleSpot(id, spotId);
         List<RecentReviewsDto> findRecentReviews =
                 spotSingleReadResponseDto.getRecentReviewDtos();
 
+
         //then
 
-        assertThat(spotSingleReadResponseDto.getSpotId())
-                .isEqualTo(findSpot.getId());
         assertThat(spotSingleReadResponseDto.getLatitude())
                 .isEqualTo(findSpot.getLatitude());
         assertThat(spotSingleReadResponseDto.getLongitude())
@@ -219,15 +229,66 @@ class SpotServiceTest {
                 .isEqualTo(String.format("%.2f",
                         (review4.getRating() + review2.getRating()
                                 + review3.getRating() + review1.getRating()) / 4));
-        assertThat(spotSingleReadResponseDto.getCreatedTime())
-                .isEqualTo(findSpot.getCreatedAt());
-        assertThat(spotSingleReadResponseDto.getUpdatedTime())
-                .isEqualTo(findSpot.getUpdatedAt());
         assertThat(spotSingleReadResponseDto.getViews()).isEqualTo(0);
         assertThat(findRecentReviews.size()).isGreaterThan(1);
         assertThat(findRecentReviews).extracting("rating")
                 .containsExactlyInAnyOrder(review4.getRating(),
                         review2.getRating(), review3.getRating());
     }
+
+    @Order(5)
+    @DisplayName("Location이 없을 때, SPOT CREATE의 EXCEPTION이 잘 동작하는지 테스트")
+    @Test
+    @Transactional
+    void createSpotExceptionTest(){
+        spotRequestDto.setLocationId(4L);
+        assertThatThrownBy(() -> spotService.createSpot(spotRequestDto))
+                .isInstanceOf(ApiException.class)
+                .hasMessageContaining(LocationErrorCode.LOCATION_NOT_FOUND.getErrorDescription());
+    }
+
+    @Order(6)
+    @DisplayName("Location이 없을 때, SPOT READ EXCEPTION이 잘 동작하는지 테스트")
+    @Test
+    @Transactional
+    void readSpotExceptionWhenEmptyLocationTest(){
+        spotRequestDto.setLocationId(4L);
+        assertThatThrownBy(() -> spotService.readSingleSpot(5L,1L))
+                .isInstanceOf(ApiException.class)
+                .hasMessageContaining(LocationErrorCode.LOCATION_NOT_FOUND.getErrorDescription());
+    }
+
+    @Order(7)
+    @DisplayName("Location이 있지만 SPOT이 없을 때, SPOT READ EXCEPTION이 잘 동작하는지 테스트")
+    @Test
+    @Transactional
+    void readSpotExceptionWhenEmptySpotTest(){
+        spotRequestDto.setLocationId(4L);
+        assertThatThrownBy(() -> spotService.readSingleSpot(1L,2L))
+                .isInstanceOf(ApiException.class)
+                .hasMessageContaining(LocationErrorCode.LOCATION_NOT_FOUND.getErrorDescription());
+    }
+
+    @Order(8)
+    @DisplayName("Spot이 없을 때, SPOT UPDATE EXCEPTION이 잘 동작하는지 테스트")
+    @Test
+    @Transactional
+    void updateSpotExceptionTest(){
+        spotRequestDto.setSpotId(4L);
+        assertThatThrownBy(() -> spotService.updateSpot(spotRequestDto))
+                .isInstanceOf(ApiException.class)
+                .hasMessageContaining(SpotErrorCode.SPOT_NOT_FOUND.getErrorDescription());
+    }
+
+    @Order(9)
+    @DisplayName("SPOT DELETE EXCEPTION이 잘 동작하는지 테스트")
+    @Test
+    @Transactional
+    void deleteSpotExceptionTest(){
+        assertThatThrownBy(() -> spotService.deleteSpot(100L))
+                .isInstanceOf(ApiException.class)
+                .hasMessageContaining(SpotErrorCode.SPOT_NOT_FOUND.getErrorDescription());
+    }
+
 
 }

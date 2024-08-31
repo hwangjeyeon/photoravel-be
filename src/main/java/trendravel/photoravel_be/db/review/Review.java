@@ -9,6 +9,7 @@ import trendravel.photoravel_be.db.location.Location;
 import trendravel.photoravel_be.db.spot.Spot;
 import trendravel.photoravel_be.domain.review.dto.request.ReviewRequestDto;
 import trendravel.photoravel_be.db.review.enums.ReviewTypes;
+import trendravel.photoravel_be.domain.review.dto.request.ReviewUpdateImagesDto;
 
 import java.util.List;
 
@@ -28,6 +29,7 @@ public class Review extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private ReviewTypes reviewType;
 
+    @Column(columnDefinition = "TEXT")
     private String content;
     private double rating;
 
@@ -64,10 +66,13 @@ public class Review extends BaseEntity {
         location.getReview().add(this);
     }
 
-    public void updateReview(ReviewRequestDto review, List<String> images) {
+    public void updateReview(ReviewUpdateImagesDto review, List<String> newImages) {
         this.content = review.getContent();
         this.rating = review.getRating();
-        this.images = images;
+        for (String deleteImage : review.getDeleteImages()) {
+            this.images.remove(deleteImage);
+        }
+        this.images.addAll(newImages);
     }
 
     public void updateReview(ReviewRequestDto review) {

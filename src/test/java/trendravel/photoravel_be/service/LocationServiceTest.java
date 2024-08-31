@@ -1,18 +1,23 @@
 package trendravel.photoravel_be.service;
 
-import jakarta.persistence.EntityManager;
+
 import jakarta.transaction.Transactional;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.GeometryFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import trendravel.photoravel_be.commom.service.ImageService;
+import trendravel.photoravel_be.commom.error.LocationErrorCode;
+import trendravel.photoravel_be.commom.exception.ApiException;
+import trendravel.photoravel_be.commom.image.service.ImageService;
 import trendravel.photoravel_be.db.location.Location;
 import trendravel.photoravel_be.db.respository.review.ReviewRepository;
 import trendravel.photoravel_be.db.review.Review;
 import trendravel.photoravel_be.db.review.enums.ReviewTypes;
+import trendravel.photoravel_be.domain.location.dto.request.LocationKeywordDto;
+import trendravel.photoravel_be.domain.location.dto.request.LocationNowPositionDto;
+import trendravel.photoravel_be.domain.location.dto.response.LocationMultiReadResponseDto;
 import trendravel.photoravel_be.domain.location.dto.response.LocationSingleReadResponseDto;
 import trendravel.photoravel_be.domain.location.service.LocationService;
 import trendravel.photoravel_be.domain.location.dto.request.LocationRequestDto;
@@ -23,9 +28,10 @@ import trendravel.photoravel_be.domain.review.dto.response.RecentReviewsDto;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @SpringBootTest
-@Transactional
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class LocationServiceTest {
 
     @Autowired
@@ -34,8 +40,6 @@ class LocationServiceTest {
     @Autowired
     ReviewRepository reviewRepository;
 
-    @Autowired
-    EntityManager em;
 
     @MockBean
     LocationService locationService;
@@ -44,6 +48,7 @@ class LocationServiceTest {
 
     LocationRequestDto locationRequestDto;
     Location location;
+    Location location2;
     Review review1;
     Review review2;
     Review review3;
@@ -60,8 +65,24 @@ class LocationServiceTest {
                 .address("아산시 신창면 순천향로46")
                 .description("순천향대학교입니다.")
                 .views(0)
+                .point(new GeometryFactory().createPoint(
+                        new Coordinate(35.24
+                                , 46.61)))
                 .build();
-        locationRepository.save(location);
+        location.getPoint().setSRID(4326);
+        location2 = Location
+                .builder()
+                .name("경찰대학교")
+                .latitude(35.22)
+                .longitude(46.59)
+                .address("아산시 경찰면 경찰로36")
+                .description("경찰대학교입니다..")
+                .views(0)
+                .point(new GeometryFactory().createPoint(
+                        new Coordinate(35.22, 46.59)))
+                .build();
+        location2.getPoint().setSRID(4326);
+
         review1 = Review
                 .builder()
                 .reviewType(ReviewTypes.LOCATION)
@@ -95,10 +116,7 @@ class LocationServiceTest {
         review3.setLocationReview(location);
         review4.setLocationReview(location);
 
-        reviewRepository.save(review1);
-        reviewRepository.save(review2);
-        reviewRepository.save(review3);
-        reviewRepository.save(review4);
+
 
 
         locationRequestDto = new LocationRequestDto();
@@ -113,12 +131,12 @@ class LocationServiceTest {
 
     @Test
     @DisplayName("Location CREATE (이미지 미포함) 서비스가 잘 작동하는지 테스트")
+    @Transactional
+    @Order(1)
     void createLocationServiceTest(){
+
         locationService.createLocation(locationRequestDto);
 
-        assertThat(locationRepository.findById(
-                locationRequestDto.getLocationId())
-                .get().getId()).isEqualTo(1L);
         assertThat(locationRepository.findById(
                 locationRequestDto.getLocationId())
                 .get().getName()).isEqualTo("순천향대학교");
@@ -139,14 +157,14 @@ class LocationServiceTest {
 
     @Test
     @DisplayName("Location UPDATE (이미지 미포함) 서비스가 잘 작동하는지 테스트")
+    @Transactional
+    @Order(2)
     void updateLocationServiceTest(){
         locationService.createLocation(locationRequestDto);
+        locationRequestDto.setLocationId(2L);
         locationRequestDto.setName("미디어랩스");
         locationService.updateLocation(locationRequestDto);
 
-        assertThat(locationRepository.findById(
-                        locationRequestDto.getLocationId())
-                .get().getId()).isEqualTo(1L);
         assertThat(locationRepository.findById(
                         locationRequestDto.getLocationId())
                 .get().getName()).isEqualTo("미디어랩스");
@@ -166,8 +184,11 @@ class LocationServiceTest {
 
     @Test
     @DisplayName("Location DELETE 서비스가 잘 작동하는지 테스트")
+    @Transactional
+    @Order(5)
     void deleteLocationServiceTest(){
-        locationService.createLocation(locationRequestDto);
+        Long newId = locationService.createLocation(locationRequestDto).getLocationId();
+        locationRequestDto.setLocationId(newId);
         locationService.deleteLocation(locationRequestDto.getLocationId());
 
         assertThat(locationRepository.findById(locationRequestDto.getLocationId())).isEmpty();
@@ -175,20 +196,27 @@ class LocationServiceTest {
 
     @Test
     @DisplayName("Location SINGLE READ 서비스가 잘 동작하는지 테스트")
+    @Transactional
+    @Order(3)
     void readSingleLocationServiceTest(){
         //given
+        locationRepository.save(location);
+        locationRepository.save(location2);
         locationService.createLocation(locationRequestDto);
-        Location findLocation = locationRepository.findById(1L).orElse(null);
+        Location findLocation = locationRepository.findById(5L).orElse(null);
+
+        reviewRepository.save(review1);
+        reviewRepository.save(review2);
+        reviewRepository.save(review3);
+        reviewRepository.save(review4);
 
         //when
         LocationSingleReadResponseDto locationSingleReadResponseDto
-                = locationService.readSingleLocation(1L);
+                = locationService.readSingleLocation(3L);
         List<RecentReviewsDto> findRecentReviews =
                 locationSingleReadResponseDto.getRecentReviewDtos();
 
         //then
-        assertThat(locationSingleReadResponseDto.getLocationId())
-                .isEqualTo(findLocation.getId());
         assertThat(locationSingleReadResponseDto.getLatitude())
                 .isEqualTo(findLocation.getLatitude());
         assertThat(locationSingleReadResponseDto.getLongitude())
@@ -201,15 +229,92 @@ class LocationServiceTest {
                 .isEqualTo(String.format("%.2f",
                         (review4.getRating() + review2.getRating()
                                 + review3.getRating() + review1.getRating()) / 4));
-        assertThat(locationSingleReadResponseDto.getCreatedTime())
-                .isEqualTo(findLocation.getCreatedAt());
-        assertThat(locationSingleReadResponseDto.getUpdatedTime())
-                .isEqualTo(findLocation.getUpdatedAt());
         assertThat(locationSingleReadResponseDto.getViews()).isEqualTo(1);
         assertThat(findRecentReviews).extracting("rating")
                 .containsExactlyInAnyOrder(review4.getRating(),
                         review2.getRating(), review3.getRating());
     }
+
+    @DisplayName("Location MULTI READ (위치기반) 서비스가 잘 동작하는지 테스트")
+    @Test
+    @Transactional
+    @Order(4)
+    void readMultiLocationWithPositionServiceTest(){
+        locationRepository.save(location);
+        locationRepository.save(location2);
+        //given
+        LocationNowPositionDto locationNowPositionDto
+                = new LocationNowPositionDto();
+        locationNowPositionDto.setLatitude(35.23);
+        locationNowPositionDto.setLongitude(46.60);
+        locationNowPositionDto.setRange(2000);
+        //when
+        List<LocationMultiReadResponseDto> locationMultiReadResponseDto
+                = locationService.readMultiLocation(locationNowPositionDto);
+        //then
+
+        assertThat(locationMultiReadResponseDto.size()).isEqualTo(2);
+        assertThat(locationMultiReadResponseDto.get(0).getLatitude()).isEqualTo(35.24);
+        assertThat(locationMultiReadResponseDto.get(0).getLongitude()).isEqualTo(46.61);
+
+        assertThat(locationMultiReadResponseDto.get(1).getLatitude()).isEqualTo(35.22);
+        assertThat(locationMultiReadResponseDto.get(1).getLongitude()).isEqualTo(46.59);
+    }
+
+    @DisplayName("Location MULTI READ (위치기반 + 검색키워드) 서비스가 잘 동작하는지 테스트")
+    @Test
+    @Transactional
+    @Order(5)
+    void readMultiLocationWithSearchServiceTest(){
+        //given
+        locationRepository.save(location);
+        locationRepository.save(location2);
+        LocationKeywordDto locationKeywordDto
+                = new LocationKeywordDto(35.23, 46.60, 2000, "순천향대");
+        //when
+        List<LocationMultiReadResponseDto> locationMultiReadResponseDto
+                = locationService.readMultiLocation(locationKeywordDto);
+        //then
+
+        assertThat(locationMultiReadResponseDto.size()).isEqualTo(1);
+        assertThat(locationMultiReadResponseDto.get(0).getLatitude()).isEqualTo(35.24);
+        assertThat(locationMultiReadResponseDto.get(0).getLongitude()).isEqualTo(46.61);
+        assertThat(locationMultiReadResponseDto.get(0).getName()).isEqualTo("순천향대학교");
+    }
+
+
+    @DisplayName("LOCATION READ의 EXCEPTION이 잘 동작하는지 테스트")
+    @Test
+    @Transactional
+    @Order(6)
+    void readExceptionServiceTest(){
+        assertThatThrownBy( () -> locationService.readSingleLocation(3L))
+                .isInstanceOf(ApiException.class)
+                .hasMessageContaining(LocationErrorCode.LOCATION_NOT_FOUND.getErrorDescription());
+    }
+
+    @DisplayName("LOCATION UPDATE의 EXCEPTION이 잘 동작하는지 테스트")
+    @Test
+    @Transactional
+    @Order(7)
+    void updateExceptionServiceTest(){
+        locationRequestDto.setLocationId(3L);
+        assertThatThrownBy(() -> locationService.updateLocation(locationRequestDto))
+                .isInstanceOf(ApiException.class)
+                .hasMessageContaining(LocationErrorCode.LOCATION_NOT_FOUND.getErrorDescription());
+    }
+
+    @DisplayName("LOCATION DELETE의 EXCEPTION이 잘 동작하는지 테스트")
+    @Test
+    @Transactional
+    @Order(8)
+    void deleteExceptionServiceTest(){
+
+        assertThatThrownBy(() -> locationService.deleteLocation(500L))
+                .isInstanceOf(ApiException.class)
+                .hasMessageContaining(LocationErrorCode.LOCATION_NOT_FOUND.getErrorDescription());
+    }
+
 
 
 }

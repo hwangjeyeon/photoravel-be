@@ -102,8 +102,8 @@ class ReviewTest {
         spotReviewRequestDto.setContent("다시보니 좋네요");
 
         //when
-        locationReview.updateReview(locationReviewRequestDto, image);
-        spotReview.updateReview(spotReviewRequestDto, image);
+        locationReview.updateReview(locationReviewRequestDto);
+        spotReview.updateReview(spotReviewRequestDto);
 
         //then
         assertThat(locationReview.getId()).isEqualTo(1L);

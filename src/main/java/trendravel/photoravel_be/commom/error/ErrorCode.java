@@ -17,7 +17,9 @@ public enum ErrorCode implements ErrorCodeIfs{
     SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR.value(), "서버 내 오류"),
     NULL_POINT(HttpStatus.INTERNAL_SERVER_ERROR.value(), "null point"),
     FORBIDDEN_ERROR(HttpStatus.FORBIDDEN.value(), "권한 없음"),
-    UNAUTHORIZED_ERROR(HttpStatus.UNAUTHORIZED.value(), "인증 안 됨");
+    UNAUTHORIZED_ERROR(HttpStatus.UNAUTHORIZED.value(), "인증 안 됨"),
+    IMAGES_NOT_FOUND(404, "이미지 없음"),
+    IMAGES_UPLOAD_ERROR(500, "이미지 저장소 업로드 실패");
 
     private final Integer httpStatusCode;   // 클라이언트에 보여줄 status code
     private final String errorDescription;  // 에러 설명
