@@ -62,13 +62,14 @@ public class ReviewService {
                 .spotReview(ReviewTypes.SPOT ==
                         reviewRequestDto.getReviewType()
                         ? spot : null)
+                .images(imageService.uploadImageFacade(images))
                 .build();
 
         review.setLocationReview(location);
         review.setSpotReview(spot);
         reviewRepository.save(review);
-        review.createReviewImage(imageService.uploadImages(images));
 
+        imageService.uploadImages(images);
         return ReviewResponseDto
                 .builder()
                 .ReviewId(review.getId())
@@ -176,7 +177,7 @@ public class ReviewService {
                 reviewRequestDto.getReviewId())
                 .orElseThrow(() -> new ApiException(ReviewErrorCode.REVIEW_NOT_FOUND));
 
-        review.updateReview(reviewRequestDto, imageService.updateImages(images,
+        review.updateReview(reviewRequestDto, imageService.updateImageFacade(images,
                 reviewRequestDto.getDeleteImages()));
 
         return ReviewResponseDto
@@ -218,7 +219,7 @@ public class ReviewService {
         Review findReview = reviewRepository.findById(id)
                 .orElseThrow(() -> new ApiException(ReviewErrorCode.REVIEW_NOT_FOUND));
         reviewRepository.deleteById(findReview.getId());
-        imageService.deleteAllImages(findReview.getImages());
+        imageService.deleteAllImagesFacade(findReview.getImages());
     }
 
 }

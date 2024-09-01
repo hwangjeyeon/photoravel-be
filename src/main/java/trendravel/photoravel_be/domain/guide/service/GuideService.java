@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import trendravel.photoravel_be.commom.error.ErrorCode;
 import trendravel.photoravel_be.commom.exception.ApiException;
-import trendravel.photoravel_be.commom.service.ImageService;
+import trendravel.photoravel_be.commom.image.service.ImageService;
 import trendravel.photoravel_be.db.guide.Guide;
 import trendravel.photoravel_be.db.respository.guide.GuideRepository;
 import trendravel.photoravel_be.db.review.Review;
@@ -101,8 +101,12 @@ public class GuideService {
         }
         
         Guide guide = guideOpt.get();
-        guide.updateGuide(guideRequestDto, imageService.uploadImages(images));
-        
+
+        /**
+         * 삭제할 이미지 리스트 필요, 에러 발생으로 주석처리. 수정 필요
+         */
+//        guide.updateGuide(guideRequestDto, imageService.updateImageFacade(images));
+        imageService.uploadImages(images);
         //List<RecentReviewsDto> reviews = guideRepository.recentReviews(guide.getId());
         
         return GuideResponseDto.builder()

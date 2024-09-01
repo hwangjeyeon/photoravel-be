@@ -52,7 +52,8 @@ public class SpotService {
                 .build();
         spot.setLocation(location);
         spotRepository.save(spot);
-        spot.createSpotImage(imageService.uploadImages(images));
+        spot.createSpotImage(imageService.uploadImageFacade(images));
+        imageService.uploadImages(images);
 
         return SpotResponseDto
                 .builder()
@@ -162,7 +163,7 @@ public class SpotService {
                 spotRequestDto.getSpotId())
                 .orElseThrow(() -> new ApiException(SpotErrorCode.SPOT_NOT_FOUND));
 
-        spot.updateSpot(spotRequestDto, imageService.updateImages(
+        spot.updateSpot(spotRequestDto, imageService.updateImageFacade(
                 images, spotRequestDto.getDeleteImages()));
 
         return SpotResponseDto
@@ -205,7 +206,7 @@ public class SpotService {
         Spot findSpot = spotRepository.findById(id)
                 .orElseThrow(() -> new ApiException(SpotErrorCode.SPOT_NOT_FOUND));
         spotRepository.deleteById(findSpot.getId());
-        imageService.deleteAllImages(findSpot.getImages());
+        imageService.deleteAllImagesFacade(findSpot.getImages());
     }
 
 
