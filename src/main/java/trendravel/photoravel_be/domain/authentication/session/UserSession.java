@@ -35,11 +35,12 @@ public class UserSession implements UserDetails {
         return password;
     }
 
-    // 메소드 명은 시큐리티 기본으로 userName이지만
-    // 실제로 내부 로직에서 사용하는 것은 email입니다.
+    // 메소드 명은 시큐리티 기본으로 username이지만
+    /** !!!! IMPORTANT !!!! **/
+    // 실제로 내부 로직에서 사용하는 것은 memberId입니다.
     @Override
     public String getUsername() {
-        return email;
+        return memberId;
     }
 
     @Override
