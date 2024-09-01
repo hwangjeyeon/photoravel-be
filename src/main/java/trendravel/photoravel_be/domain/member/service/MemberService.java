@@ -140,7 +140,7 @@ public class MemberService {
         log.info("find member : {}, memberId : {}", member.getMemberId(), memberId);
 
         if (member.getMemberId().equals(memberId)){
-            redisTemplate.opsForHash().delete(memberId);
+            redisTemplate.opsForHash().delete("refresh_token", memberId);
             SecurityContextHolder.clearContext();
             memberRepository.delete(member);
         }else {
