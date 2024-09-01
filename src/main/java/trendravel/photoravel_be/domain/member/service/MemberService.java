@@ -13,7 +13,7 @@ import trendravel.photoravel_be.commom.exception.ApiException;
 import trendravel.photoravel_be.db.inmemorydb.entity.Token;
 import trendravel.photoravel_be.db.member.MemberEntity;
 import trendravel.photoravel_be.db.respository.member.MemberRepository;
-import trendravel.photoravel_be.domain.authentication.model.UserSession;
+import trendravel.photoravel_be.domain.authentication.session.UserSession;
 import trendravel.photoravel_be.domain.member.convertor.MemberConvertor;
 import trendravel.photoravel_be.domain.member.dto.*;
 import trendravel.photoravel_be.domain.token.model.TokenDto;
