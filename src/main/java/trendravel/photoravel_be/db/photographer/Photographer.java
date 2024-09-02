@@ -70,8 +70,5 @@ public class Photographer extends BaseEntity {
     @Builder.Default
     private List<Review> reviews = new ArrayList<>();
     
-    @OneToMany(mappedBy = "photographer", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<Matching> matchings = new HashSet<>();
-    
     
 }

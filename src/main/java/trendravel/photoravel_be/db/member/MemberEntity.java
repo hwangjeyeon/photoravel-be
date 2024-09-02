@@ -39,7 +39,5 @@ public class MemberEntity extends BaseEntity {
         this.email = email;
         this.profileImg = profileImg;
     }
-    
-    @OneToOne(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Matching matching;
+
 }

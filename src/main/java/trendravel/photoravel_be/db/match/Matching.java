@@ -26,13 +26,9 @@ public class Matching {
     private MatchingStatus status;
     
     
-    @OneToOne
-    @JoinColumn(name = "member_id", unique = true)
-    private MemberEntity member;
-    
-    @ManyToOne
-    @JoinColumn(name = "photographer_id")
-    private Photographer photographer;
+    private String memberId;
+
+    private String photographerId;
     
     
 }
