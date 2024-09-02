@@ -2,10 +2,12 @@ package trendravel.photoravel_be.domain.location.controller;
 
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import trendravel.photoravel_be.commom.image.valid.ImageSizeValid;
 import trendravel.photoravel_be.commom.response.Api;
 import trendravel.photoravel_be.commom.response.Result;
 import trendravel.photoravel_be.domain.location.dto.request.LocationKeywordDto;
@@ -31,7 +33,7 @@ public class LocationController {
             contentEncoding = MediaType.APPLICATION_JSON_VALUE)
     @PostMapping(value = "/private/location/create")
     public Api<LocationResponseDto> locationCreate(@RequestBody
-                                           LocationRequestDto locationRequestDto) {
+            @Valid LocationRequestDto locationRequestDto) {
 
         return Api.CREATED(locationService.createLocation(locationRequestDto));
     }
@@ -42,7 +44,8 @@ public class LocationController {
             consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
     public Api<LocationResponseDto> locationCreate(@RequestPart(value = "data")
-                                               LocationRequestDto locationRequestDto,
+            @Valid LocationRequestDto locationRequestDto,
+                                           @ImageSizeValid
                                            @RequestPart(value = "images", required = false)
                                                 List<MultipartFile> images) {
 
@@ -91,8 +94,9 @@ public class LocationController {
     @Schema(description = "장소 UPDATE 요청/응답 (이미지 미포함)",
             contentEncoding = MediaType.APPLICATION_JSON_VALUE)
     @PatchMapping(value = "/private/location/update")
-    public Api<LocationResponseDto> locationUpdate(@RequestBody
-                                                       LocationRequestDto locationRequestDto) {
+    public Api<LocationResponseDto> locationUpdate(
+            @Valid @RequestBody
+            LocationRequestDto locationRequestDto) {
 
         return Api.UPDATED(locationService.updateLocation(locationRequestDto));
     }
@@ -103,8 +107,10 @@ public class LocationController {
     @PatchMapping(value = "/private/location/update",
             consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public Api<LocationResponseDto> locationUpdate(@RequestPart(value = "data")
-                                                       LocationUpdateImagesDto locationRequestDto,
+    public Api<LocationResponseDto> locationUpdate(
+            @RequestPart(value = "data")
+            @Valid LocationUpdateImagesDto locationRequestDto,
+                                           @ImageSizeValid
                                            @RequestPart(value = "images", required = false)
                                                 List<MultipartFile> images) {
 
