@@ -10,6 +10,7 @@ import trendravel.photoravel_be.commom.error.ReviewErrorCode;
 import trendravel.photoravel_be.commom.error.SpotErrorCode;
 import trendravel.photoravel_be.commom.exception.ApiException;
 import trendravel.photoravel_be.commom.image.service.ImageService;
+import trendravel.photoravel_be.commom.image.service.ImageServiceFacade;
 import trendravel.photoravel_be.db.location.Location;
 import trendravel.photoravel_be.db.spot.Spot;
 import trendravel.photoravel_be.domain.review.dto.request.ReviewRequestDto;
@@ -30,7 +31,7 @@ public class ReviewService {
     private final ReviewRepository reviewRepository;
     private final SpotRepository spotRepository;
     private final LocationRepository locationRepository;
-    private final ImageService imageService;
+    private final ImageServiceFacade imageServiceFacade;
 
     @Transactional
     public ReviewResponseDto createReview(
@@ -62,14 +63,13 @@ public class ReviewService {
                 .spotReview(ReviewTypes.SPOT ==
                         reviewRequestDto.getReviewType()
                         ? spot : null)
-                .images(imageService.uploadImageFacade(images))
+                .images(imageServiceFacade.uploadImageFacade(images))
                 .build();
 
         review.setLocationReview(location);
         review.setSpotReview(spot);
         reviewRepository.save(review);
 
-        imageService.uploadImages(images);
         return ReviewResponseDto
                 .builder()
                 .ReviewId(review.getId())
@@ -177,7 +177,7 @@ public class ReviewService {
                 reviewRequestDto.getReviewId())
                 .orElseThrow(() -> new ApiException(ReviewErrorCode.REVIEW_NOT_FOUND));
 
-        review.updateReview(reviewRequestDto, imageService.updateImageFacade(images,
+        review.updateReview(reviewRequestDto, imageServiceFacade.updateImageFacade(images,
                 reviewRequestDto.getDeleteImages()));
 
         return ReviewResponseDto
@@ -219,7 +219,7 @@ public class ReviewService {
         Review findReview = reviewRepository.findById(id)
                 .orElseThrow(() -> new ApiException(ReviewErrorCode.REVIEW_NOT_FOUND));
         reviewRepository.deleteById(findReview.getId());
-        imageService.deleteAllImagesFacade(findReview.getImages());
+        imageServiceFacade.deleteAllImagesFacade(findReview.getImages());
     }
 
 }
