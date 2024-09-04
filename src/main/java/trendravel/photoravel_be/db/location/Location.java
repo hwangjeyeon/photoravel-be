@@ -2,7 +2,11 @@ package trendravel.photoravel_be.db.location;
 
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.*;
+import org.hibernate.validator.constraints.Length;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.GeometryFactory;
 import trendravel.photoravel_be.db.BaseEntity;
@@ -18,9 +22,12 @@ import java.util.List;
 @Entity
 @Getter
 @AllArgsConstructor
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Builder
-@Table(name = "LOCATION")
+@Table(name = "LOCATION", indexes = {
+        @Index(name = "idx__point", columnList = "point"),
+        @Index(name = "idx__point__name", columnList = "name")
+})
 public class Location extends BaseEntity {
 
     @Id
@@ -28,13 +35,22 @@ public class Location extends BaseEntity {
     @Column(name = "location_id")
     private Long id;
 
-
-    private double latitude;
-    private double longitude;
+    @NotNull(message = "필수 입력사항입니다.")
+    private Double latitude;
+    @NotNull(message = "필수 입력사항입니다.")
+    private Double longitude;
+    @Column(length = 50)
+    @NotBlank(message = "공백/null 입력은 미허용됩니다.")
+    @Length(max = 50, message = "최대 길이는 50글자입니다.")
     private String address;
 
     @Column(columnDefinition = "TEXT")
+    @NotBlank(message = "공백/null 입력은 미허용됩니다.")
     private String description;
+
+    @Column(length = 50)
+    @NotBlank(message = "공백/null 입력은 미허용됩니다.")
+    @Length(max = 50, message = "최대 길이는 50글자입니다.")
     private String name;
 
     @Column(columnDefinition = "POINT SRID 4326", nullable = false)
@@ -45,6 +61,7 @@ public class Location extends BaseEntity {
             name = "location_images",
             joinColumns = @JoinColumn(name = "location_id")
     )
+    @Size(max = 10, message = "한번에 들어올 수 있는 이미지는 10개입니다")
     private List<String> images = new ArrayList<>();
     private int views;
 
