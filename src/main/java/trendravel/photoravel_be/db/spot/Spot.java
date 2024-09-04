@@ -29,9 +29,11 @@ public class Spot extends BaseEntity {
     @Column(name = "spot_id")
     private Long id;
 
+
     @Column(length = 50)
     @NotBlank(message = "공백/null 입력은 미허용됩니다.")
     @Length(max = 50, message="최대 길이는 50자 입니다.")
+
     private String title;
 
     @Column(columnDefinition = "TEXT")
@@ -52,6 +54,7 @@ public class Spot extends BaseEntity {
     @Size(max = 10, message = "한번에 들어올 수 있는 이미지는 10개입니다")
     @Builder.Default
     private List<String> images = new ArrayList<>();
+
 
 
     //유저 엔티티 생성 후, 연관관계 필드 추가 필요

@@ -46,9 +46,11 @@ public class Review extends BaseEntity {
             name = "review_images",
             joinColumns = @JoinColumn(name = "review_id")
     )
+
     @Size(max = 10, message = "한번에 들어올 수 있는 이미지는 10개입니다")
     @Builder.Default
     private List<String> images = new ArrayList<>();
+
 
     // 회원, 가이드 관련 연관관계 필드 추가 필요
 
