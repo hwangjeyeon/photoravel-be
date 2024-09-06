@@ -33,16 +33,12 @@ public class Spot extends BaseEntity {
     @Column(length = 50)
     @NotBlank(message = "공백/null 입력은 미허용됩니다.")
     @Length(max = 50, message="최대 길이는 50자 입니다.")
-
     private String title;
 
     @Column(columnDefinition = "TEXT")
-    @NotBlank(message = "공백/null 입력은 미허용됩니다.")
     private String description;
 
-    @NotNull(message = "필수 입력사항입니다.")
     private Double latitude;
-    @NotNull(message = "필수 입력사항입니다.")
     private Double longitude;
     private int views;
 
@@ -51,7 +47,6 @@ public class Spot extends BaseEntity {
             name = "spot_image",
             joinColumns = @JoinColumn(name = "spot_id")
     )
-    @Size(max = 10, message = "한번에 들어올 수 있는 이미지는 10개입니다")
     @Builder.Default
     private List<String> images = new ArrayList<>();
 
@@ -67,10 +62,6 @@ public class Spot extends BaseEntity {
     @OneToMany(mappedBy = "spotReview", orphanRemoval = true)
     @Builder.Default
     private List<Review> reviews = new ArrayList<>();
-
-    public void createSpotImage(List<String> imageNames){
-        images.addAll(imageNames);
-    }
 
     //연관관계 편의 메소드
     public void setLocation(Location location){

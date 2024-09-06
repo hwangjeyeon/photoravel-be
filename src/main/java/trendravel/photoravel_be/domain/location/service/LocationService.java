@@ -2,6 +2,7 @@ package trendravel.photoravel_be.domain.location.service;
 
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.GeometryFactory;
@@ -10,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import trendravel.photoravel_be.commom.error.LocationErrorCode;
 import trendravel.photoravel_be.commom.exception.ApiException;
+import trendravel.photoravel_be.commom.image.service.ImageServiceFacade;
 import trendravel.photoravel_be.db.review.Review;
 import trendravel.photoravel_be.domain.location.dto.request.LocationKeywordDto;
 import trendravel.photoravel_be.domain.location.dto.request.LocationNowPositionDto;
@@ -21,7 +23,7 @@ import trendravel.photoravel_be.db.location.Location;
 import trendravel.photoravel_be.db.respository.location.LocationRepository;
 import trendravel.photoravel_be.domain.location.dto.response.LocationSingleReadResponseDto;
 import trendravel.photoravel_be.domain.review.dto.response.RecentReviewsDto;
-import trendravel.photoravel_be.commom.image.service.ImageService;
+
 
 import java.util.List;
 
@@ -32,17 +34,20 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class LocationService {
 
     private final LocationRepository locationRepository;
-    private final ImageService imageService;
+    private final ImageServiceFacade imageServiceFacade;
 
     @Transactional
     public LocationResponseDto createLocation(
             LocationRequestDto locationRequestDto, List<MultipartFile> images) {
+
         Location location = Location.builder()
                 .description(locationRequestDto.getDescription())
                 .name(locationRequestDto.getName())
+                .images(imageServiceFacade.uploadImageFacade(images))
                 .latitude(locationRequestDto.getLatitude())
                 .longitude(locationRequestDto.getLongitude())
                 .address(locationRequestDto.getAddress())
@@ -53,7 +58,6 @@ public class LocationService {
                 .build();
         location.getPoint().setSRID(4326);
         locationRepository.save(location);
-        location.createLocationImage(imageService.uploadImages(images));
 
 
         return LocationResponseDto
@@ -173,16 +177,16 @@ public class LocationService {
 
     @Transactional
     public LocationResponseDto updateLocation(
-            LocationUpdateImagesDto locationRequestDto, List<MultipartFile> images) {
+            LocationUpdateImagesDto locationRequestDto,
+            List<MultipartFile> images) {
 
         Location location = locationRepository.findById(
                 locationRequestDto.getLocationId())
                 .orElseThrow(() -> new ApiException(LocationErrorCode.LOCATION_NOT_FOUND));
-
-
+        log.info("이미지 저장 전");
         location.updateLocation(locationRequestDto,
-                imageService.updateImages(images, locationRequestDto.getDeleteImages()));
-
+                imageServiceFacade.updateImageFacade(images, locationRequestDto.getDeleteImages()));
+        log.info("이미지 저장 후");
 
         return LocationResponseDto
                 .builder()
@@ -227,9 +231,7 @@ public class LocationService {
         Location findLocation = locationRepository.findById(id)
                 .orElseThrow(() -> new ApiException(LocationErrorCode.LOCATION_NOT_FOUND));
         locationRepository.deleteById(findLocation.getId());
-        imageService.deleteAllImages(findLocation.getImages());
+        imageServiceFacade.deleteAllImagesFacade(findLocation.getImages());
     }
-
-
 
 }

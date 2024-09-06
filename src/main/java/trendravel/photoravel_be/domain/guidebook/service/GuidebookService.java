@@ -4,12 +4,13 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import trendravel.photoravel_be.commom.image.service.ImageService;
+import trendravel.photoravel_be.commom.image.service.ImageServiceFacade;
 import trendravel.photoravel_be.domain.guidebook.dto.request.GuidebookRequestDto;
 import trendravel.photoravel_be.domain.guidebook.dto.response.GuidebookResponseDto;
 import trendravel.photoravel_be.db.guidebook.Guidebook;
 import trendravel.photoravel_be.db.enums.Region;
 import trendravel.photoravel_be.db.respository.guidebook.GuidebookRepository;
-import trendravel.photoravel_be.commom.service.ImageService;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,7 +22,7 @@ import java.util.Optional;
 public class GuidebookService {
     
     private final GuidebookRepository guidebookRepository;
-    private final ImageService imageService;
+    private final ImageServiceFacade imageServiceFacade;
     
     @Transactional
     public GuidebookResponseDto createGuidebook(
@@ -33,11 +34,11 @@ public class GuidebookService {
                 .title(guidebookRequestDto.getTitle())
                 .content(guidebookRequestDto.getContent())
                 .region(guidebookRequestDto.getRegion())
-                .images(imageService.uploadImages(images))
+                .images(imageServiceFacade.uploadImageFacade(images))
                 .views(0)
                 .build());
-        
-        
+
+
         return GuidebookResponseDto.builder()
                 .id(guidebook.getId())
                 .userId(guidebook.getUserId())
@@ -137,8 +138,11 @@ public class GuidebookService {
         }
         
         Guidebook guidebook = guidebookOpt.get();
-        guidebook.updateGuidebook(guidebookRequestDto, imageService.uploadImages(images));
-        
+
+        /**
+         * 삭제 이미지 리스트 필요, 수정 필요.
+         */
+//        guidebook.updateGuidebook(guidebookRequestDto, imageService.updateImageFacade(images));
         return GuidebookResponseDto.builder()
                 .id(guidebook.getId())
                 .userId(guidebook.getUserId())

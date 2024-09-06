@@ -8,6 +8,7 @@ import trendravel.photoravel_be.commom.error.LocationErrorCode;
 import trendravel.photoravel_be.commom.error.SpotErrorCode;
 import trendravel.photoravel_be.commom.exception.ApiException;
 import trendravel.photoravel_be.commom.image.service.ImageService;
+import trendravel.photoravel_be.commom.image.service.ImageServiceFacade;
 import trendravel.photoravel_be.db.location.Location;
 import trendravel.photoravel_be.db.review.Review;
 import trendravel.photoravel_be.domain.review.dto.response.RecentReviewsDto;
@@ -32,7 +33,7 @@ public class SpotService {
 
     private final SpotRepository spotRepository;
     private final LocationRepository locationRepository;
-    private final ImageService imageService;
+    private final ImageServiceFacade imageServiceFacade;
 
     @Transactional
     public SpotResponseDto createSpot(
@@ -48,11 +49,11 @@ public class SpotService {
                 .title(spotRequestDto.getTitle())
                 .latitude(spotRequestDto.getLatitude())
                 .longitude(spotRequestDto.getLongitude())
-                .location(location)
+                .description(spotRequestDto.getDescription())
+                .images(imageServiceFacade.uploadImageFacade(images))
                 .build();
         spot.setLocation(location);
         spotRepository.save(spot);
-        spot.createSpotImage(imageService.uploadImages(images));
 
         return SpotResponseDto
                 .builder()
@@ -162,7 +163,7 @@ public class SpotService {
                 spotRequestDto.getSpotId())
                 .orElseThrow(() -> new ApiException(SpotErrorCode.SPOT_NOT_FOUND));
 
-        spot.updateSpot(spotRequestDto, imageService.updateImages(
+        spot.updateSpot(spotRequestDto, imageServiceFacade.updateImageFacade(
                 images, spotRequestDto.getDeleteImages()));
 
         return SpotResponseDto
@@ -205,7 +206,7 @@ public class SpotService {
         Spot findSpot = spotRepository.findById(id)
                 .orElseThrow(() -> new ApiException(SpotErrorCode.SPOT_NOT_FOUND));
         spotRepository.deleteById(findSpot.getId());
-        imageService.deleteAllImages(findSpot.getImages());
+        imageServiceFacade.deleteAllImagesFacade(findSpot.getImages());
     }
 
 

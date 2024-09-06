@@ -53,7 +53,7 @@ public class Guide extends BaseEntity {
         this.profileImg = images.get(0);
     }
     
-    @OneToMany(mappedBy = "guideReview")
+    @OneToMany(mappedBy = "guideReview", orphanRemoval = true)
     @Builder.Default
     private List<Review> reviews = new ArrayList<>();
     

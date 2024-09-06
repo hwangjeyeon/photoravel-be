@@ -2,10 +2,12 @@ package trendravel.photoravel_be.domain.spot.controller;
 
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import trendravel.photoravel_be.commom.image.valid.ImageSizeValid;
 import trendravel.photoravel_be.commom.response.Api;
 import trendravel.photoravel_be.commom.response.Result;
 import trendravel.photoravel_be.domain.spot.dto.request.SpotRequestDto;
@@ -24,13 +26,11 @@ public class SpotController {
 
     private final SpotService spotService;
 
-
-
     @Schema(description = "스팟 CREATE 요청/응답 (이미지 미포함)",
             contentEncoding = MediaType.APPLICATION_JSON_VALUE)
     @PostMapping(value = "/private/spot/create")
     public Api<SpotResponseDto> spotCreate(@RequestBody
-                                       SpotRequestDto spotRequestDto){
+            @Valid SpotRequestDto spotRequestDto){
 
         return Api.CREATED(spotService.createSpot(spotRequestDto));
     }
@@ -41,7 +41,8 @@ public class SpotController {
             consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
     public Api<SpotResponseDto> spotCreate(@RequestPart(value = "data")
-                                           SpotRequestDto spotRequestDto,
+            @Valid SpotRequestDto spotRequestDto,
+                                           @ImageSizeValid
                                            @RequestPart(value = "images", required = false)
                                            List<MultipartFile> images){
 
@@ -68,7 +69,7 @@ public class SpotController {
     @Schema(description = "스팟 UPDATE 요청/응답 (이미지 미포함)",
             contentEncoding = MediaType.APPLICATION_JSON_VALUE)
     @PatchMapping(value = "/private/spot/update")
-    public Api<SpotResponseDto> spotUpdate(@RequestBody
+    public Api<SpotResponseDto> spotUpdate(@RequestBody @Valid
                                        SpotRequestDto spotRequestDto) {
 
         return Api.UPDATED(spotService.updateSpot(spotRequestDto));
@@ -80,7 +81,8 @@ public class SpotController {
             consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
     public Api<SpotResponseDto> spotUpdate(@RequestPart(value = "data")
-                                               SpotUpdatedImagesDto spotRequestDto,
+            @Valid SpotUpdatedImagesDto spotRequestDto,
+                                           @ImageSizeValid
                                            @RequestPart(value = "images", required = false)
                                            List<MultipartFile> images) {
 
