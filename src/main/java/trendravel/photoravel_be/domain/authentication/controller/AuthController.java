@@ -3,6 +3,8 @@ package trendravel.photoravel_be.domain.authentication.controller;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import trendravel.photoravel_be.commom.response.Api;
@@ -21,7 +23,7 @@ public class AuthController {
     private final RedisTemplate<String, Token> redisTemplate;
 
     @PostMapping("/refresh-token")
-    public Api<?> refreshAccessToken(
+    public ResponseEntity<Api<Object>> refreshAccessToken(
             @RequestBody RefreshTokenRequest request
     ) {
 
@@ -29,16 +31,19 @@ public class AuthController {
 
         Token storedRefreshToken = (Token) redisTemplate.opsForHash().get("refresh_token", memberId);
 
-        log.info("stored refresh token: {}", storedRefreshToken.equals(request.getRefreshToken()));
+        log.info("stored refresh token: {}", storedRefreshToken.getRefreshToken());
 
         // 레디스에 리프레쉬 토큰이 저장되어 있는지 && 요청으로 보낸 토큰과 레디스에 저장된 토큰이 일치하는지
         if (storedRefreshToken != null && request.getRefreshToken().equals(storedRefreshToken.getRefreshToken())) {
             // 정상적인 경우 액세스 토큰 재발급
-            TokenDto accessToken = tokenService.issueAccessTokenForMemberId(memberId);
-            return Api.CREATED(accessToken);
+            TokenDto accessToken = tokenService.issueAccessToken(memberId);
+            return ResponseEntity.ok(Api.OK(accessToken));
         } else {
+            // http status code를 명확히 하기 위해 ResponseEntity 사용
+            return ResponseEntity
+                    .status(HttpStatus.BAD_REQUEST)
+                    .body(Api.ERROR(400, "Invalid refresh token"));
             // 정상적이지 않은 경우 bad request
-            return Api.ERROR(400, "Invalid refresh token");
         }
     }
 
@@ -55,6 +60,6 @@ public class AuthController {
         // 저장된 컨텍스트 안의 principal 삭제
         SecurityContextHolder.clearContext();
 
-        return Api.DELETE("로그아웃되었습니다.");
+        return Api.OK("로그아웃되었습니다.");
     }
 }
