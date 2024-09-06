@@ -47,20 +47,27 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         String token = getToken(request);
 
+        // Authorization 헤더에 토큰이 있는지 확인
         if(StringUtils.hasText(token)){
-            String memberId = tokenService.validationTokenWithMemberId(token);
-            Token storedRefreshToken = (Token) redisTemplate.opsForHash().get("refresh_token", memberId);
+            String tokenMemberId = tokenService.validationTokenWithMemberId(token);
+            Token storedRefreshToken = (Token) redisTemplate.opsForHash().get("refresh_token", tokenMemberId);
 
+            // redis 에 저장된 refresh token이 있는지 확인
             if (storedRefreshToken != null) {
                 String storedMemberId = tokenService.validationTokenWithMemberId(storedRefreshToken.getRefreshToken());
-                if (memberId.equals(storedMemberId)) {
-                    UserSession userSession = (UserSession) userDetailsService.loadUserByUsername(memberId);
+
+                // refresh token payload의 memberId와 redis token의 memberId를 비교
+                if (tokenMemberId.equals(storedMemberId)) {
+                    UserSession userSession = (UserSession) userDetailsService.loadUserByUsername(tokenMemberId);
+
                     log.info("user session : {}", userSession.getUsername());
+
+                    // 인증 정보 생성 후
+                    // 인증 정보를 SecurityContextHolder 에 저장
                     UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(userSession, null, userSession.getAuthorities());
-                    // 인증 정보 생성
                     usernamePasswordAuthenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-                    //인증 정보를 SecurityContextHolder 에 저장
                     SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
+
                     filterChain.doFilter(request, response);
                 } else {
                     throw new JwtException(TokenErrorCode.INVALID_TOKEN);
