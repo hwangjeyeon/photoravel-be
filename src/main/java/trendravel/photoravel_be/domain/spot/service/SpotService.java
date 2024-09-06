@@ -1,10 +1,9 @@
 package trendravel.photoravel_be.domain.spot.service;
 
-import jakarta.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-import trendravel.photoravel_be.commom.error.ErrorCode;
 import trendravel.photoravel_be.commom.error.LocationErrorCode;
 import trendravel.photoravel_be.commom.error.SpotErrorCode;
 import trendravel.photoravel_be.commom.exception.ApiException;
@@ -35,6 +34,7 @@ public class SpotService {
     private final LocationRepository locationRepository;
     private final ImageService imageService;
 
+    @Transactional
     public SpotResponseDto createSpot(
             SpotRequestDto spotRequestDto, List<MultipartFile> images) {
 
@@ -48,11 +48,12 @@ public class SpotService {
                 .title(spotRequestDto.getTitle())
                 .latitude(spotRequestDto.getLatitude())
                 .longitude(spotRequestDto.getLongitude())
-                .images(imageService.uploadImages(images))
                 .location(location)
                 .build();
         spot.setLocation(location);
         spotRepository.save(spot);
+        spot.createSpotImage(imageService.uploadImageFacade(images));
+        imageService.uploadImages(images);
 
         return SpotResponseDto
                 .builder()
@@ -67,6 +68,7 @@ public class SpotService {
                 .build();
     }
 
+    @Transactional
     public SpotResponseDto createSpot(
             SpotRequestDto spotRequestDto) {
         Location location = locationRepository.findById(spotRequestDto.
@@ -97,16 +99,16 @@ public class SpotService {
     }
 
 
-    @Transactional
+    @Transactional(readOnly = true)
     public SpotSingleReadResponseDto readSingleSpot(Long locationId, Long spotId) {
         List<Spot> spots = locationRepository.findById(locationId)
                 .map(Location::getSpot)
                 .orElseThrow(() -> new ApiException(LocationErrorCode.LOCATION_NOT_FOUND));
 
-
         Spot spot = spots.stream().
                 filter(s -> s.getId().equals(spotId)).findFirst()
                 .orElseThrow(() -> new ApiException(SpotErrorCode.SPOT_NOT_FOUND));
+        spot.increaseViews();
 
         List<RecentReviewsDto> reviews = spotRepository.recentReviews(spot.getId());
 
@@ -120,12 +122,14 @@ public class SpotService {
                 .latitude(spot.getLatitude())
                 .longitude(spot.getLongitude())
                 .images(spot.getImages())
-                .ratingAvg(String.format("%.2f", ratingAverage(spot.getReviews())))
+                .ratingAvg(Double.parseDouble
+                        (String.format("%.2f", ratingAverage(spot.getReviews()))))
                 .recentReviewDtos(reviews)
+                .reviewCounts(spot.getReviews().size() < 100 ? spot.getReviews().size(): 99)
                 .build();
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public List<SpotMultiReadResponseDto> readMultiSpot(Long locationId) {
         List<Spot> spots = locationRepository.findById(locationId)
                 .map(Location::getSpot)
@@ -159,7 +163,7 @@ public class SpotService {
                 spotRequestDto.getSpotId())
                 .orElseThrow(() -> new ApiException(SpotErrorCode.SPOT_NOT_FOUND));
 
-        spot.updateSpot(spotRequestDto, imageService.updateImages(
+        spot.updateSpot(spotRequestDto, imageService.updateImageFacade(
                 images, spotRequestDto.getDeleteImages()));
 
         return SpotResponseDto
@@ -202,7 +206,7 @@ public class SpotService {
         Spot findSpot = spotRepository.findById(id)
                 .orElseThrow(() -> new ApiException(SpotErrorCode.SPOT_NOT_FOUND));
         spotRepository.deleteById(findSpot.getId());
-        imageService.deleteAllImages(findSpot.getImages());
+        imageService.deleteAllImagesFacade(findSpot.getImages());
     }
 
 

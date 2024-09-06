@@ -33,7 +33,10 @@ public class SpotSingleReadResponseDto {
     private int views;
 
     @Schema(description = "단일 스팟의 모든 리뷰 평균 평점")
-    private String ratingAvg;
+    private Double ratingAvg;
+
+    @Schema(description = "장소 리뷰 수")
+    private Integer reviewCounts;
 
     //유저 객체 추가 필요
 

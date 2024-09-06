@@ -57,8 +57,8 @@ public class GlobalExHandler {
                 .collect(Collectors.toCollection(ArrayList::new));
 
         return ResponseEntity
-                .status(500)
-                .body(Api.ERROR(500,
+                .status(400)
+                .body(Api.ERROR(400,
                         errors.stream().toList().toString()));
     }
 

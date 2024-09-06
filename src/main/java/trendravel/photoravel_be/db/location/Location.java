@@ -62,6 +62,7 @@ public class Location extends BaseEntity {
             joinColumns = @JoinColumn(name = "location_id")
     )
     @Size(max = 10, message = "한번에 들어올 수 있는 이미지는 10개입니다")
+    @Builder.Default
     private List<String> images = new ArrayList<>();
     private int views;
 
@@ -76,6 +77,11 @@ public class Location extends BaseEntity {
     @Builder.Default
     private List<Review> review = new ArrayList<>();
 
+    public void createLocationImage(List<String> imageNames){
+        images.addAll(imageNames);
+    }
+
+
     public void updateLocation(LocationUpdateImagesDto location, List<String> newImages){
         this.longitude = location.getLongitude();
         this.latitude = location.getLatitude();
@@ -85,9 +91,7 @@ public class Location extends BaseEntity {
         this.point = new GeometryFactory()
                 .createPoint(new Coordinate(latitude, longitude));
         this.point.setSRID(4326);
-        for (String deleteImage : location.getDeleteImages()) {
-            this.images.remove(deleteImage);
-        }
+        this.images.removeAll(location.getDeleteImages());
         this.images.addAll(newImages);
     }
 

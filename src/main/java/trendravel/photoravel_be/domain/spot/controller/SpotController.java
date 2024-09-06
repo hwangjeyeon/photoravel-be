@@ -28,7 +28,7 @@ public class SpotController {
 
     @Schema(description = "스팟 CREATE 요청/응답 (이미지 미포함)",
             contentEncoding = MediaType.APPLICATION_JSON_VALUE)
-    @PostMapping(value = "/spot/create")
+    @PostMapping(value = "/private/spot/create")
     public Api<SpotResponseDto> spotCreate(@RequestBody
                                        SpotRequestDto spotRequestDto){
 
@@ -37,7 +37,7 @@ public class SpotController {
 
     @Schema(description = "스팟 CREATE 요청/응답 (이미지 포함)",
             contentEncoding = MediaType.MULTIPART_FORM_DATA_VALUE)
-    @PostMapping(value = "/spot/create",
+    @PostMapping(value = "/private/spot/create",
             consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
     public Api<SpotResponseDto> spotCreate(@RequestPart(value = "data")
@@ -67,7 +67,7 @@ public class SpotController {
 
     @Schema(description = "스팟 UPDATE 요청/응답 (이미지 미포함)",
             contentEncoding = MediaType.APPLICATION_JSON_VALUE)
-    @PatchMapping(value = "/spot/update")
+    @PatchMapping(value = "/private/spot/update")
     public Api<SpotResponseDto> spotUpdate(@RequestBody
                                        SpotRequestDto spotRequestDto) {
 
@@ -76,7 +76,7 @@ public class SpotController {
 
     @Schema(description = "스팟 UPDATE 요청/응답 (이미지 포함)",
             contentEncoding = MediaType.MULTIPART_FORM_DATA_VALUE)
-    @PatchMapping(value = "/spot/update",
+    @PatchMapping(value = "/private/spot/update",
             consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
     public Api<SpotResponseDto> spotUpdate(@RequestPart(value = "data")
@@ -88,7 +88,7 @@ public class SpotController {
     }
 
     @Schema(description = "스팟 DELETE 요청")
-    @DeleteMapping("/spot/{spotId}/delete")
+    @DeleteMapping("/private/spot/{spotId}/delete")
     public Result spotDelete(@PathVariable("spotId") Long spotId) {
         spotService.deleteSpot(spotId);
 
