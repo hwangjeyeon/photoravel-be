@@ -12,6 +12,7 @@ import trendravel.photoravel_be.commom.error.ReviewErrorCode;
 import trendravel.photoravel_be.commom.error.SpotErrorCode;
 import trendravel.photoravel_be.commom.exception.ApiException;
 import trendravel.photoravel_be.commom.image.service.ImageService;
+import trendravel.photoravel_be.commom.image.service.ImageServiceFacade;
 import trendravel.photoravel_be.db.location.Location;
 import trendravel.photoravel_be.db.respository.location.LocationRepository;
 import trendravel.photoravel_be.db.respository.review.ReviewRepository;
@@ -44,7 +45,7 @@ class ReviewServiceTest {
     ReviewService reviewService;
 
     @MockBean
-    ImageService imageService;
+    ImageServiceFacade imageService;
 
     ReviewRequestDto locationReviewRequestDto = new ReviewRequestDto();
     ReviewRequestDto spotReviewRequestDto = new ReviewRequestDto();

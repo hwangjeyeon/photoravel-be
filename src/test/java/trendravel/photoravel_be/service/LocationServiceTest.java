@@ -10,7 +10,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import trendravel.photoravel_be.commom.error.LocationErrorCode;
 import trendravel.photoravel_be.commom.exception.ApiException;
-import trendravel.photoravel_be.commom.image.service.ImageService;
+import trendravel.photoravel_be.commom.image.service.ImageServiceFacade;
 import trendravel.photoravel_be.db.location.Location;
 import trendravel.photoravel_be.db.respository.review.ReviewRepository;
 import trendravel.photoravel_be.db.review.Review;
@@ -44,7 +44,7 @@ class LocationServiceTest {
     @MockBean
     LocationService locationService;
     @MockBean
-    ImageService imageService;
+    ImageServiceFacade imageService;
 
     LocationRequestDto locationRequestDto;
     Location location;
