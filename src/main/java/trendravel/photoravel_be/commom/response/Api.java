@@ -62,8 +62,15 @@ public class Api<T> {
         return response;
     }
 
-    // validation용 ERROR
+
     public static Api<Object> ERROR(Integer errorCode, String errorDescription) {
+        Api<Object> response = new Api<>();
+        response.result = Result.ERROR(errorCode, errorDescription);
+        return response;
+    }
+
+
+    public static Api<Object> NOT_VALID(Integer errorCode, String errorDescription) {
         Api<Object> response = new Api<>();
         response.result = Result.ERROR(errorCode, errorDescription);
         return response;

@@ -20,7 +20,10 @@ public enum ErrorCode implements ErrorCodeIfs{
     UNAUTHORIZED_ERROR(HttpStatus.UNAUTHORIZED.value(), "인증 안 됨"),
     IMAGES_NOT_FOUND(404, "이미지 없음"),
     IMAGES_UPLOAD_ERROR(500, "이미지 저장소 업로드 실패"),
-    ENUM_TYPE_NOT_READABLE(400, "잘못된 ENUM 타입 전달, [LOCATION, SPOT, GUIDE] 중 하나로 보낼 것");
+    HTTP_INPUT_NOT_READABLE(400, "잘못된 HTTP 입력 요청"),
+    ENUM_TYPE_NOT_READABLE(400, "잘못된 ENUM 타입 전달, [LOCATION, SPOT, GUIDE] 중 하나로 보낼 것"),
+    INPUT_FORMAT_ERROR(400, "잘못된 타입의 입력 요청"),
+    IMAGE_SIZE_EXCEED_ERROR(400, "요청 이미지 최대 용량 초과");
 
     private final Integer httpStatusCode;   // 클라이언트에 보여줄 status code
     private final String errorDescription;  // 에러 설명

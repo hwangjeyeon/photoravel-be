@@ -4,8 +4,8 @@ package trendravel.photoravel_be.db.review;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.*;
-import org.hibernate.validator.constraints.Length;
 import trendravel.photoravel_be.db.BaseEntity;
+import trendravel.photoravel_be.db.guide.Guide;
 import trendravel.photoravel_be.db.location.Location;
 import trendravel.photoravel_be.db.spot.Spot;
 import trendravel.photoravel_be.domain.review.dto.request.ReviewRequestDto;
@@ -32,12 +32,8 @@ public class Review extends BaseEntity {
     private ReviewTypes reviewType;
 
     @Column(length = 500)
-    @NotBlank(message = "공백/null 입력은 미허용됩니다.")
-    @Length(max = 500, message = "최대 길이는 500자 입니다.")
     private String content;
 
-    @DecimalMax(value = "5.0", message = "최대 허용 별점은 5.0입니다.")
-    @DecimalMin(value = "1.0", message = "최소 허용 별점은 1.0입니다.")
     @NotNull(message = "필수 입력사항입니다.")
     private Double rating;
 
@@ -46,7 +42,6 @@ public class Review extends BaseEntity {
             name = "review_images",
             joinColumns = @JoinColumn(name = "review_id")
     )
-    @Size(max = 10, message = "한번에 들어올 수 있는 이미지는 10개입니다")
     @Builder.Default
     private List<String> images = new ArrayList<>();
 
@@ -61,10 +56,10 @@ public class Review extends BaseEntity {
     @JoinColumn(name = "spot_id")
     private Spot spotReview;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "guide_id")
+    private Guide guideReview;
 
-    public void createReviewImage(List<String> imageNames){
-        images.addAll(imageNames);
-    }
 
 
     //연관관계 편의 메소드
