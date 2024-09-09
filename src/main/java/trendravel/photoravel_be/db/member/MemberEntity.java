@@ -8,7 +8,7 @@ import trendravel.photoravel_be.db.BaseEntity;
 @Table(name = "member")
 @Getter
 @Setter
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Builder
 public class MemberEntity extends BaseEntity {
