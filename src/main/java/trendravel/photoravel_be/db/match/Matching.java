@@ -30,5 +30,8 @@ public class Matching {
 
     private String photographerId;
     
+    public void updateStatus(MatchingStatus status) {
+        this.status = status;
+    }
     
 }
