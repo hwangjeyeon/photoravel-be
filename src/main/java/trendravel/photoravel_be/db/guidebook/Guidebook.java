@@ -6,6 +6,8 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import trendravel.photoravel_be.db.BaseEntity;
 import trendravel.photoravel_be.domain.guidebook.dto.request.GuidebookRequestDto;
 import trendravel.photoravel_be.db.enums.Region;
+import trendravel.photoravel_be.domain.guidebook.dto.request.GuidebookUpdateDto;
+import trendravel.photoravel_be.domain.guidebook.dto.request.GuidebookUpdateImageDto;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -48,17 +50,21 @@ public class Guidebook extends BaseEntity {
     
     private int views;
     
-    public void updateGuidebook(GuidebookRequestDto guidebookRequestDto, List<String> images) {
-        this.title = guidebookRequestDto.getTitle();
-        this.content = guidebookRequestDto.getContent();
-        this.region = guidebookRequestDto.getRegion();
-        this.images = images;
+    public void updateGuidebook(GuidebookUpdateImageDto guidebookUpdateImageDto, List<String> newImages) {
+        this.title = guidebookUpdateImageDto.getTitle();
+        this.content = guidebookUpdateImageDto.getContent();
+        this.region = guidebookUpdateImageDto.getRegion();
+        
+        for (String deleteImage : guidebookUpdateImageDto.getDeleteImages()) {
+            this.images.remove(deleteImage);
+        }
+        this.images.addAll(newImages);
     }
     
-    public void updateGuidebook(GuidebookRequestDto guidebookRequestDto) {
-        this.title = guidebookRequestDto.getTitle();
-        this.content = guidebookRequestDto.getContent();
-        this.region = guidebookRequestDto.getRegion();
+    public void updateGuidebook(GuidebookUpdateDto guidebookUpdateDto) {
+        this.title = guidebookUpdateDto.getTitle();
+        this.content = guidebookUpdateDto.getContent();
+        this.region = guidebookUpdateDto.getRegion();
     }
     
     public void increaseView() {

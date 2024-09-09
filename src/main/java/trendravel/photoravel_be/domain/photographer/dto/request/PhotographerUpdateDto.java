@@ -1,4 +1,4 @@
-package trendravel.photoravel_be.domain.guide.dto.request;
+package trendravel.photoravel_be.domain.photographer.dto.request;
 
 
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -6,14 +6,12 @@ import lombok.Data;
 import org.springframework.http.MediaType;
 import trendravel.photoravel_be.db.enums.Region;
 
-@Schema(description = "가이드 생성 조회 수정 요청 DTO",
+@Schema(description = "사진작가 수정 요청 DTO",
         contentEncoding = MediaType.APPLICATION_JSON_VALUE)
 @Data
-public class GuideRequestDto {
+public class PhotographerUpdateDto {
     
-    @Schema(description = "가이드 ID")
-    private Long id;
-    @Schema(description = "가이드 계정 ID")
+    @Schema(description = "사진작가 계정 ID")
     private String accountId;
     @Schema(description = "비밀번호")
     private String password;
@@ -23,7 +21,5 @@ public class GuideRequestDto {
     private Region region;
     @Schema(description = "설명")
     private String description;
-    @Schema(description = "프로필 이미지")
-    private String profileImg;
     
 }

@@ -6,11 +6,10 @@ import trendravel.photoravel_be.db.guidebook.Guidebook;
 import trendravel.photoravel_be.db.enums.Region;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface GuidebookRepository extends JpaRepository<Guidebook, Long> {
-    
-    List<Guidebook> findByTitleContaining(String title);
     
     List<Guidebook> findByRegion(Region region);
 
