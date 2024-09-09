@@ -1,15 +1,16 @@
 package trendravel.photoravel_be.domain.review.service;
 
-import jakarta.transaction.Transactional;
+
 import lombok.RequiredArgsConstructor;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-import trendravel.photoravel_be.commom.error.ErrorCode;
 import trendravel.photoravel_be.commom.error.LocationErrorCode;
 import trendravel.photoravel_be.commom.error.ReviewErrorCode;
 import trendravel.photoravel_be.commom.error.SpotErrorCode;
 import trendravel.photoravel_be.commom.exception.ApiException;
 import trendravel.photoravel_be.commom.image.service.ImageService;
+import trendravel.photoravel_be.commom.image.service.ImageServiceFacade;
 import trendravel.photoravel_be.db.location.Location;
 import trendravel.photoravel_be.db.spot.Spot;
 import trendravel.photoravel_be.domain.review.dto.request.ReviewRequestDto;
@@ -30,8 +31,9 @@ public class ReviewService {
     private final ReviewRepository reviewRepository;
     private final SpotRepository spotRepository;
     private final LocationRepository locationRepository;
-    private final ImageService imageService;
+    private final ImageServiceFacade imageServiceFacade;
 
+    @Transactional
     public ReviewResponseDto createReview(
             ReviewRequestDto reviewRequestDto, List<MultipartFile> images) {
 
@@ -51,9 +53,8 @@ public class ReviewService {
                     .orElseThrow(() -> new ApiException(SpotErrorCode.SPOT_NOT_FOUND));
         }
 
-        Review review = reviewRepository.save(Review.builder()
+        Review review = Review.builder()
                 .reviewType(reviewRequestDto.getReviewType())
-                .images(imageService.uploadImages(images))
                 .content(reviewRequestDto.getContent())
                 .rating(reviewRequestDto.getRating())
                 .locationReview(ReviewTypes.LOCATION ==
@@ -62,10 +63,12 @@ public class ReviewService {
                 .spotReview(ReviewTypes.SPOT ==
                         reviewRequestDto.getReviewType()
                         ? spot : null)
-                .build());
+                .images(imageServiceFacade.uploadImageFacade(images))
+                .build();
 
         review.setLocationReview(location);
         review.setSpotReview(spot);
+        reviewRepository.save(review);
 
         return ReviewResponseDto
                 .builder()
@@ -79,6 +82,7 @@ public class ReviewService {
                 .build();
     }
 
+    @Transactional
     public ReviewResponseDto createReview(
             ReviewRequestDto reviewRequestDto) {
 
@@ -96,7 +100,7 @@ public class ReviewService {
         }
 
 
-        Review review = reviewRepository.save(Review.builder()
+        Review review = Review.builder()
                 .reviewType(reviewRequestDto.getReviewType())
                 .content(reviewRequestDto.getContent())
                 .rating(reviewRequestDto.getRating())
@@ -106,7 +110,7 @@ public class ReviewService {
                 .spotReview(ReviewTypes.SPOT ==
                         reviewRequestDto.getReviewType()
                         ? spot : null)
-                .build());
+                .build();
 
 
         /**
@@ -118,7 +122,7 @@ public class ReviewService {
             review.setLocationReview(location);
         }
 
-
+        reviewRepository.save(review);
 
 
         return ReviewResponseDto
@@ -132,7 +136,7 @@ public class ReviewService {
                 .build();
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public List<ReviewResponseDto> readAllLocationReview(Long locationId){
         List<Review> reviews = locationRepository.findById(locationId)
                 .map(Location::getReview)
@@ -145,7 +149,7 @@ public class ReviewService {
                 .toList();
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public List<ReviewResponseDto> readAllSpotReview(Long locationId, Long spotId){
         List<Spot> spots = locationRepository.findById(locationId)
                 .map(Location::getSpot)
@@ -173,7 +177,7 @@ public class ReviewService {
                 reviewRequestDto.getReviewId())
                 .orElseThrow(() -> new ApiException(ReviewErrorCode.REVIEW_NOT_FOUND));
 
-        review.updateReview(reviewRequestDto, imageService.updateImages(images,
+        review.updateReview(reviewRequestDto, imageServiceFacade.updateImageFacade(images,
                 reviewRequestDto.getDeleteImages()));
 
         return ReviewResponseDto
@@ -215,7 +219,7 @@ public class ReviewService {
         Review findReview = reviewRepository.findById(id)
                 .orElseThrow(() -> new ApiException(ReviewErrorCode.REVIEW_NOT_FOUND));
         reviewRepository.deleteById(findReview.getId());
-        imageService.deleteAllImages(findReview.getImages());
+        imageServiceFacade.deleteAllImagesFacade(findReview.getImages());
     }
 
 }

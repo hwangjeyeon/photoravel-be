@@ -2,7 +2,11 @@ package trendravel.photoravel_be.db.location;
 
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.*;
+import org.hibernate.validator.constraints.Length;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.GeometryFactory;
 import trendravel.photoravel_be.db.BaseEntity;
@@ -18,9 +22,12 @@ import java.util.List;
 @Entity
 @Getter
 @AllArgsConstructor
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Builder
-@Table(name = "LOCATION")
+@Table(name = "LOCATION", indexes = {
+        @Index(name = "idx__point", columnList = "point"),
+        @Index(name = "idx__point__name", columnList = "name")
+})
 public class Location extends BaseEntity {
 
     @Id
@@ -28,13 +35,15 @@ public class Location extends BaseEntity {
     @Column(name = "location_id")
     private Long id;
 
-
-    private double latitude;
-    private double longitude;
+    private Double latitude;
+    private Double longitude;
+    @Column(length = 50)
     private String address;
 
     @Column(columnDefinition = "TEXT")
     private String description;
+
+    @Column(length = 50)
     private String name;
 
     @Column(columnDefinition = "POINT SRID 4326", nullable = false)
@@ -45,6 +54,7 @@ public class Location extends BaseEntity {
             name = "location_images",
             joinColumns = @JoinColumn(name = "location_id")
     )
+    @Builder.Default
     private List<String> images = new ArrayList<>();
     private int views;
 
@@ -59,6 +69,7 @@ public class Location extends BaseEntity {
     @Builder.Default
     private List<Review> review = new ArrayList<>();
 
+
     public void updateLocation(LocationUpdateImagesDto location, List<String> newImages){
         this.longitude = location.getLongitude();
         this.latitude = location.getLatitude();
@@ -68,9 +79,7 @@ public class Location extends BaseEntity {
         this.point = new GeometryFactory()
                 .createPoint(new Coordinate(latitude, longitude));
         this.point.setSRID(4326);
-        for (String deleteImage : location.getDeleteImages()) {
-            this.images.remove(deleteImage);
-        }
+        this.images.removeAll(location.getDeleteImages());
         this.images.addAll(newImages);
     }
 

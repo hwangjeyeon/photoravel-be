@@ -34,12 +34,12 @@ public class LocationMultiReadResponseDto {
     @Schema(description = "장소별 조회수")
     private int views;
     @Schema(description = "장소 리뷰 평균 평점")
-    private String ratingAvg;
+    private Double ratingAvg;
+    @Schema(description = "장소 리뷰 수")
+    private Integer reviewCounts;
 
     //유저 객체 추가 필요
 
-    // 프론트엔드측과 의논 후 추가 여부 결정
-    // private List<RecentReviewsDto> recentReviewDtos;
 
     @Schema(description = "장소 생성일")
     private LocalDateTime createAt;

@@ -2,10 +2,12 @@ package trendravel.photoravel_be.domain.review.controller;
 
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import trendravel.photoravel_be.commom.image.valid.ImageSizeValid;
 import trendravel.photoravel_be.commom.response.Api;
 import trendravel.photoravel_be.commom.response.Result;
 import trendravel.photoravel_be.domain.review.dto.request.ReviewRequestDto;
@@ -25,8 +27,8 @@ public class ReviewController {
 
     @Schema(description = "리뷰 CREATE 요청/응답 (이미지 미포함)",
             contentEncoding = MediaType.APPLICATION_JSON_VALUE)
-    @PostMapping(value = "/review/create")
-    public Api<ReviewResponseDto> createReview(@RequestBody
+    @PostMapping(value = "/private/review/create")
+    public Api<ReviewResponseDto> createReview(@RequestBody @Valid
                                                    ReviewRequestDto reviewRequestDto){
 
         return Api.CREATED(reviewService.createReview(reviewRequestDto));
@@ -34,11 +36,12 @@ public class ReviewController {
 
     @Schema(description = "리뷰 CREATE 요청/응답 (이미지 포함)",
             contentEncoding = MediaType.MULTIPART_FORM_DATA_VALUE)
-    @PostMapping(value = "/review/create",
+    @PostMapping(value = "/private/review/create",
             consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public Api<ReviewResponseDto> createReview(@RequestPart(value = "data")
+    public Api<ReviewResponseDto> createReview(@RequestPart(value = "data") @Valid
                                              ReviewRequestDto reviewRequestDto,
+                                         @ImageSizeValid
                                          @RequestPart(value = "images", required = false)
                                             List<MultipartFile> images){
 
@@ -64,8 +67,8 @@ public class ReviewController {
 
     @Schema(description = "리뷰 UPDATE 요청 (이미지 미포함)",
             contentEncoding = MediaType.APPLICATION_JSON_VALUE)
-    @PatchMapping(value = "/review/update")
-    public Api<ReviewResponseDto> updateReview(@RequestBody
+    @PatchMapping(value = "/private/review/update")
+    public Api<ReviewResponseDto> updateReview(@RequestBody @Valid
                                                ReviewRequestDto reviewRequestDto){
 
         return Api.UPDATED(reviewService.updateReview(reviewRequestDto));
@@ -73,11 +76,12 @@ public class ReviewController {
 
     @Schema(description = "리뷰 UPDATE 요청 (이미지 포함)",
             contentEncoding = MediaType.MULTIPART_FORM_DATA_VALUE)
-    @PatchMapping(value = "/review/update",
+    @PatchMapping(value = "/private/review/update",
             consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public Api<ReviewResponseDto> updateReview(@RequestPart(value = "data")
+    public Api<ReviewResponseDto> updateReview(@RequestPart(value = "data") @Valid
                                                    ReviewUpdateImagesDto reviewRequestDto,
+                                         @ImageSizeValid
                                          @RequestPart(value = "images", required = false)
                                             List<MultipartFile> images){
 
@@ -85,7 +89,7 @@ public class ReviewController {
     }
 
     @Schema(description = "리뷰 DELETE 요청")
-    @DeleteMapping(value ="/review/{reviewId}/delete")
+    @DeleteMapping(value ="/private/review/{reviewId}/delete")
     public Result locationDelete(@PathVariable("reviewId") Long reviewId) {
         reviewService.deleteReview(reviewId);
 
