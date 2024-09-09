@@ -90,7 +90,6 @@ public class GuidebookService {
         /*
         region이 all로 들어오면 모든 가이드북 반환
         region이 지역으로 들어오면 해당 지역으로 검색
-        
         키워드 기반 가이드북은 프론트 측과 상의하여 잠시 보류
          */
         
@@ -104,6 +103,7 @@ public class GuidebookService {
             throw new ApiException(GuidebookErrorCode.GUIDEBOOK_NOT_FOUND);
         }
         
+
         return guidebooks.stream()
                 .map(guidebook -> GuidebookListResponseDto.builder()
                         .id(guidebook.getId())
@@ -148,6 +148,7 @@ public class GuidebookService {
                 () -> new ApiException(GuidebookErrorCode.GUIDEBOOK_NOT_FOUND));
         
         
+
         guidebook.updateGuidebook(guidebookUpdateImageDto,
                 imageService.updateImages(images, guidebookUpdateImageDto.getDeleteImages()));
         
@@ -170,6 +171,7 @@ public class GuidebookService {
         Guidebook guidebook = guidebookRepository.findById(guidebookUpdateDto.getId()).orElseThrow(
                 () -> new ApiException(GuidebookErrorCode.GUIDEBOOK_NOT_FOUND));
         
+
         guidebook.updateGuidebook(guidebookUpdateDto);
         
         return GuidebookResponseDto.builder()

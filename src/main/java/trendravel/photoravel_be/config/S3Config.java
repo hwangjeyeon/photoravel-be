@@ -1,15 +1,14 @@
 package trendravel.photoravel_be.config;
 
 
-import com.amazonaws.auth.AWSCredentials;
-import com.amazonaws.auth.AWSStaticCredentialsProvider;
-import com.amazonaws.auth.BasicAWSCredentials;
-import com.amazonaws.client.builder.AwsClientBuilder;
-import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import software.amazon.awssdk.auth.credentials.*;
+import software.amazon.awssdk.regions.Region;
+import software.amazon.awssdk.services.s3.S3Client;
+
+import java.net.URI;
 
 @Configuration
 public class S3Config {
@@ -34,21 +33,26 @@ public class S3Config {
 
 
     @Bean
-    public AmazonS3 amazonS3(){
-        AWSCredentials awsCredentials = new BasicAWSCredentials(accessKey, accessSecret);
-        return AmazonS3ClientBuilder
-                .standard()
-                .withRegion(region)
-                .withCredentials(new AWSStaticCredentialsProvider(awsCredentials))
+    public S3Client amazonS3(){
+        return S3Client.builder()
+                .region(Region.of(region))
+                .credentialsProvider(StaticCredentialsProvider
+                        .create(AwsBasicCredentials
+                                .create(accessKey, accessSecret)))
                 .build();
     }
 
+
+
     @Bean
-    public AmazonS3 minioClient(){
-        return AmazonS3ClientBuilder.standard()
-                .withEndpointConfiguration(new AwsClientBuilder.EndpointConfiguration(minioUrl, region))
-                .withCredentials(new AWSStaticCredentialsProvider(new BasicAWSCredentials(minioAccessKey, minioSecretKey)))
-                .withPathStyleAccessEnabled(true)
+    public S3Client minioClient(){
+        return S3Client.builder()
+                .endpointOverride(URI.create(minioUrl))
+                .region(Region.of(region))
+                .credentialsProvider(StaticCredentialsProvider
+                        .create(AwsBasicCredentials
+                                .create(minioAccessKey, minioSecretKey)))
+                .forcePathStyle(true)
                 .build();
     }
 

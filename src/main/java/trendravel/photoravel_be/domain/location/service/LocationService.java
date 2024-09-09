@@ -1,14 +1,17 @@
 package trendravel.photoravel_be.domain.location.service;
 
 
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.jetbrains.annotations.NotNull;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.GeometryFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import trendravel.photoravel_be.commom.error.LocationErrorCode;
 import trendravel.photoravel_be.commom.exception.ApiException;
+import trendravel.photoravel_be.commom.image.service.ImageServiceFacade;
 import trendravel.photoravel_be.db.review.Review;
 import trendravel.photoravel_be.domain.location.dto.request.LocationKeywordDto;
 import trendravel.photoravel_be.domain.location.dto.request.LocationNowPositionDto;
@@ -20,7 +23,7 @@ import trendravel.photoravel_be.db.location.Location;
 import trendravel.photoravel_be.db.respository.location.LocationRepository;
 import trendravel.photoravel_be.domain.location.dto.response.LocationSingleReadResponseDto;
 import trendravel.photoravel_be.domain.review.dto.response.RecentReviewsDto;
-import trendravel.photoravel_be.commom.image.service.ImageService;
+
 
 import java.util.List;
 
@@ -31,20 +34,22 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class LocationService {
 
     private final LocationRepository locationRepository;
-    private final ImageService imageService;
+    private final ImageServiceFacade imageServiceFacade;
 
     @Transactional
     public LocationResponseDto createLocation(
             LocationRequestDto locationRequestDto, List<MultipartFile> images) {
+
         Location location = Location.builder()
                 .description(locationRequestDto.getDescription())
                 .name(locationRequestDto.getName())
+                .images(imageServiceFacade.uploadImageFacade(images))
                 .latitude(locationRequestDto.getLatitude())
                 .longitude(locationRequestDto.getLongitude())
-                .images(imageService.uploadImages(images))
                 .address(locationRequestDto.getAddress())
                 .views(0)
                 .point(new GeometryFactory().createPoint(
@@ -53,6 +58,7 @@ public class LocationService {
                 .build();
         location.getPoint().setSRID(4326);
         locationRepository.save(location);
+
 
         return LocationResponseDto
                 .builder()
@@ -98,7 +104,7 @@ public class LocationService {
                 .build();
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public LocationSingleReadResponseDto readSingleLocation(Long id){
         Location location = locationRepository.findById(id)
                 .orElseThrow(() -> new ApiException(LocationErrorCode.LOCATION_NOT_FOUND));
@@ -118,42 +124,29 @@ public class LocationService {
                 .createdAt(location.getCreatedAt())
                 .images(location.getImages())
                 .views(location.getViews())
-                .ratingAvg(String.format("%.2f", ratingAverage(location.getReview())))
+                .ratingAvg(Double.parseDouble(String.format("%.2f",
+                        ratingAverage(location.getReview()))))
+                .reviewCounts(location.getReview().size() < 100
+                        ? location.getReview().size() : 99)
                 .recentReviewDtos(reviews)
                 .build();
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public List<LocationMultiReadResponseDto> readMultiLocation(
             LocationNowPositionDto locationNowPositionDto){
         List<Location> locations =
                 locationRepository.searchNowPosition(locationNowPositionDto);
 
-        return locations.stream()
-                .map(p -> new LocationMultiReadResponseDto(
-                        p.getId(), p.getLatitude(), p.getLongitude(),
-                        p.getAddress(), p.getDescription(), p.getName(),
-                        p.getImages(),p.getViews(),
-                        String.format("%.2f",ratingAverage(p.getReview())),
-                        p.getCreatedAt(), p.getUpdatedAt())
-                )
-                .toList();
+        return getLocationResponseLists(locations);
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public List<LocationMultiReadResponseDto> readMultiLocation(
             LocationKeywordDto locationKeywordDto){
         List<Location> locations = locationRepository.searchKeyword(locationKeywordDto);
 
-        return locations.stream()
-                .map(p -> new LocationMultiReadResponseDto(
-                        p.getId(), p.getLatitude(), p.getLongitude(),
-                        p.getAddress(), p.getDescription(), p.getName(),
-                        p.getImages(),p.getViews(),
-                        String.format("%.2f",ratingAverage(p.getReview())),
-                        p.getCreatedAt(), p.getUpdatedAt())
-                )
-                .toList();
+        return getLocationResponseLists(locations);
     }
 
 
@@ -165,19 +158,35 @@ public class LocationService {
         return sum / reviews.size();
     }
 
+    @NotNull
+    private List<LocationMultiReadResponseDto> getLocationResponseLists(List<Location> locations) {
+        return locations.stream()
+                .map(p -> new LocationMultiReadResponseDto(
+                        p.getId(), p.getLatitude(), p.getLongitude(),
+                        p.getAddress(), p.getDescription(), p.getName(),
+                        p.getImages(),p.getViews(),
+                        Double.parseDouble(String.format("%.2f",
+                                ratingAverage(p.getReview()))),
+                        p.getReview().size() < 100 ? p.getReview().size() : 99,
+                        p.getCreatedAt(), p.getUpdatedAt())
+                )
+                .toList();
+    }
+
+
 
     @Transactional
     public LocationResponseDto updateLocation(
-            LocationUpdateImagesDto locationRequestDto, List<MultipartFile> images) {
+            LocationUpdateImagesDto locationRequestDto,
+            List<MultipartFile> images) {
 
         Location location = locationRepository.findById(
                 locationRequestDto.getLocationId())
                 .orElseThrow(() -> new ApiException(LocationErrorCode.LOCATION_NOT_FOUND));
-
-
+        log.info("이미지 저장 전");
         location.updateLocation(locationRequestDto,
-                imageService.updateImages(images, locationRequestDto.getDeleteImages()));
-
+                imageServiceFacade.updateImageFacade(images, locationRequestDto.getDeleteImages()));
+        log.info("이미지 저장 후");
 
         return LocationResponseDto
                 .builder()
@@ -222,9 +231,7 @@ public class LocationService {
         Location findLocation = locationRepository.findById(id)
                 .orElseThrow(() -> new ApiException(LocationErrorCode.LOCATION_NOT_FOUND));
         locationRepository.deleteById(findLocation.getId());
-        imageService.deleteAllImages(findLocation.getImages());
+        imageServiceFacade.deleteAllImagesFacade(findLocation.getImages());
     }
-
-
 
 }

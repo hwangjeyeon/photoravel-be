@@ -45,7 +45,7 @@ class ImageServiceTest {
     void imageUploadTest() {
         List<MultipartFile> list = new ArrayList<>();
         list.add(mockMultipartFile);
-        List<String> urls = imageService.uploadImages(list);
+        List<String> urls = imageService.getImagesName(list);
         assertThat(urls.get(0).substring(urls.get(0).lastIndexOf(".")+1)).isEqualTo("png");
         assertThat(urls.get(0).substring(urls.get(0).lastIndexOf("/")+1,
                 urls.get(0).lastIndexOf("_"))).isEqualTo(
@@ -60,7 +60,7 @@ class ImageServiceTest {
     void imageUpdateTest(){
         List<MultipartFile> list = new ArrayList<>();
         list.add(mockMultipartFile);
-        List<String> urls = imageService.uploadImages(list);
+        List<String> urls = imageService.getImagesName(list);
 
         list.clear();
         list.add(mockMultipartFile2);

@@ -1,12 +1,14 @@
 package trendravel.photoravel_be.domain.review.service;
 
-import jakarta.transaction.Transactional;
+
 import lombok.RequiredArgsConstructor;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import trendravel.photoravel_be.commom.error.*;
 import trendravel.photoravel_be.commom.exception.ApiException;
 import trendravel.photoravel_be.commom.image.service.ImageService;
+import trendravel.photoravel_be.commom.image.service.ImageServiceFacade;
 import trendravel.photoravel_be.db.location.Location;
 import trendravel.photoravel_be.db.photographer.Photographer;
 import trendravel.photoravel_be.db.respository.photographer.PhotographerRepository;
@@ -32,6 +34,7 @@ public class ReviewService {
     private final PhotographerRepository photographerRepository;
     private final ImageService imageService;
 
+    @Transactional
     public ReviewResponseDto createReview(
             ReviewRequestDto reviewRequestDto, List<MultipartFile> images) {
 
@@ -58,9 +61,8 @@ public class ReviewService {
         }
         
 
-        Review review = reviewRepository.save(Review.builder()
+        Review review = Review.builder()
                 .reviewType(reviewRequestDto.getReviewType())
-                .images(imageService.uploadImages(images))
                 .content(reviewRequestDto.getContent())
                 .rating(reviewRequestDto.getRating())
                 .locationReview(ReviewTypes.LOCATION ==
@@ -94,6 +96,7 @@ public class ReviewService {
                 .build();
     }
 
+    @Transactional
     public ReviewResponseDto createReview(
             ReviewRequestDto reviewRequestDto) {
 
@@ -143,7 +146,7 @@ public class ReviewService {
             review.setPhotographerReview(photographer);
         }
 
-
+        reviewRepository.save(review);
 
         return ReviewResponseDto
                 .builder()
@@ -156,7 +159,7 @@ public class ReviewService {
                 .build();
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public List<ReviewResponseDto> readAllLocationReview(Long locationId){
         List<Review> reviews = locationRepository.findById(locationId)
                 .map(Location::getReview)
@@ -169,7 +172,7 @@ public class ReviewService {
                 .toList();
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public List<ReviewResponseDto> readAllSpotReview(Long locationId, Long spotId){
         List<Spot> spots = locationRepository.findById(locationId)
                 .map(Location::getSpot)
@@ -206,7 +209,7 @@ public class ReviewService {
                 reviewRequestDto.getReviewId())
                 .orElseThrow(() -> new ApiException(ReviewErrorCode.REVIEW_NOT_FOUND));
 
-        review.updateReview(reviewRequestDto, imageService.updateImages(images,
+        review.updateReview(reviewRequestDto, imageServiceFacade.updateImageFacade(images,
                 reviewRequestDto.getDeleteImages()));
 
         return ReviewResponseDto
@@ -248,7 +251,6 @@ public class ReviewService {
         Review findReview = reviewRepository.findById(id)
                 .orElseThrow(() -> new ApiException(ReviewErrorCode.REVIEW_NOT_FOUND));
         reviewRepository.deleteById(findReview.getId());
-        
         //이미지가 있는 경우, refactoring 필요
         if (!findReview.getImages().isEmpty()) {
             imageService.deleteAllImages(findReview.getImages());

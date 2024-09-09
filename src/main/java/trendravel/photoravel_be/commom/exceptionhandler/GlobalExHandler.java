@@ -1,5 +1,7 @@
 package trendravel.photoravel_be.commom.exceptionhandler;
 
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.ResponseEntity;
@@ -8,6 +10,9 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import trendravel.photoravel_be.commom.error.ErrorCode;
 import trendravel.photoravel_be.commom.exception.ImageSystemException;
 import trendravel.photoravel_be.commom.response.Api;
+
+import java.util.*;
+import java.util.stream.Collectors;
 
 @RestControllerAdvice
 @Order(value = Integer.MAX_VALUE)
@@ -38,4 +43,25 @@ public class GlobalExHandler {
                                 , imageSystemException.getErrorDescription())
                 );
     }
+
+    @ExceptionHandler(value = ConstraintViolationException.class)
+    public ResponseEntity<Api<?>> validationExceptionHandler(
+            ConstraintViolationException e
+    ){
+
+        ArrayList<String> errors = e.getConstraintViolations().stream()
+                .map(ConstraintViolation::getMessage)
+                .collect(Collectors.toCollection(ArrayList::new));
+
+        return ResponseEntity
+                .status(400)
+                .body(Api.ERROR(400,
+                        errors.stream().toList().toString()));
+    }
+
+
+
+
+
+
 }

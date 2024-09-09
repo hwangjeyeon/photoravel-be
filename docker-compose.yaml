@@ -1,0 +1,13 @@
+version: '3.8'  # Docker Compose 파일 버전
+
+services:
+  redis:
+    image: redis:latest  # Redis 최신 버전 사용
+    container_name: photoravel-redis  # 컨테이너 이름
+    ports:
+      - "6379:6379"  # 호스트의 6379 포트를 컨테이너의 6379 포트와 연결
+    volumes:
+      - redis-data:/data  # 데이터 지속성을 위한 볼륨 설정
+
+volumes:
+  redis-data:  # Redis 데이터 저장을 위한 볼륨 정의

@@ -2,10 +2,12 @@ package trendravel.photoravel_be.domain.location.controller;
 
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import trendravel.photoravel_be.commom.image.valid.ImageSizeValid;
 import trendravel.photoravel_be.commom.response.Api;
 import trendravel.photoravel_be.commom.response.Result;
 import trendravel.photoravel_be.domain.location.dto.request.LocationKeywordDto;
@@ -29,20 +31,21 @@ public class LocationController {
 
     @Schema(description = "장소 CREATE 요청/응답 (이미지 미포함)",
             contentEncoding = MediaType.APPLICATION_JSON_VALUE)
-    @PostMapping(value = "/location/create")
+    @PostMapping(value = "/private/location/create")
     public Api<LocationResponseDto> locationCreate(@RequestBody
-                                           LocationRequestDto locationRequestDto) {
+            @Valid LocationRequestDto locationRequestDto) {
 
         return Api.CREATED(locationService.createLocation(locationRequestDto));
     }
 
     @Schema(description = "장소 CREATE 요청/응답 (이미지 포함)",
             contentEncoding = MediaType.MULTIPART_FORM_DATA_VALUE)
-    @PostMapping(value = "/location/create",
+    @PostMapping(value = "/private/location/create",
             consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
     public Api<LocationResponseDto> locationCreate(@RequestPart(value = "data")
-                                               LocationRequestDto locationRequestDto,
+            @Valid LocationRequestDto locationRequestDto,
+                                           @ImageSizeValid
                                            @RequestPart(value = "images", required = false)
                                                 List<MultipartFile> images) {
 
@@ -90,9 +93,10 @@ public class LocationController {
 
     @Schema(description = "장소 UPDATE 요청/응답 (이미지 미포함)",
             contentEncoding = MediaType.APPLICATION_JSON_VALUE)
-    @PatchMapping(value = "/location/update")
-    public Api<LocationResponseDto> locationUpdate(@RequestBody
-                                                       LocationRequestDto locationRequestDto) {
+    @PatchMapping(value = "/private/location/update")
+    public Api<LocationResponseDto> locationUpdate(
+            @Valid @RequestBody
+            LocationRequestDto locationRequestDto) {
 
         return Api.UPDATED(locationService.updateLocation(locationRequestDto));
     }
@@ -100,11 +104,13 @@ public class LocationController {
 
     @Schema(description = "장소 UPDATE 요청/응답 (이미지 포함)",
             contentEncoding = MediaType.MULTIPART_FORM_DATA_VALUE)
-    @PatchMapping(value = "/location/update",
+    @PatchMapping(value = "/private/location/update",
             consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public Api<LocationResponseDto> locationUpdate(@RequestPart(value = "data")
-                                                       LocationUpdateImagesDto locationRequestDto,
+    public Api<LocationResponseDto> locationUpdate(
+            @RequestPart(value = "data")
+            @Valid LocationUpdateImagesDto locationRequestDto,
+                                           @ImageSizeValid
                                            @RequestPart(value = "images", required = false)
                                                 List<MultipartFile> images) {
 
@@ -114,7 +120,7 @@ public class LocationController {
 
 
     @Schema(description = "장소 DELETE 요청/응답")
-    @DeleteMapping("/location/{locationId}/delete")
+    @DeleteMapping("/private/location/{locationId}/delete")
     public Result locationDelete(@PathVariable("locationId") Long locationId) {
         locationService.deleteLocation(locationId);
 

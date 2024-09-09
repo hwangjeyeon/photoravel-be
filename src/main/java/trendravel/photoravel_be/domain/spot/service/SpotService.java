@@ -1,14 +1,14 @@
 package trendravel.photoravel_be.domain.spot.service;
 
-import jakarta.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-import trendravel.photoravel_be.commom.error.ErrorCode;
 import trendravel.photoravel_be.commom.error.LocationErrorCode;
 import trendravel.photoravel_be.commom.error.SpotErrorCode;
 import trendravel.photoravel_be.commom.exception.ApiException;
 import trendravel.photoravel_be.commom.image.service.ImageService;
+import trendravel.photoravel_be.commom.image.service.ImageServiceFacade;
 import trendravel.photoravel_be.db.location.Location;
 import trendravel.photoravel_be.db.review.Review;
 import trendravel.photoravel_be.domain.review.dto.response.RecentReviewsDto;
@@ -33,8 +33,9 @@ public class SpotService {
 
     private final SpotRepository spotRepository;
     private final LocationRepository locationRepository;
-    private final ImageService imageService;
+    private final ImageServiceFacade imageServiceFacade;
 
+    @Transactional
     public SpotResponseDto createSpot(
             SpotRequestDto spotRequestDto, List<MultipartFile> images) {
 
@@ -48,8 +49,8 @@ public class SpotService {
                 .title(spotRequestDto.getTitle())
                 .latitude(spotRequestDto.getLatitude())
                 .longitude(spotRequestDto.getLongitude())
-                .images(imageService.uploadImages(images))
-                .location(location)
+                .description(spotRequestDto.getDescription())
+                .images(imageServiceFacade.uploadImageFacade(images))
                 .build();
         spot.setLocation(location);
         spotRepository.save(spot);
@@ -67,6 +68,7 @@ public class SpotService {
                 .build();
     }
 
+    @Transactional
     public SpotResponseDto createSpot(
             SpotRequestDto spotRequestDto) {
         Location location = locationRepository.findById(spotRequestDto.
@@ -97,16 +99,16 @@ public class SpotService {
     }
 
 
-    @Transactional
+    @Transactional(readOnly = true)
     public SpotSingleReadResponseDto readSingleSpot(Long locationId, Long spotId) {
         List<Spot> spots = locationRepository.findById(locationId)
                 .map(Location::getSpot)
                 .orElseThrow(() -> new ApiException(LocationErrorCode.LOCATION_NOT_FOUND));
 
-
         Spot spot = spots.stream().
                 filter(s -> s.getId().equals(spotId)).findFirst()
                 .orElseThrow(() -> new ApiException(SpotErrorCode.SPOT_NOT_FOUND));
+        spot.increaseViews();
 
         List<RecentReviewsDto> reviews = spotRepository.recentReviews(spot.getId());
 
@@ -120,12 +122,14 @@ public class SpotService {
                 .latitude(spot.getLatitude())
                 .longitude(spot.getLongitude())
                 .images(spot.getImages())
-                .ratingAvg(String.format("%.2f", ratingAverage(spot.getReviews())))
+                .ratingAvg(Double.parseDouble
+                        (String.format("%.2f", ratingAverage(spot.getReviews()))))
                 .recentReviewDtos(reviews)
+                .reviewCounts(spot.getReviews().size() < 100 ? spot.getReviews().size(): 99)
                 .build();
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public List<SpotMultiReadResponseDto> readMultiSpot(Long locationId) {
         List<Spot> spots = locationRepository.findById(locationId)
                 .map(Location::getSpot)
@@ -159,7 +163,7 @@ public class SpotService {
                 spotRequestDto.getSpotId())
                 .orElseThrow(() -> new ApiException(SpotErrorCode.SPOT_NOT_FOUND));
 
-        spot.updateSpot(spotRequestDto, imageService.updateImages(
+        spot.updateSpot(spotRequestDto, imageServiceFacade.updateImageFacade(
                 images, spotRequestDto.getDeleteImages()));
 
         return SpotResponseDto
@@ -202,7 +206,7 @@ public class SpotService {
         Spot findSpot = spotRepository.findById(id)
                 .orElseThrow(() -> new ApiException(SpotErrorCode.SPOT_NOT_FOUND));
         spotRepository.deleteById(findSpot.getId());
-        imageService.deleteAllImages(findSpot.getImages());
+        imageServiceFacade.deleteAllImagesFacade(findSpot.getImages());
     }
 
 
