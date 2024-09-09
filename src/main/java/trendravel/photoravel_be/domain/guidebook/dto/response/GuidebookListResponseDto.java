@@ -26,7 +26,7 @@ public class GuidebookListResponseDto {
     @Schema(description = "조회수")
     private int views;
     
-    @Schema(description = "이미지 (배열의 첫번째 이미지 반환)")
+    @Schema(description = "썸네일 이미지 URL (배열의 첫번째 이미지 즉, 업로드 할 때 첫번째 등록한 이미지를 반환)")
     private String image;
     
     @Schema(description = "가이드북 생성일")
