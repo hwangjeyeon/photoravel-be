@@ -33,7 +33,7 @@ public class MatchingController {
     @GetMapping("/{memberId}")
     Api<List<MatchingResponseDto>> getMatching(@PathVariable String memberId) {
         
-        return Api.CREATED(matchingService.getMatchingList(memberId));
+        return Api.OK(matchingService.getMatchingList(memberId));
     }
 
     @Schema(description = "매칭 취소",
@@ -53,7 +53,7 @@ public class MatchingController {
         
         matchingService.accept(matchingRequestDto);
         
-        return Result.CREATED();
+        return Result.OK();
     }
     
     @Schema(description = "매칭 거절",
@@ -63,7 +63,7 @@ public class MatchingController {
         
         matchingService.reject(matchingRequestDto);
         
-        return Result.CREATED();
+        return Result.OK();
     }
     
     @Schema(description = "매칭 종료",
@@ -73,7 +73,7 @@ public class MatchingController {
         
         matchingService.complete(matchingRequestDto);
                 
-        return Result.CREATED();
+        return Result.OK();
     }
     
     
