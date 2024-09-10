@@ -28,12 +28,20 @@ public class MatchingController {
         return Result.CREATED();
     }
     
-    @Schema(description = "매칭 목록 조회",
+    @Schema(description = "유저의 매칭 목록 조회",
             contentEncoding = MediaType.APPLICATION_JSON_VALUE)
-    @GetMapping("/{memberId}")
-    Api<List<MatchingResponseDto>> getMatching(@PathVariable String memberId) {
+    @GetMapping("/user/{memberId}")
+    Api<List<MatchingResponseDto>> getMemberMatching(@PathVariable String memberId) {
         
         return Api.OK(matchingService.getMatchingList(memberId));
+    }
+    
+    @Schema(description = "사진작가의 매칭 목록 조회",
+            contentEncoding = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping("/photographer/{accountId}")
+    Api<List<MatchingResponseDto>> getPhotographerMatching(@PathVariable String accountId) {
+        
+        return Api.OK(matchingService.getMatchingList(accountId));
     }
 
     @Schema(description = "매칭 취소",
