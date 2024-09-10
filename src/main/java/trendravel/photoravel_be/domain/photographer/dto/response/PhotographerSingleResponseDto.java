@@ -17,8 +17,10 @@ import java.util.List;
         contentEncoding = MediaType.APPLICATION_JSON_VALUE)
 public class PhotographerSingleResponseDto {
     
-
-    @Schema(description = "가이드 계정 ID")
+    
+    @Schema(description = "사진작가 ID")
+    Long id;
+    @Schema(description = "사진작가 계정 ID")
     private String accountId;
     @Schema(description = "이름")
     private String name;

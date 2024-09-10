@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface PhotographerRepository extends JpaRepository<Photographer, Long> {
+public interface PhotographerRepository extends JpaRepository<Photographer, Long>, PhotographerRepositoryCustom {
     
     Optional<Photographer> findByAccountId(String accountId);
     

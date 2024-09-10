@@ -63,7 +63,14 @@ public class ReviewController {
                                                             Long spotId){
         return Api.READ(reviewService.readAllSpotReview(locationId, spotId));
     }
-
+    
+    @Schema(description = "특정 사진작가의 모든 리뷰 READ 요청/응답")
+    @GetMapping(value = "/photographers/{photographerId}/detail/reviews")
+    public Api<List<ReviewResponseDto>> readPhotographerReviews(@PathVariable("photographerId") 
+                                                                    String accountId){
+        return Api.READ(reviewService.readAllPhotographerReview(accountId));
+    }
+    
 
     @Schema(description = "리뷰 UPDATE 요청 (이미지 미포함)",
             contentEncoding = MediaType.APPLICATION_JSON_VALUE)

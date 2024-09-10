@@ -65,6 +65,11 @@ public class Review extends BaseEntity {
         this.locationReview = location;
         location.getReview().add(this);
     }
+    
+    public void setPhotographerReview(Photographer photographer) {
+        this.photographerReview = photographer;
+        photographer.getReviews().add(this);
+    }
 
     public void updateReview(ReviewUpdateImagesDto review, List<String> newImages) {
         this.content = review.getContent();

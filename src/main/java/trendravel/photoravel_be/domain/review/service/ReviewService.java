@@ -5,13 +5,13 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-import trendravel.photoravel_be.commom.error.LocationErrorCode;
-import trendravel.photoravel_be.commom.error.ReviewErrorCode;
-import trendravel.photoravel_be.commom.error.SpotErrorCode;
+import trendravel.photoravel_be.commom.error.*;
 import trendravel.photoravel_be.commom.exception.ApiException;
 import trendravel.photoravel_be.commom.image.service.ImageService;
 import trendravel.photoravel_be.commom.image.service.ImageServiceFacade;
 import trendravel.photoravel_be.db.location.Location;
+import trendravel.photoravel_be.db.photographer.Photographer;
+import trendravel.photoravel_be.db.respository.photographer.PhotographerRepository;
 import trendravel.photoravel_be.db.spot.Spot;
 import trendravel.photoravel_be.domain.review.dto.request.ReviewRequestDto;
 import trendravel.photoravel_be.domain.review.dto.request.ReviewUpdateImagesDto;
@@ -31,7 +31,8 @@ public class ReviewService {
     private final ReviewRepository reviewRepository;
     private final SpotRepository spotRepository;
     private final LocationRepository locationRepository;
-    private final ImageServiceFacade imageServiceFacade;
+    private final PhotographerRepository photographerRepository;
+    private final ImageService imageService;
 
     @Transactional
     public ReviewResponseDto createReview(
@@ -52,6 +53,13 @@ public class ReviewService {
             spot = spotRepository.findById(reviewRequestDto.getTypeId())
                     .orElseThrow(() -> new ApiException(SpotErrorCode.SPOT_NOT_FOUND));
         }
+        
+        Photographer photographer = null;
+        if(reviewRequestDto.getReviewType().equals(ReviewTypes.PHOTOGRAPHER)){
+            photographer = photographerRepository.findById(reviewRequestDto.getTypeId())
+                    .orElseThrow(() -> new ApiException(PhotographerErrorCode.PHOTOGRAPHER_NOT_FOUND));
+        }
+        
 
         Review review = Review.builder()
                 .reviewType(reviewRequestDto.getReviewType())
@@ -63,13 +71,19 @@ public class ReviewService {
                 .spotReview(ReviewTypes.SPOT ==
                         reviewRequestDto.getReviewType()
                         ? spot : null)
-                .images(imageServiceFacade.uploadImageFacade(images))
-                .build();
+                .photographerReview(ReviewTypes.PHOTOGRAPHER ==
+                        reviewRequestDto.getReviewType()
+                        ? photographer : null)
+                .build());
 
-        review.setLocationReview(location);
-        review.setSpotReview(spot);
-        reviewRepository.save(review);
-
+        if (ReviewTypes.LOCATION == reviewRequestDto.getReviewType()) {
+            review.setLocationReview(location);
+        } else if (ReviewTypes.SPOT == reviewRequestDto.getReviewType()) {
+            review.setSpotReview(spot);
+        } else if (ReviewTypes.PHOTOGRAPHER == reviewRequestDto.getReviewType()) {
+            review.setPhotographerReview(photographer);
+        }
+        
         return ReviewResponseDto
                 .builder()
                 .ReviewId(review.getId())
@@ -98,9 +112,14 @@ public class ReviewService {
             spot = spotRepository.findById(reviewRequestDto.getTypeId())
                     .orElseThrow(() -> new ApiException(SpotErrorCode.SPOT_NOT_FOUND));
         }
-
-
-        Review review = Review.builder()
+        
+        Photographer photographer = null;
+        if(reviewRequestDto.getReviewType().equals(ReviewTypes.PHOTOGRAPHER)){
+            photographer = photographerRepository.findById(reviewRequestDto.getTypeId())
+                    .orElseThrow(() -> new ApiException(PhotographerErrorCode.PHOTOGRAPHER_NOT_FOUND));
+        }
+        
+        Review review = reviewRepository.save(Review.builder()
                 .reviewType(reviewRequestDto.getReviewType())
                 .content(reviewRequestDto.getContent())
                 .rating(reviewRequestDto.getRating())
@@ -110,20 +129,24 @@ public class ReviewService {
                 .spotReview(ReviewTypes.SPOT ==
                         reviewRequestDto.getReviewType()
                         ? spot : null)
-                .build();
+                .photographerReview(ReviewTypes.PHOTOGRAPHER ==
+                        reviewRequestDto.getReviewType()
+                        ? photographer : null)
+                .build());
 
 
         /**
          * 리팩토링 필요.
          */
-        if(review.getLocationReview() == null){
-            review.setSpotReview(spot);
-        }else if(review.getSpotReview() == null){
+        if (ReviewTypes.LOCATION == reviewRequestDto.getReviewType()) {
             review.setLocationReview(location);
+        } else if (ReviewTypes.SPOT == reviewRequestDto.getReviewType()) {
+            review.setSpotReview(spot);
+        } else if (ReviewTypes.PHOTOGRAPHER == reviewRequestDto.getReviewType()) {
+            review.setPhotographerReview(photographer);
         }
 
         reviewRepository.save(review);
-
 
         return ReviewResponseDto
                 .builder()
@@ -166,8 +189,17 @@ public class ReviewService {
                         p.getCreatedAt(), p.getUpdatedAt()))
                 .toList();
     }
-
-
+    @Transactional
+    public List<ReviewResponseDto> readAllPhotographerReview(String photographerId) {
+        List<Review> reviews = photographerRepository.findByAccountId(photographerId).map(Photographer::getReviews)
+                .orElseThrow(() -> new ApiException(PhotographerErrorCode.PHOTOGRAPHER_NOT_FOUND));
+        
+        return reviews.stream()
+                .map(p -> new ReviewResponseDto(p.getId(), p.getReviewType().toString(),
+                        p.getContent(), p.getRating(), p.getImages(),
+                        p.getCreatedAt(), p.getUpdatedAt()))
+                .toList();
+    }
 
     @Transactional
     public ReviewResponseDto updateReview(
@@ -219,7 +251,11 @@ public class ReviewService {
         Review findReview = reviewRepository.findById(id)
                 .orElseThrow(() -> new ApiException(ReviewErrorCode.REVIEW_NOT_FOUND));
         reviewRepository.deleteById(findReview.getId());
-        imageServiceFacade.deleteAllImagesFacade(findReview.getImages());
+        //이미지가 있는 경우, refactoring 필요
+        if (!findReview.getImages().isEmpty()) {
+            imageService.deleteAllImages(findReview.getImages());
+        }
     }
-
+    
+    
 }

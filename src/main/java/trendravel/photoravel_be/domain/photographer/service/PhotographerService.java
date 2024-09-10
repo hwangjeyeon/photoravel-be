@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import trendravel.photoravel_be.commom.error.PhotographerErrorCode;
 import trendravel.photoravel_be.commom.exception.ApiException;
-import trendravel.photoravel_be.commom.service.ImageService;
+import trendravel.photoravel_be.commom.image.service.ImageService;
 import trendravel.photoravel_be.db.enums.Region;
 import trendravel.photoravel_be.db.photographer.Photographer;
 import trendravel.photoravel_be.db.respository.photographer.PhotographerRepository;
@@ -15,6 +15,7 @@ import trendravel.photoravel_be.domain.photographer.dto.request.PhotographerRequ
 import trendravel.photoravel_be.domain.photographer.dto.request.PhotographerUpdateDto;
 import trendravel.photoravel_be.domain.photographer.dto.response.PhotographerListResponseDto;
 import trendravel.photoravel_be.domain.photographer.dto.response.PhotographerSingleResponseDto;
+import trendravel.photoravel_be.domain.review.dto.response.RecentReviewsDto;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -63,14 +64,16 @@ public class PhotographerService {
         Photographer photographer = photographerRepository.findByAccountId(photographerId).orElseThrow(() ->
                 new ApiException(PhotographerErrorCode.PHOTOGRAPHER_NOT_FOUND));
         
-        //List<RecentReviewsDto> reviews = guideRepository.recentReviews(guide.getId());
+        List<RecentReviewsDto> reviews = photographerRepository.recentReviews(photographer.getId());
         
         return PhotographerSingleResponseDto.builder()
+                .id(photographer.getId())
                 .accountId(photographer.getAccountId())
                 .name(photographer.getName())
                 .region(photographer.getRegion())
                 .description(photographer.getDescription())
                 .profileImg(photographer.getProfileImg())
+                .recentReviewDtos(reviews)
                 .createdAt(photographer.getCreatedAt())
                 .updatedAt(photographer.getUpdatedAt())
                 .ratingAvg(String.format("%.2f", ratingAverage(photographer.getReviews())))
@@ -160,7 +163,19 @@ public class PhotographerService {
     
     @Transactional
     public void deletePhotographer(String photographerId) {
+        
+        Photographer photographer = photographerRepository.findByAccountId(photographerId).orElseThrow(
+                () -> new ApiException(PhotographerErrorCode.PHOTOGRAPHER_NOT_FOUND));
+        
         photographerRepository.deleteByAccountId(photographerId);
+        
+        /*
+        단일 이미지 삭제 로직 구현 필요
+        if (!photographer.getProfileImg().isEmpty()) {
+            imageService.deleteAllImages();
+        }
+        */
+        
     }
     
     private double ratingAverage(List<Review> reviews) {
