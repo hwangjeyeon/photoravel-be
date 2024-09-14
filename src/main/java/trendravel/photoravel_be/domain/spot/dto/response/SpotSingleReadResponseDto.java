@@ -38,13 +38,12 @@ public class SpotSingleReadResponseDto {
     @Schema(description = "장소 리뷰 수")
     private Integer reviewCounts;
 
-    //유저 객체 추가 필요
+    @Schema(description = "스팟 작성 유저")
+    private String userName;
 
     @Schema(description = "최근 업데이트된 리뷰 목록 (최대 3개)")
     private List<RecentReviewsDto> recentReviewDtos;
 
-
-    // 유저 객체 전달 필요
     @Schema(description = "스팟 생성일")
     private LocalDateTime createdAt;
     @Schema(description = "스팟 수정일")
