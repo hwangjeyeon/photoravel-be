@@ -17,6 +17,8 @@ public interface PhotographerRepository extends JpaRepository<Photographer, Long
     
     void deleteByAccountId(String accountId);
     
+    boolean existsByAccountId(String photographerId);
+    
     //List<RecentReviewsDto> recentReviews(Long id);
     
 }

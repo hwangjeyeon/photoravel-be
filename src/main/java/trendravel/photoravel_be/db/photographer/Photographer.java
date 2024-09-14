@@ -5,12 +5,14 @@ import lombok.*;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import trendravel.photoravel_be.db.BaseEntity;
 import trendravel.photoravel_be.db.enums.Region;
+import trendravel.photoravel_be.db.match.Matching;
 import trendravel.photoravel_be.db.review.Review;
-import trendravel.photoravel_be.domain.photographer.dto.request.PhotographerRequestDto;
 import trendravel.photoravel_be.domain.photographer.dto.request.PhotographerUpdateDto;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Getter
@@ -45,6 +47,9 @@ public class Photographer extends BaseEntity {
     @Column(nullable = false)
     private String profileImg;
     
+    @Column(nullable = false)
+    private Integer careerYear;
+    
     //images 타입에 대해 수정 필요 imageService 단에서 하나의 이미지를 처리하는 메서드 필요
     public void updatePhotographer(PhotographerUpdateDto photographerUpdateDto, List<String> images) {
         this.password = photographerUpdateDto.getPassword();
@@ -64,5 +69,6 @@ public class Photographer extends BaseEntity {
     @OneToMany(mappedBy = "photographerReview")
     @Builder.Default
     private List<Review> reviews = new ArrayList<>();
+    
     
 }

@@ -40,7 +40,8 @@ public class PhotographerSingleResponseDto {
     private LocalDateTime createdAt;
     @Schema(description = "사진작가 계정 수정일")
     private LocalDateTime updatedAt;
-    
+    @Schema(description = "경력")
+    private Integer careerYear;
     @Schema(description = "최근 리뷰")
     private List<RecentReviewsDto> recentReviewDtos;
     
