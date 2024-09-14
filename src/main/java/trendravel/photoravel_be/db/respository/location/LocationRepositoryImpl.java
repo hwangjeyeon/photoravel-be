@@ -43,7 +43,8 @@ public class LocationRepositoryImpl implements LocationRepositoryCustom{
 
         return recentReviews.stream()
                 .map(p -> new RecentReviewsDto(p.getContent(),
-                        p.getRating(), p.getImages()))
+                        p.getRating(), p.getImages()
+                        , p.getMember().getNickname()))
                 .toList();
     }
 
