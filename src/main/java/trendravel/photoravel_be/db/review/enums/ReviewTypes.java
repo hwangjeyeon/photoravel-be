@@ -8,5 +8,5 @@ public enum ReviewTypes {
 
     LOCATION,
     SPOT,
-    GUIDE;
+    PHOTOGRAPHER;
 }
