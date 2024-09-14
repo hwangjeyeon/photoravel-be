@@ -269,8 +269,8 @@ public class ReviewService {
     public void deleteReview(Long id){
         Review findReview = reviewRepository.findById(id)
                 .orElseThrow(() -> new ApiException(ReviewErrorCode.REVIEW_NOT_FOUND));
-        reviewRepository.deleteById(findReview.getId());
         imageServiceFacade.deleteAllImagesFacade(findReview.getImages());
+        reviewRepository.deleteById(findReview.getId());
     }
     
     

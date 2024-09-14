@@ -1,5 +1,6 @@
 package trendravel.photoravel_be.domain.spot.service;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -8,7 +9,6 @@ import trendravel.photoravel_be.commom.error.LocationErrorCode;
 import trendravel.photoravel_be.commom.error.MemberErrorCode;
 import trendravel.photoravel_be.commom.error.SpotErrorCode;
 import trendravel.photoravel_be.commom.exception.ApiException;
-import trendravel.photoravel_be.commom.image.service.ImageService;
 import trendravel.photoravel_be.commom.image.service.ImageServiceFacade;
 import trendravel.photoravel_be.db.location.Location;
 import trendravel.photoravel_be.db.member.MemberEntity;
@@ -24,6 +24,7 @@ import trendravel.photoravel_be.db.respository.location.LocationRepository;
 import trendravel.photoravel_be.db.respository.spot.SpotRepository;
 import trendravel.photoravel_be.domain.spot.dto.response.SpotSingleReadResponseDto;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -32,6 +33,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class SpotService {
 
     private final SpotRepository spotRepository;
@@ -223,8 +225,18 @@ public class SpotService {
     public void deleteSpot(Long id){
         Spot findSpot = spotRepository.findById(id)
                 .orElseThrow(() -> new ApiException(SpotErrorCode.SPOT_NOT_FOUND));
+        imageServiceFacade.deleteAllImagesFacade(deleteSubDomainImages(findSpot));
         spotRepository.deleteById(findSpot.getId());
-        imageServiceFacade.deleteAllImagesFacade(findSpot.getImages());
+    }
+
+    private List<String> deleteSubDomainImages(Spot spot){
+        List<String> deleteImages = new ArrayList<>();
+        deleteImages.addAll(spot.getImages());
+        for (Review review : spot.getReviews()) {
+            deleteImages.addAll(review.getImages());
+            log.info(review.getImages().get(0).toString());
+        }
+        return deleteImages;
     }
 
 

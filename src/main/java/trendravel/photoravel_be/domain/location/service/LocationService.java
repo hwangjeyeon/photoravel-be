@@ -16,6 +16,7 @@ import trendravel.photoravel_be.commom.image.service.ImageServiceFacade;
 import trendravel.photoravel_be.db.member.MemberEntity;
 import trendravel.photoravel_be.db.respository.member.MemberRepository;
 import trendravel.photoravel_be.db.review.Review;
+import trendravel.photoravel_be.db.spot.Spot;
 import trendravel.photoravel_be.domain.location.dto.request.LocationKeywordDto;
 import trendravel.photoravel_be.domain.location.dto.request.LocationNowPositionDto;
 import trendravel.photoravel_be.domain.location.dto.request.LocationRequestDto;
@@ -28,6 +29,7 @@ import trendravel.photoravel_be.domain.location.dto.response.LocationSingleReadR
 import trendravel.photoravel_be.domain.review.dto.response.RecentReviewsDto;
 
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -251,8 +253,23 @@ public class LocationService {
     public void deleteLocation(Long id){
         Location findLocation = locationRepository.findById(id)
                 .orElseThrow(() -> new ApiException(LocationErrorCode.LOCATION_NOT_FOUND));
+        imageServiceFacade.deleteAllImagesFacade(deleteSubDomainImages(findLocation));
         locationRepository.deleteById(findLocation.getId());
-        imageServiceFacade.deleteAllImagesFacade(findLocation.getImages());
+    }
+
+
+    private List<String> deleteSubDomainImages(Location location){
+        List<String> deleteImages = new ArrayList<>(location.getImages());
+        log.info("{}",location.getImages().get(0));
+        for (Spot spot : location.getSpot()) {
+            deleteImages.addAll(spot.getImages());
+            log.info(spot.getImages().get(0));
+        }
+        for (Review review : location.getReview()) {
+            deleteImages.addAll(review.getImages());
+            log.info(review.getImages().get(0));
+        }
+        return deleteImages;
     }
 
 }
