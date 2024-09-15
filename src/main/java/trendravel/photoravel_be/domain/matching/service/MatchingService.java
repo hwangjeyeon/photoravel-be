@@ -28,17 +28,13 @@ public class MatchingService {
     private final MatchingRepository matchingRepository;
     
     @Transactional
-    public List<MatchingResponseDto> getMatchingList(String memberId) {
-        List<Matching> all = matchingRepository.findByMemberId(memberId);
-        Collections.reverse(all);
-        
-        return all.stream().map(
-                matching -> MatchingResponseDto.builder()
-                        .memberId(matching.getMemberId())
-                        .photographerId(matching.getPhotographerId())
-                        .matchingStatus(matching.getStatus())
-                        .build()
-        ).collect(Collectors.toList());
+    public List<MatchingResponseDto> getMatchingListByMemberId(String memberId) {
+        return matchingRepository.getMatchingListByMemberId(memberId);
+    }
+    
+    @Transactional
+    public List<MatchingResponseDto> getMatchingListByPhotographerId(String accountId) {
+        return matchingRepository.getMatchingListByPhotographerId(accountId);
     }
     
     @Transactional
