@@ -4,10 +4,12 @@ package trendravel.photoravel_be.db.review;
 import jakarta.persistence.*;
 import lombok.*;
 import trendravel.photoravel_be.db.BaseEntity;
+import trendravel.photoravel_be.db.photographer.Photographer;
 import trendravel.photoravel_be.db.location.Location;
 import trendravel.photoravel_be.db.spot.Spot;
 import trendravel.photoravel_be.domain.review.dto.request.ReviewRequestDto;
 import trendravel.photoravel_be.db.review.enums.ReviewTypes;
+import trendravel.photoravel_be.domain.review.dto.request.ReviewUpdateImagesDto;
 
 import java.util.List;
 
@@ -27,6 +29,7 @@ public class Review extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private ReviewTypes reviewType;
 
+    @Column(columnDefinition = "TEXT")
     private String content;
     private double rating;
 
@@ -47,7 +50,11 @@ public class Review extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "spot_id")
     private Spot spotReview;
-
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "photographer_id")
+    private Photographer photographerReview;
+    
     //연관관계 편의 메소드
     public void setSpotReview(Spot spot) {
         this.spotReview = spot;
@@ -58,11 +65,19 @@ public class Review extends BaseEntity {
         this.locationReview = location;
         location.getReview().add(this);
     }
+    
+    public void setPhotographerReview(Photographer photographer) {
+        this.photographerReview = photographer;
+        photographer.getReviews().add(this);
+    }
 
-    public void updateReview(ReviewRequestDto review, List<String> images) {
+    public void updateReview(ReviewUpdateImagesDto review, List<String> newImages) {
         this.content = review.getContent();
         this.rating = review.getRating();
-        this.images = images;
+        for (String deleteImage : review.getDeleteImages()) {
+            this.images.remove(deleteImage);
+        }
+        this.images.addAll(newImages);
     }
 
     public void updateReview(ReviewRequestDto review) {

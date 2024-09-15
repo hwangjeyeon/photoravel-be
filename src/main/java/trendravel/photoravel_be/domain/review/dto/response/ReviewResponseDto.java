@@ -12,7 +12,8 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 
-@Schema(description = "리뷰 생성/수정 응답 DTO", contentEncoding = MediaType.APPLICATION_JSON_VALUE)
+@Schema(description = "리뷰 CREATE/UPDATE 응답 DTO",
+        contentEncoding = MediaType.APPLICATION_JSON_VALUE)
 @Data
 @Builder
 @NoArgsConstructor @AllArgsConstructor

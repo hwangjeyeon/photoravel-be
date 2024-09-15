@@ -81,7 +81,7 @@ class LocationTest {
         locationRequestDto.setUserId("hwangjeyeon");
 
         //when
-        location.updateLocation(locationRequestDto, image);
+        location.updateLocation(locationRequestDto);
 
         //then
         assertThat(location.getId()).isEqualTo(1L);
@@ -90,9 +90,6 @@ class LocationTest {
         assertThat(location.getName()).isEqualTo("우리집");
         assertThat(location.getAddress()).isEqualTo("김포시 풍무동 양도로49");
         assertThat(location.getDescription()).isEqualTo("우리집 근처입니다");
-        for (String locationImage : location.getImages()) {
-            assertThat(locationImage).isIn(image);
-        }
         assertThat(location.getViews()).isEqualTo(0);
 
     }

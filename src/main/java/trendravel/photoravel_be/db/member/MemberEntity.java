@@ -3,12 +3,13 @@ package trendravel.photoravel_be.db.member;
 import jakarta.persistence.*;
 import lombok.*;
 import trendravel.photoravel_be.db.BaseEntity;
+import trendravel.photoravel_be.db.match.Matching;
 
 @Entity
 @Table(name = "member")
 @Getter
 @Setter
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Builder
 public class MemberEntity extends BaseEntity {

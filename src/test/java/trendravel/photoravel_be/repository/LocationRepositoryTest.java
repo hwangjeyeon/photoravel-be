@@ -3,6 +3,7 @@ package trendravel.photoravel_be.repository;
 
 
 import jakarta.transaction.Transactional;
+import jakarta.validation.ConstraintViolationException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -19,9 +20,11 @@ import trendravel.photoravel_be.db.review.enums.ReviewTypes;
 import trendravel.photoravel_be.db.spot.Spot;
 import trendravel.photoravel_be.domain.location.dto.request.LocationNowPositionDto;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 
 @SpringBootTest
@@ -146,6 +149,36 @@ class LocationRepositoryTest {
         assertThat(locations.get(0).getViews()).isEqualTo(location.getViews());
         assertThat(locations.get(0).getLatitude()).isEqualTo(location.getLatitude());
         assertThat(locations.get(0).getLongitude()).isEqualTo(location.getLongitude());
+    }
+
+
+    @Test
+    @DisplayName("공백/null 입력 미허용 검증 예외를 잘 터트리는지 테스트")
+    void validateIsBlankTest(){
+        Location nullLocation = Location.builder()
+                .id(1L)
+                .address(" ")
+                .description(" ")
+                .name(" ")
+                .build();
+        assertThatThrownBy(() -> locationRepository.save(nullLocation))
+                .isInstanceOf(ConstraintViolationException.class)
+                .hasMessageContaining("공백/null 입력은 미허용됩니다.");
+    }
+
+
+    @Test
+    @DisplayName("제한된 길이 이상의 입력값이 들어왔을 때, 검증 예외를 잘 터트리는지 테스트")
+    void validateLengthTest(){
+        Location longLocation = Location.builder()
+                .id(1L)
+                .address("아아아아아아아아아아아아아아아아아아아아아아아아아아아아아아아아아아아아아아아아아아아아아아아아아아아아아아아아아아아아")
+                .name("아아아아아아아아아아아아아아아아아아아아아아아아아아아아아아아아아아아아아아아아아아아아아아아아아아아아아아아아아아아아")
+                .build();
+
+        assertThatThrownBy(() -> locationRepository.save(longLocation))
+                .isInstanceOf(ConstraintViolationException.class)
+                .hasMessageContaining("최대 길이는 50글자입니다.");
     }
 
 
