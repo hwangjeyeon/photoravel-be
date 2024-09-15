@@ -4,6 +4,7 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -13,6 +14,7 @@ import trendravel.photoravel_be.commom.exception.ApiException;
 import trendravel.photoravel_be.db.inmemorydb.entity.Token;
 import trendravel.photoravel_be.db.member.MemberEntity;
 import trendravel.photoravel_be.db.respository.member.MemberRepository;
+import trendravel.photoravel_be.domain.authentication.service.AuthenticationService;
 import trendravel.photoravel_be.domain.authentication.session.UserSession;
 import trendravel.photoravel_be.domain.member.convertor.MemberConvertor;
 import trendravel.photoravel_be.domain.member.dto.*;
@@ -30,6 +32,7 @@ public class MemberService {
     private final TokenService tokenService;
     private final PasswordEncoder passwordEncoder;
     private final RedisTemplate<String, Token> redisTemplate;
+    private final AuthenticationService authenticationService;
 
     @Transactional
     public TokenResponse login(BaseMemberDto baseMemberDto) {
@@ -82,14 +85,17 @@ public class MemberService {
     }
 
     @Transactional
-    public MemberResponse memberModi(MemberModRequest request) {
+    public MemberUpdateResponse memberUpdate(MemberUpdateRequest request) {
 
         // 스프링 시큐리티 컨텍스트 홀더에서 인증 객체를 찾음으로써 인증된 사용자인지 검증
         // jwt 토큰 인증 필터를 거칠 때 홀더에 인증 객체를 저장하기 때문.
-
         UserSession principal = (UserSession) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        MemberEntity memberEntity = memberRepository.findByEmail(principal.getUsername())
+        MemberEntity memberEntity = memberRepository.findByMemberId(principal.getUsername())
                 .orElseThrow(() -> new ApiException(MemberErrorCode.UNAUTHORIZED));
+
+        // TODO..............(?)
+        // 인증 객체랑 토큰 안의 회원 정보랑 비교 검사를 해야할까..?
+        // 왜냐하면 다른 회원이 정보를 수정할지도 모르니까
 
         memberEntity.setMemberId(request.getMemberId());
         memberEntity.setPassword(passwordEncoder.encode(request.getPassword()));
@@ -99,7 +105,32 @@ public class MemberService {
 
         MemberEntity saved = memberRepository.save(memberEntity);
 
-        return memberConvertor.toMemberResponse(saved);
+        redisTemplate.opsForHash().delete("refresh_token", request.getMemberId());
+        TokenDto accessToken = tokenService.issueAccessToken(saved.getMemberId());
+        TokenDto refreshToken = tokenService.issueRefreshToken(saved.getMemberId());
+
+
+        TokenResponse token = TokenResponse.builder()
+                .accessToken(accessToken)
+                .refreshToken(refreshToken)
+                .build();
+
+        // 회원 정보 수정 후 UserDetails를 업데이트
+        UserSession userSession = (UserSession) authenticationService.loadUserByUsername(saved.getMemberId());
+        Authentication authentication = new UsernamePasswordAuthenticationToken(userSession, null, userSession.getAuthorities());
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+
+        return MemberUpdateResponse.builder()
+                .memberId(saved.getMemberId())
+                .email(saved.getEmail())
+                .password(saved.getPassword())
+                .name(saved.getName())
+                .nickname(saved.getNickname())
+                .profileImg(saved.getProfileImg())
+                .createdAt(saved.getCreatedAt())
+                .updatedAt(saved.getUpdatedAt())
+                .token(token)
+                .build();
     }
 
     @Transactional
@@ -161,8 +192,8 @@ public class MemberService {
 
 
     private TokenResponse issueTokenResponse(MemberEntity member) {
-        TokenDto accessTokenDto = tokenService.issueAccessToken(member.getEmail());
-        TokenDto refreshTokenDto = tokenService.issueRefreshToken(member.getEmail());
+        TokenDto accessTokenDto = tokenService.issueAccessToken(member.getMemberId());
+        TokenDto refreshTokenDto = tokenService.issueRefreshToken(member.getMemberId());
 
         return TokenResponse.builder()
                 .accessToken(accessTokenDto)

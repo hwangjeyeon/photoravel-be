@@ -32,8 +32,6 @@ public class SpotUpdatedImagesDto {
     private double longitude;
     @Schema(description = "장소 ID")
     private Long locationId;
-    @Schema(description = "유저 아이디")
-    private String userId;
     @Schema(description = "삭제할 이미지 목록")
     private List<String> deleteImages;
 

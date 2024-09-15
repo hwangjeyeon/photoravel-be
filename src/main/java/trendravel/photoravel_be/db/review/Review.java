@@ -4,6 +4,7 @@ package trendravel.photoravel_be.db.review;
 import jakarta.persistence.*;
 import lombok.*;
 import trendravel.photoravel_be.db.BaseEntity;
+import trendravel.photoravel_be.db.member.MemberEntity;
 import trendravel.photoravel_be.db.photographer.Photographer;
 import trendravel.photoravel_be.db.location.Location;
 import trendravel.photoravel_be.db.spot.Spot;
@@ -27,11 +28,13 @@ public class Review extends BaseEntity {
     private Long id;
 
     @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
     private ReviewTypes reviewType;
 
-    @Column(columnDefinition = "TEXT")
+    @Column(columnDefinition = "TEXT", nullable = false)
     private String content;
-    private double rating;
+    @Column(nullable = false)
+    private Double rating;
 
     @ElementCollection
     @CollectionTable(
@@ -54,6 +57,10 @@ public class Review extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "photographer_id")
     private Photographer photographerReview;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "memberEntity_id")
+    private MemberEntity member;
     
     //연관관계 편의 메소드
     public void setSpotReview(Spot spot) {
@@ -64,6 +71,11 @@ public class Review extends BaseEntity {
     public void setLocationReview(Location location) {
         this.locationReview = location;
         location.getReview().add(this);
+    }
+
+    public void setMemberReview(MemberEntity member){
+        this.member = member;
+        member.getReviewMember().add(this);
     }
     
     public void setPhotographerReview(Photographer photographer) {

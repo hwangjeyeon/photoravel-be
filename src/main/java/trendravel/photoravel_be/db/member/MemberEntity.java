@@ -3,6 +3,11 @@ package trendravel.photoravel_be.db.member;
 import jakarta.persistence.*;
 import lombok.*;
 import trendravel.photoravel_be.db.BaseEntity;
+import trendravel.photoravel_be.db.location.Location;
+import trendravel.photoravel_be.db.review.Review;
+import trendravel.photoravel_be.db.spot.Spot;
+import java.util.ArrayList;
+import java.util.List;
 import trendravel.photoravel_be.db.match.Matching;
 
 @Entity
@@ -30,6 +35,18 @@ public class MemberEntity extends BaseEntity {
     private String email;
     @Column(length = 255, nullable = false)
     private String profileImg;
+
+    @OneToMany(mappedBy = "member", orphanRemoval = true)
+    @Builder.Default
+    private List<Location> locationMember = new ArrayList<>();
+
+    @OneToMany(mappedBy = "member", orphanRemoval = true)
+    @Builder.Default
+    private List<Spot> spotMember = new ArrayList<>();
+
+    @OneToMany(mappedBy = "member", orphanRemoval = true)
+    @Builder.Default
+    private List<Review> reviewMember = new ArrayList<>();
 
     public MemberEntity(String memberId, String password, String name, String nickname, String email, String profileImg) {
         this.memberId = memberId;

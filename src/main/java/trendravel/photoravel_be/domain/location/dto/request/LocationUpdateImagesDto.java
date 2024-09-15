@@ -1,7 +1,6 @@
 package trendravel.photoravel_be.domain.location.dto.request;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
@@ -35,8 +34,7 @@ public class LocationUpdateImagesDto {
     @NotBlank(message = "공백/null 입력은 미허용됩니다.")
     @Length(max = 50, message = "최대 길이는 50글자입니다.")
     private String name;
-    @Schema(description = "유저명")
-    private String userId;
+
     @Schema(description = "삭제할 이미지 목록")
     private List<String> deleteImages;
 

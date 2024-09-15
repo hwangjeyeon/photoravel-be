@@ -21,13 +21,17 @@ public class SpotResponseDto {
     @Schema(description = "스팟 내용")
     private String description;
     @Schema(description = "스팟 위도")
-    private double latitude;
+    private Double latitude;
     @Schema(description = "스팟 경도")
-    private double longitude;
+    private Double longitude;
     @Schema(description = "스팟 이미지들")
     private List<String> images;
 
-    // 유저 객체 전달 필요
+    @Schema(description = "스팟 조회수")
+    private Integer views;
+
+    @Schema(description = "스팟 작성 유저")
+    private String userName;
     @Schema(description = "스팟 생성일")
     private LocalDateTime createdAt;
     @Schema(description = "스팟 수정일")

@@ -28,7 +28,8 @@ public class SpotRepositoryImpl implements SpotRepositoryCustom {
                 .fetch();
 
         return recentReviews.stream()
-                .map(p -> new RecentReviewsDto(p.getContent(), p.getRating(), p.getImages()))
+                .map(p -> new RecentReviewsDto(p.getContent(), p.getRating()
+                        , p.getImages(), p.getMember().getNickname()))
                 .toList();
     }
 

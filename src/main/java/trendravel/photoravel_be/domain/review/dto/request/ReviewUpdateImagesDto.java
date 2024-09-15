@@ -30,8 +30,6 @@ public class ReviewUpdateImagesDto {
     @DecimalMax(value = "5.0", message = "최대 허용 별점은 5.0입니다.")
     @DecimalMin(value = "1.0", message = "최소 허용 별점은 1.0입니다.")
     private double rating;
-    @Schema(description = "유저아이디")
-    private String userId;
     @Schema(description = "리뷰타입(장소/스팟)ID")
     private Long typeId;
     @Schema(description = "삭제할 이미지 목록")
