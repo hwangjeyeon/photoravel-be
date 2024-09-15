@@ -3,6 +3,7 @@ package trendravel.photoravel_be.db.member;
 import jakarta.persistence.*;
 import lombok.*;
 import trendravel.photoravel_be.db.BaseEntity;
+import trendravel.photoravel_be.db.guidebook.Guidebook;
 import trendravel.photoravel_be.db.location.Location;
 import trendravel.photoravel_be.db.review.Review;
 import trendravel.photoravel_be.db.spot.Spot;
@@ -47,6 +48,10 @@ public class MemberEntity extends BaseEntity {
     @OneToMany(mappedBy = "member", orphanRemoval = true)
     @Builder.Default
     private List<Review> reviewMember = new ArrayList<>();
+    
+    @OneToMany(mappedBy = "member", orphanRemoval = true)
+    @Builder.Default
+    private List<Guidebook> guidebookMember = new ArrayList<>();
 
     public MemberEntity(String memberId, String password, String name, String nickname, String email, String profileImg) {
         this.memberId = memberId;
