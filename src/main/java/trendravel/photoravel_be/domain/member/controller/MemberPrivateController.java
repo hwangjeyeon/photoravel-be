@@ -3,7 +3,8 @@ package trendravel.photoravel_be.domain.member.controller;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import trendravel.photoravel_be.commom.response.Api;
-import trendravel.photoravel_be.domain.member.dto.MemberModRequest;
+import trendravel.photoravel_be.domain.member.dto.MemberUpdateResponse;
+import trendravel.photoravel_be.domain.member.dto.MemberUpdateRequest;
 import trendravel.photoravel_be.domain.member.dto.MemberResponse;
 import trendravel.photoravel_be.domain.member.service.MemberService;
 
@@ -22,9 +23,10 @@ public class MemberPrivateController {
         return Api.OK(response);
     }
 
+    // TODO 이미지 서비스
     @PatchMapping("/info")
-    public Api<MemberResponse> patchInfo(MemberModRequest request) {
-        MemberResponse response = memberService.memberModi(request);
+    public Api<MemberUpdateResponse> patchInfo(@RequestBody MemberUpdateRequest request) {
+        MemberUpdateResponse response = memberService.memberUpdate(request);
         return Api.OK(response);
     }
 

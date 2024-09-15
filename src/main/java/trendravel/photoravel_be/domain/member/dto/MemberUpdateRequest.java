@@ -2,12 +2,11 @@ package trendravel.photoravel_be.domain.member.dto;
 
 import lombok.*;
 
-@Data
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class MemberModRequest {
+public class MemberUpdateRequest {
 
     private String memberId;
     private String password;

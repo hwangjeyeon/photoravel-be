@@ -23,5 +23,7 @@ public class PhotographerRequestDto {
     private Region region;
     @Schema(description = "설명")
     private String description;
+    @Schema(description = "경력")
+    private Integer careerYear;
     
 }

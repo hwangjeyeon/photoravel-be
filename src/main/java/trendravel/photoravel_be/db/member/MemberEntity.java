@@ -6,9 +6,9 @@ import trendravel.photoravel_be.db.BaseEntity;
 import trendravel.photoravel_be.db.location.Location;
 import trendravel.photoravel_be.db.review.Review;
 import trendravel.photoravel_be.db.spot.Spot;
-
 import java.util.ArrayList;
 import java.util.List;
+import trendravel.photoravel_be.db.match.Matching;
 
 @Entity
 @Table(name = "member")
