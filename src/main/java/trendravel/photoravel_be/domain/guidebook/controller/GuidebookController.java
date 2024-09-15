@@ -17,7 +17,6 @@ import trendravel.photoravel_be.domain.guidebook.service.GuidebookService;
 import java.util.List;
 
 @RestController
-@RequestMapping("/guidebooks")
 @RequiredArgsConstructor
 public class GuidebookController {
     
@@ -25,7 +24,7 @@ public class GuidebookController {
     
     @Schema(description = "가이드북 CREATE 요청 (이미지 미포함)",
             contentEncoding = MediaType.APPLICATION_JSON_VALUE)
-    @PostMapping("/create")
+    @PostMapping("/private/guidebooks/create")
     public Api<GuidebookResponseDto> guidebookCreate(
             @RequestBody GuidebookRequestDto guidebookRequestDto) {
         
@@ -34,7 +33,7 @@ public class GuidebookController {
     
     @Schema(description = "가이드북 CREATE 요청 (이미지 포함)",
             contentEncoding = MediaType.MULTIPART_FORM_DATA_VALUE)
-    @PostMapping(value = "/create",
+    @PostMapping(value = "/private/guidebooks/create",
             consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
     public Api<GuidebookResponseDto> guidebookCreate(
@@ -46,7 +45,7 @@ public class GuidebookController {
     
     
     @Schema(description = "가이드북 목록 READ 요청")
-    @GetMapping
+    @GetMapping("/public/guidebooks")
     public Api<List<GuidebookListResponseDto>> guidebooksList(
             @RequestParam String region) {
         
@@ -54,7 +53,7 @@ public class GuidebookController {
     }
     
     @Schema(description = "가이드북 상제 정보 READ 요청")
-    @GetMapping("/{guidebookId}/detail")
+    @GetMapping("/public/guidebooks/{guidebookId}/detail")
     public Api<GuidebookResponseDto> guidebookDetail(@PathVariable Long guidebookId) {
         
         return Api.READ(guidebookService.getGuidebook(guidebookId));
@@ -62,7 +61,7 @@ public class GuidebookController {
     
     @Schema(description = "가이드북 UPDATE 요청 (이미지 미포함)",
             contentEncoding = MediaType.APPLICATION_JSON_VALUE)
-    @PatchMapping("/update")
+    @PatchMapping("/private/guidebooks/update")
     public Api<GuidebookResponseDto> updateGuidebook(
             @RequestBody GuidebookUpdateDto guidebookUpdateDto) {
         
@@ -71,7 +70,7 @@ public class GuidebookController {
     
     @Schema(description = "가이드북 UPDATE 요청 (이미지 포함)",
             contentEncoding = MediaType.MULTIPART_FORM_DATA_VALUE)
-    @PatchMapping(value = "/update",
+    @PatchMapping(value = "/private/guidebooks/update",
             consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
     public Api<GuidebookResponseDto> updateGuidebook(
@@ -82,7 +81,7 @@ public class GuidebookController {
     }
     
     @Schema(description = "가이드북 DELETE 요청")
-    @DeleteMapping("/{guidebookId}/delete")
+    @DeleteMapping("/private/guidebooks/{guidebookId}/delete")
     public Result guidebookDelete(@PathVariable Long guidebookId) {
         
         guidebookService.deleteGuidebook(guidebookId);
