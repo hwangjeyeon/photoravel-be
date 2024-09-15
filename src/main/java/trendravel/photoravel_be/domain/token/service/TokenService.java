@@ -26,19 +26,7 @@ public class TokenService {
     private final MemberRepository memberRepository;
     private final RedisTemplate<String, Token> redisTemplate;
 
-    public TokenDto issueAccessToken(String email) {
-        MemberEntity member = memberRepository.findByEmail(email)
-                .orElseThrow(() -> new ApiException(MemberErrorCode.USER_NOT_FOUND));
-
-        HashMap<String, Object> data = new HashMap<>();
-        data.put("email", member.getEmail());
-        data.put("name", member.getName());
-        data.put("nickname", member.getNickname());
-        data.put("memberId", member.getMemberId());
-        return tokenHelper.issueAccessToken(data);
-    }
-
-    public TokenDto issueAccessTokenForMemberId(String memberId) {
+    public TokenDto issueAccessToken(String memberId) {
         MemberEntity member = memberRepository.findByMemberId(memberId)
                 .orElseThrow(() -> new ApiException(MemberErrorCode.USER_NOT_FOUND));
 
@@ -47,19 +35,20 @@ public class TokenService {
         data.put("name", member.getName());
         data.put("nickname", member.getNickname());
         data.put("memberId", member.getMemberId());
+        data.put("issuer", "photoravel");
         return tokenHelper.issueAccessToken(data);
     }
 
-    public TokenDto issueRefreshToken(String email) {
-        MemberEntity member = memberRepository.findByEmail(email)
+    public TokenDto issueRefreshToken(String memberId) {
+        MemberEntity member = memberRepository.findByMemberId(memberId)
                 .orElseThrow(() -> new ApiException(MemberErrorCode.USER_NOT_FOUND));
         HashMap<String, Object> data = new HashMap<>();
         data.put("email", member.getEmail());
         data.put("name", member.getName());
         data.put("nickname", member.getNickname());
         data.put("memberId", member.getMemberId());
-
-        TokenDto refreshToken = tokenHelper.issueRefreshToken(data);
+        data.put("issuer", "photoravel");
+        TokenDto refreshToken = tokenHelper.issueRefreshToken(  data);
         saveRefreshToken(refreshToken, member.getMemberId());
 
         return refreshToken;
