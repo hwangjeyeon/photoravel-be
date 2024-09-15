@@ -23,11 +23,13 @@ public class Matching {
     private Long id;
     
     @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
     private MatchingStatus status;
     
-    
+    @Column(nullable = false, length = 50)
     private String memberId;
-
+    
+    @Column(nullable = false, length = 50)
     private String photographerId;
     
     public void updateStatus(MatchingStatus status) {
