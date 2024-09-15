@@ -25,6 +25,7 @@ public class RecentReviewsDto {
     @Schema(description = "리뷰 이미지들")
     private List<String> images;
 
-    // 유저 객체 필요
+    @Schema(description = "리뷰 작성 유저")
+    private String userName;
 
 }

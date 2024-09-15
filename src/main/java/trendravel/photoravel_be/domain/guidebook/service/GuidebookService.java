@@ -7,6 +7,7 @@ import org.springframework.web.multipart.MultipartFile;
 import trendravel.photoravel_be.commom.error.GuidebookErrorCode;
 import trendravel.photoravel_be.commom.exception.ApiException;
 import trendravel.photoravel_be.commom.image.service.ImageService;
+import trendravel.photoravel_be.commom.image.service.ImageServiceFacade;
 import trendravel.photoravel_be.domain.guidebook.dto.request.GuidebookRequestDto;
 import trendravel.photoravel_be.domain.guidebook.dto.request.GuidebookUpdateDto;
 import trendravel.photoravel_be.domain.guidebook.dto.request.GuidebookUpdateImageDto;
@@ -27,7 +28,7 @@ import java.util.stream.Collectors;
 public class GuidebookService {
     
     private final GuidebookRepository guidebookRepository;
-    private final ImageService imageService;
+    private final ImageServiceFacade imageServiceFacade;
     
     @Transactional
     public GuidebookResponseDto createGuidebook(
@@ -39,7 +40,7 @@ public class GuidebookService {
                 .title(guidebookRequestDto.getTitle())
                 .content(guidebookRequestDto.getContent())
                 .region(guidebookRequestDto.getRegion())
-                .images(imageService.uploadImages(images))
+                .images(imageServiceFacade.uploadImageFacade(images))
                 .views(0)
                 .build());
         
@@ -150,7 +151,7 @@ public class GuidebookService {
         
 
         guidebook.updateGuidebook(guidebookUpdateImageDto,
-                imageService.updateImages(images, guidebookUpdateImageDto.getDeleteImages()));
+                imageServiceFacade.updateImageFacade(images, guidebookUpdateImageDto.getDeleteImages()));
         
         return GuidebookResponseDto.builder()
                 .id(guidebook.getId())
@@ -193,7 +194,7 @@ public class GuidebookService {
         guidebookRepository.deleteById(guidebookId);
         
         if (guidebook.getImages() != null) {
-            imageService.deleteAllImages(guidebook.getImages());
+            imageServiceFacade.deleteAllImagesFacade(guidebook.getImages());
         }
         
     }

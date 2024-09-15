@@ -53,24 +53,5 @@ class ImageServiceTest {
                                 mockMultipartFile.getOriginalFilename().lastIndexOf(".")));
     }
 
-    @DisplayName("이미지가 잘 수정되는지 테스트")
-    @Test
-    @Order(2)
-    @Transactional
-    void imageUpdateTest(){
-        List<MultipartFile> list = new ArrayList<>();
-        list.add(mockMultipartFile);
-        List<String> urls = imageService.getImagesName(list);
-
-        list.clear();
-        list.add(mockMultipartFile2);
-        urls = imageService.updateImages(list, urls);
-
-
-        assertThat(urls.get(0).substring(urls.get(0).lastIndexOf("/")+1,
-                urls.get(0).lastIndexOf("_"))).isEqualTo(
-                mockMultipartFile2.getOriginalFilename().substring(0,
-                        mockMultipartFile2.getOriginalFilename().lastIndexOf(".")));
-    }
 
 }

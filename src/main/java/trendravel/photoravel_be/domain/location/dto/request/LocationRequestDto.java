@@ -32,7 +32,7 @@ public class LocationRequestDto {
     @NotBlank(message = "공백/null 입력은 미허용됩니다.")
     @Length(max = 50, message = "최대 길이는 50글자입니다.")
     private String name;
-    @Schema(description = "유저명")
+    @Schema(description = "유저아이디")
     private String userId;
 
 }

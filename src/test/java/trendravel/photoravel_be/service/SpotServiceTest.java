@@ -11,7 +11,9 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import trendravel.photoravel_be.commom.error.LocationErrorCode;
 import trendravel.photoravel_be.commom.error.SpotErrorCode;
 import trendravel.photoravel_be.commom.exception.ApiException;
-import trendravel.photoravel_be.commom.image.service.ImageService;
+import trendravel.photoravel_be.commom.image.service.ImageServiceFacade;
+import trendravel.photoravel_be.db.member.MemberEntity;
+import trendravel.photoravel_be.db.respository.member.MemberRepository;
 import trendravel.photoravel_be.db.respository.review.ReviewRepository;
 import trendravel.photoravel_be.db.review.Review;
 import trendravel.photoravel_be.db.review.enums.ReviewTypes;
@@ -41,6 +43,8 @@ class SpotServiceTest {
     SpotRepository spotRepository;
     @Autowired
     ReviewRepository reviewRepository;
+    @Autowired
+    MemberRepository memberRepository;
 
     @Autowired
     EntityManager em;
@@ -49,7 +53,7 @@ class SpotServiceTest {
     SpotService spotService;
 
     @MockBean
-    ImageService imageService;
+    ImageServiceFacade imageService;
 
     SpotRequestDto spotRequestDto;
     Location location;
@@ -58,13 +62,26 @@ class SpotServiceTest {
     Review review2;
     Review review3;
     Review review4;
+    MemberEntity member;
+
     @Autowired
     private ReviewService reviewService;
 
     @BeforeEach
     void before(){
-        spotService = new SpotService(spotRepository, locationRepository, imageService);
+        spotService = new SpotService(spotRepository, locationRepository
+                , memberRepository, imageService);
         spotRequestDto = new SpotRequestDto();
+        member = MemberEntity.builder()
+                .email("asfd")
+                .memberId("hwangjeyeon")
+                .nickname("hwangs")
+                .name("황제연")
+                .password("1234")
+                .profileImg("1123asd.png")
+                .build();
+        memberRepository.save(member);
+
         location = Location
                 .builder()
                 .name("순천향대학교")
@@ -87,6 +104,7 @@ class SpotServiceTest {
                 .views(0)
                 .location(location)
                 .build();
+        spot.setMemberSpot(member);
         review1 = Review
                 .builder()
                 .reviewType(ReviewTypes.SPOT)
@@ -115,13 +133,17 @@ class SpotServiceTest {
                 .rating(4.5)
                 .spotReview(spot)
                 .build();
-
+        review1.setMemberReview(member);
+        review2.setMemberReview(member);
+        review3.setMemberReview(member);
+        review4.setMemberReview(member);
 
 
         spotRequestDto.setTitle("미디어랩스건물 방문");
         spotRequestDto.setDescription("미디어랩스관입니다");
         spotRequestDto.setLatitude(46.61);
         spotRequestDto.setLongitude(35.24);
+        spotRequestDto.setUserId(member.getMemberId());
     }
 
     @Order(1)

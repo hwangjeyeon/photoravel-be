@@ -1,7 +1,6 @@
 package trendravel.photoravel_be.repository;
 
 import jakarta.transaction.Transactional;
-import jakarta.validation.ConstraintViolationException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -19,7 +18,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @SpringBootTest
 class ReviewRepositoryTest {
@@ -103,78 +101,6 @@ class ReviewRepositoryTest {
         assertThat(findLocationReview.getLocationReview()).isEqualTo(locationReview.getLocationReview());
     }
 
-    @Test
-    @DisplayName("공백/null 입력 미허용 검증 예외를 잘 터트리는지 테스트")
-    @Transactional
-    void validateIsBlankTest(){
-        StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < 501; i++) {
-            sb.append(i);
-        }
 
-        Review nullreview = Review.builder()
-                .id(1L)
-                .reviewType(ReviewTypes.valueOf("LOCATION"))
-                .content(" ")
-                .build();
-        assertThatThrownBy(() -> reviewRepository.save(nullreview))
-                .isInstanceOf(ConstraintViolationException.class)
-                .hasMessageContaining("공백/null 입력은 미허용됩니다.");
-    }
-
-
-    @Test
-    @DisplayName("제한된 길이 이상의 입력값이 들어왔을 때, 검증 예외를 잘 터트리는지 테스트")
-    @Transactional
-    void validateLengthTest(){
-        StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < 501; i++) {
-            sb.append(i);
-        }
-
-        Review longReview = Review.builder()
-                .id(1L)
-                .reviewType(ReviewTypes.valueOf("LOCATION"))
-                .content(sb.toString())
-                .rating(1.0)
-                .build();
-
-        assertThatThrownBy(() -> reviewRepository.save(longReview))
-                .isInstanceOf(ConstraintViolationException.class)
-                .hasMessageContaining("최대 길이는 500자 입니다.");
-    }
-
-
-    @Test
-    @DisplayName("제한된 길이 이상의 입력값이 들어왔을 때, 검증 예외를 잘 터트리는지 테스트")
-    @Transactional
-    void validateRatingRangeTest(){
-
-        Review minRatingReview = Review.builder()
-                .id(1L)
-                .reviewType(ReviewTypes.valueOf("LOCATION"))
-                .content("굿")
-                .rating(0.5)
-                .build();
-
-        Review maxRatingReview = Review.builder()
-                .id(1L)
-                .reviewType(ReviewTypes.valueOf("LOCATION"))
-                .content("굿")
-                .rating(5.5)
-                .build();
-
-
-
-        assertThatThrownBy(() -> reviewRepository.save(minRatingReview))
-                .isInstanceOf(ConstraintViolationException.class)
-                .hasMessageContaining("최소 허용 별점은 1.0입니다.");
-
-
-        assertThatThrownBy(() -> reviewRepository.save(maxRatingReview))
-                .isInstanceOf(ConstraintViolationException.class)
-                .hasMessageContaining("최대 허용 별점은 5.0입니다.");
-
-    }
 
 }

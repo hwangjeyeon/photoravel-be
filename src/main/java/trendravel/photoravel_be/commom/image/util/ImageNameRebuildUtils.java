@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
 @Slf4j
 public class ImageNameRebuildUtils {
 
-    public static final String IMAGE_EXTENSION_SEPARATOR = ".";
+    private static final String IMAGE_EXTENSION_SEPARATOR = ".";
 
     public static String getImageName(String originalFileName){
         return originalFileName.substring(0,

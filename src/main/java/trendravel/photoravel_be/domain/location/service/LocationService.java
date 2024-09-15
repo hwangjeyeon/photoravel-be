@@ -10,9 +10,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import trendravel.photoravel_be.commom.error.LocationErrorCode;
+import trendravel.photoravel_be.commom.error.MemberErrorCode;
 import trendravel.photoravel_be.commom.exception.ApiException;
 import trendravel.photoravel_be.commom.image.service.ImageServiceFacade;
+import trendravel.photoravel_be.db.member.MemberEntity;
+import trendravel.photoravel_be.db.respository.member.MemberRepository;
 import trendravel.photoravel_be.db.review.Review;
+import trendravel.photoravel_be.db.spot.Spot;
 import trendravel.photoravel_be.domain.location.dto.request.LocationKeywordDto;
 import trendravel.photoravel_be.domain.location.dto.request.LocationNowPositionDto;
 import trendravel.photoravel_be.domain.location.dto.request.LocationRequestDto;
@@ -25,6 +29,7 @@ import trendravel.photoravel_be.domain.location.dto.response.LocationSingleReadR
 import trendravel.photoravel_be.domain.review.dto.response.RecentReviewsDto;
 
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -39,10 +44,13 @@ public class LocationService {
 
     private final LocationRepository locationRepository;
     private final ImageServiceFacade imageServiceFacade;
+    private final MemberRepository memberRepository;
 
     @Transactional
     public LocationResponseDto createLocation(
             LocationRequestDto locationRequestDto, List<MultipartFile> images) {
+        MemberEntity member = memberRepository.findByMemberId(locationRequestDto.getUserId())
+                .orElseThrow(() -> new ApiException(MemberErrorCode.USER_NOT_FOUND));
 
         Location location = Location.builder()
                 .description(locationRequestDto.getDescription())
@@ -55,8 +63,10 @@ public class LocationService {
                 .point(new GeometryFactory().createPoint(
                                 new Coordinate(locationRequestDto.getLatitude()
                                         , locationRequestDto.getLongitude())))
+                .member(member)
                 .build();
         location.getPoint().setSRID(4326);
+        location.setMemberLocation(member);
         locationRepository.save(location);
 
 
@@ -71,12 +81,15 @@ public class LocationService {
                 .address(location.getAddress())
                 .createdAt(location.getCreatedAt())
                 .updatedAt(location.getUpdatedAt())
+                .userName(location.getMember().getNickname())
                 .build();
     }
 
     @Transactional
     public LocationResponseDto createLocation(
             LocationRequestDto locationRequestDto) {
+        MemberEntity member = memberRepository.findByMemberId(locationRequestDto.getUserId())
+                .orElseThrow(() -> new ApiException(MemberErrorCode.USER_NOT_FOUND));
         Location location = Location.builder()
                 .description(locationRequestDto.getDescription())
                 .name(locationRequestDto.getName())
@@ -87,8 +100,10 @@ public class LocationService {
                 .point(new GeometryFactory().createPoint(
                         new Coordinate(locationRequestDto.getLatitude()
                                 , locationRequestDto.getLongitude())))
+                .member(member)
                 .build();
         location.getPoint().setSRID(4326);
+        location.setMemberLocation(member);
         locationRepository.save(location);
 
         return LocationResponseDto
@@ -101,6 +116,7 @@ public class LocationService {
                 .address(location.getAddress())
                 .createdAt(location.getCreatedAt())
                 .updatedAt(location.getUpdatedAt())
+                .userName(location.getMember().getNickname())
                 .build();
     }
 
@@ -109,6 +125,8 @@ public class LocationService {
         Location location = locationRepository.findById(id)
                 .orElseThrow(() -> new ApiException(LocationErrorCode.LOCATION_NOT_FOUND));
 
+        MemberEntity member = memberRepository.findByMemberId(location.getMember().getMemberId())
+                .orElseThrow(() -> new ApiException(MemberErrorCode.USER_NOT_FOUND));
 
         location.increaseViews();
         List<RecentReviewsDto> reviews = locationRepository.recentReviews(location.getId());
@@ -129,6 +147,7 @@ public class LocationService {
                 .reviewCounts(location.getReview().size() < 100
                         ? location.getReview().size() : 99)
                 .recentReviewDtos(reviews)
+                .userName(member.getNickname())
                 .build();
     }
 
@@ -183,6 +202,7 @@ public class LocationService {
         Location location = locationRepository.findById(
                 locationRequestDto.getLocationId())
                 .orElseThrow(() -> new ApiException(LocationErrorCode.LOCATION_NOT_FOUND));
+
         log.info("이미지 저장 전");
         location.updateLocation(locationRequestDto,
                 imageServiceFacade.updateImageFacade(images, locationRequestDto.getDeleteImages()));
@@ -199,6 +219,7 @@ public class LocationService {
                 .address(location.getAddress())
                 .createdAt(location.getCreatedAt())
                 .updatedAt(location.getUpdatedAt())
+                .userName(location.getMember().getNickname())
                 .build();
     }
 
@@ -209,6 +230,7 @@ public class LocationService {
         Location location = locationRepository.findById(
                 locationRequestDto.getLocationId())
                 .orElseThrow(() -> new ApiException(LocationErrorCode.LOCATION_NOT_FOUND));
+
 
         location.updateLocation(locationRequestDto);
 
@@ -223,6 +245,7 @@ public class LocationService {
                 .address(location.getAddress())
                 .createdAt(location.getCreatedAt())
                 .updatedAt(location.getUpdatedAt())
+                .userName(location.getMember().getNickname())
                 .build();
     }
 
@@ -230,8 +253,23 @@ public class LocationService {
     public void deleteLocation(Long id){
         Location findLocation = locationRepository.findById(id)
                 .orElseThrow(() -> new ApiException(LocationErrorCode.LOCATION_NOT_FOUND));
+        imageServiceFacade.deleteAllImagesFacade(deleteSubDomainImages(findLocation));
         locationRepository.deleteById(findLocation.getId());
-        imageServiceFacade.deleteAllImagesFacade(findLocation.getImages());
+    }
+
+
+    private List<String> deleteSubDomainImages(Location location){
+        List<String> deleteImages = new ArrayList<>(location.getImages());
+        log.info("{}",location.getImages().get(0));
+        for (Spot spot : location.getSpot()) {
+            deleteImages.addAll(spot.getImages());
+            log.info(spot.getImages().get(0));
+        }
+        for (Review review : location.getReview()) {
+            deleteImages.addAll(review.getImages());
+            log.info(review.getImages().get(0));
+        }
+        return deleteImages;
     }
 
 }
