@@ -100,7 +100,7 @@ public class GuidebookService {
             throw new ApiException(GuidebookErrorCode.GUIDEBOOK_NOT_FOUND);
         }
         
-
+        
         return guidebooks.stream()
                 .map(guidebook -> GuidebookListResponseDto.builder()
                         .id(guidebook.getId())
@@ -108,7 +108,9 @@ public class GuidebookService {
                         .title(guidebook.getTitle())
                         .region(guidebook.getRegion())
                         .views(guidebook.getViews())
-                        .image(!guidebook.getImages().isEmpty() ? guidebook.getImages().get(0) : null)
+                        .image((guidebook.getImages() == null || guidebook.getImages().isEmpty())
+                                ? null
+                                : guidebook.getImages().get(0))
                         .createdAt(guidebook.getCreatedAt())
                         .updatedAt(guidebook.getUpdatedAt())
                         .build())
@@ -145,7 +147,6 @@ public class GuidebookService {
                 () -> new ApiException(GuidebookErrorCode.GUIDEBOOK_NOT_FOUND));
         
         
-
         guidebook.updateGuidebook(guidebookUpdateImageDto,
                 imageServiceFacade.updateImageFacade(images, guidebookUpdateImageDto.getDeleteImages()));
         
@@ -168,7 +169,7 @@ public class GuidebookService {
         Guidebook guidebook = guidebookRepository.findById(guidebookUpdateDto.getId()).orElseThrow(
                 () -> new ApiException(GuidebookErrorCode.GUIDEBOOK_NOT_FOUND));
         
-
+        
         guidebook.updateGuidebook(guidebookUpdateDto);
         
         return GuidebookResponseDto.builder()
