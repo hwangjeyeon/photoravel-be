@@ -37,6 +37,7 @@ public class PhotographerRepositoryTest {
                 .region(Region.아산)
                 .description("신동욱입니다")
                 .profileImg(profileImg)
+                .careerYear(1)
                 .build();
     }
     

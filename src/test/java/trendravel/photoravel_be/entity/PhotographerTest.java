@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import trendravel.photoravel_be.db.enums.Region;
 import trendravel.photoravel_be.db.photographer.Photographer;
 import trendravel.photoravel_be.domain.photographer.dto.request.PhotographerRequestDto;
+import trendravel.photoravel_be.domain.photographer.dto.request.PhotographerUpdateDto;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -59,18 +60,18 @@ public class PhotographerTest {
                 .profileImg(profileImg)
                 .build();
         
-        PhotographerRequestDto photographerRequestDto = new PhotographerRequestDto();
-        photographerRequestDto.setPassword("4321");
-        photographerRequestDto.setName("김동욱");
-        photographerRequestDto.setRegion(Region.천안);
-        photographerRequestDto.setDescription("설명 수정");
+        PhotographerUpdateDto photographerUpdateDto = new PhotographerUpdateDto();
+        photographerUpdateDto.setPassword("4321");
+        photographerUpdateDto.setName("김동욱");
+        photographerUpdateDto.setRegion(Region.천안);
+        photographerUpdateDto.setDescription("설명 수정");
         
         List<String> profileImgList = new ArrayList<>();
         
         //when
         profileImg = "이미지 url 2";
         profileImgList.add(profileImg);
-        //photographer.updatePhotographer(photographerRequestDto, profileImgList);
+        photographer.updatePhotographer(photographerUpdateDto, profileImgList);
         
         //then
         assertThat(photographer.getPassword()).isEqualTo("4321");
