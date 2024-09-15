@@ -17,7 +17,6 @@ import trendravel.photoravel_be.domain.photographer.service.PhotographerService;
 import java.util.List;
 
 @RestController
-@RequestMapping("/photographers")
 @RequiredArgsConstructor
 public class PhotographerController {
     
@@ -25,7 +24,7 @@ public class PhotographerController {
     
     @Schema(description = "사진작가 회원 가입(CREATE) 요청",
             contentEncoding = MediaType.MULTIPART_FORM_DATA_VALUE)
-    @PostMapping(value = "/join",
+    @PostMapping(value = "/public/photographers/join",
             consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
     public Result createPhotographer(
@@ -39,7 +38,7 @@ public class PhotographerController {
     
     @Schema(description = "사진작가 로그인 요청",
             contentEncoding = MediaType.APPLICATION_JSON_VALUE)
-    @PostMapping("/login")
+    @PostMapping("/public/photographers/login")
     public Result loginPhotographer(@RequestBody PhotographerLoginRequestDto loginRequestDto) {
         
         photographerService.authenticate(loginRequestDto.getUsername(),
@@ -50,14 +49,14 @@ public class PhotographerController {
     
     @Schema(description = "사진작가 목록 READ 요청",
             contentEncoding = MediaType.APPLICATION_JSON_VALUE)
-    @GetMapping
+    @GetMapping("/public/photographers")
     public Api<List<PhotographerListResponseDto>> getPhotographerList(@RequestParam String region) {
         
         return Api.READ(photographerService.getPhotographerList(region));
     }
     
     @Schema(description = "사진작가 상세 정보 READ 요청")
-    @GetMapping("/{photographerId}/detail")
+    @GetMapping("/public/photographers/{photographerId}/detail")
     public Api<PhotographerSingleResponseDto> getPhotographer(@PathVariable String photographerId) {
         
         return Api.READ(photographerService.getPhotographer(photographerId));
@@ -66,7 +65,7 @@ public class PhotographerController {
     
     @Schema(description = "사진작가 정보 UPDATE 요청 (이미지 미포함)",
             contentEncoding = MediaType.APPLICATION_JSON_VALUE)
-    @PatchMapping("/update")
+    @PatchMapping("/private/photographers/update")
     public Api<PhotographerSingleResponseDto> updatePhotographer(
             @RequestBody PhotographerUpdateDto photographerUpdateDto) {
         
@@ -75,7 +74,7 @@ public class PhotographerController {
     
     @Schema(description = "사진작가 정보 UPDATE 요청 (이미지 포함)",
             contentEncoding = MediaType.MULTIPART_FORM_DATA_VALUE)
-    @PatchMapping(value = "/update",
+    @PatchMapping(value = "/private/photographers/update",
             consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
     public Api<PhotographerSingleResponseDto> updatePhotographer(
@@ -89,7 +88,7 @@ public class PhotographerController {
     
     @Schema(description = "사진작가 정보 DELETE 요청",
             contentEncoding = MediaType.APPLICATION_JSON_VALUE)
-    @DeleteMapping("/{photographerId}/delete")
+    @DeleteMapping("/private/photographers/{photographerId}/delete")
     public Result deletePhotographer(@PathVariable String photographerId) {
         
         photographerService.deletePhotographer(photographerId);

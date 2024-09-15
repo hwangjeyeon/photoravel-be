@@ -4,6 +4,7 @@ import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.web.multipart.MultipartFile;
 import trendravel.photoravel_be.commom.error.GuidebookErrorCode;
 import trendravel.photoravel_be.commom.error.PhotographerErrorCode;
@@ -17,6 +18,11 @@ import trendravel.photoravel_be.domain.photographer.dto.response.PhotographerLis
 import trendravel.photoravel_be.domain.photographer.dto.response.PhotographerSingleResponseDto;
 import trendravel.photoravel_be.domain.photographer.service.PhotographerService;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.*;
@@ -34,10 +40,18 @@ public class PhotographerServiceTest {
     
     PhotographerRequestDto photo1, photo2;
     PhotographerUpdateDto photographerUpdateDto;
-    List<MultipartFile> list;
+    
+    
+    MockMultipartFile mockMultipartFile;
     
     @BeforeEach
-    void before() {
+    void before() throws IOException {
+        
+        //   resource/images/test.png
+        URL resource = getClass().getClassLoader().getResource("images/test.png");
+        mockMultipartFile = new MockMultipartFile("image",
+                "test.png", "image/png", new FileInputStream(resource.getFile()));
+        
         
         photo1 = new PhotographerRequestDto();
         photo1.setAccountId("아이디");
@@ -45,6 +59,7 @@ public class PhotographerServiceTest {
         photo1.setDescription("설명");
         photo1.setName("신동욱");
         photo1.setRegion(Region.아산);
+        photo1.setCareerYear(1);
         
         photo2 = new PhotographerRequestDto();
         photo2.setAccountId("아이디22");
@@ -52,6 +67,7 @@ public class PhotographerServiceTest {
         photo2.setDescription("설명22");
         photo2.setName("김동욱");
         photo2.setRegion(Region.천안);
+        photo2.setCareerYear(2);
         
         photographerUpdateDto = new PhotographerUpdateDto();
         photographerUpdateDto.setAccountId("아이디"); //수정용 아니고 검색용
@@ -61,13 +77,15 @@ public class PhotographerServiceTest {
         photographerUpdateDto.setRegion(Region.천안);
         
         
-        list = null;
     }
     
     @Test
     @Order(1)
     @DisplayName("사진작가 CREATE 테스트")
     void create() {
+        
+        List<MultipartFile> list = new ArrayList<>();
+        list.add(mockMultipartFile);
         
         //when
         photographerService.createPhotographer(photo1, list);
@@ -86,6 +104,8 @@ public class PhotographerServiceTest {
     void getList() {
         
         //given
+        List<MultipartFile> list = new ArrayList<>();
+        list.add(mockMultipartFile);
         photographerService.createPhotographer(photo1, list);
         photographerService.createPhotographer(photo2, list);
         
@@ -105,6 +125,8 @@ public class PhotographerServiceTest {
     void getOne() {
         
         //given
+        List<MultipartFile> list = new ArrayList<>();
+        list.add(mockMultipartFile);
         photographerService.createPhotographer(photo1, list);
         
         //when
@@ -122,6 +144,8 @@ public class PhotographerServiceTest {
     void update() {
         
         //given
+        List<MultipartFile> list = new ArrayList<>();
+        list.add(mockMultipartFile);
         photographerService.createPhotographer(photo1, list);
         
         //when
@@ -140,6 +164,8 @@ public class PhotographerServiceTest {
     void delete() {
         
         //given
+        List<MultipartFile> list = new ArrayList<>();
+        list.add(mockMultipartFile);
         photographerService.createPhotographer(photo1, list);
         
         //when

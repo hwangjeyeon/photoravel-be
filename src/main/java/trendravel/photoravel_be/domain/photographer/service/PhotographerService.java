@@ -172,6 +172,10 @@ public class PhotographerService {
         Photographer photographer = photographerRepository.findByAccountId(photographerId).orElseThrow(
                 () -> new ApiException(PhotographerErrorCode.PHOTOGRAPHER_NOT_FOUND));
         
+        List<String> img = new ArrayList<>();
+        img.add(photographer.getProfileImg());
+        imageServiceFacade.deleteAllImagesFacade(img);
+        
         photographerRepository.deleteByAccountId(photographerId);
         
         /*
