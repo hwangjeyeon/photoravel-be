@@ -24,7 +24,7 @@ public class PhotographerController {
     
     @Schema(description = "사진작가 회원 가입(CREATE) 요청",
             contentEncoding = MediaType.MULTIPART_FORM_DATA_VALUE)
-    @PostMapping(value = "/private/photographers/join",
+    @PostMapping(value = "/public/photographers/join",
             consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
     public Result createPhotographer(
