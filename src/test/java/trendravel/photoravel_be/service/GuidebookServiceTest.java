@@ -8,7 +8,9 @@ import trendravel.photoravel_be.commom.error.GuidebookErrorCode;
 import trendravel.photoravel_be.commom.exception.ApiException;
 import trendravel.photoravel_be.db.enums.Region;
 import trendravel.photoravel_be.db.guidebook.Guidebook;
+import trendravel.photoravel_be.db.member.MemberEntity;
 import trendravel.photoravel_be.db.respository.guidebook.GuidebookRepository;
+import trendravel.photoravel_be.db.respository.member.MemberRepository;
 import trendravel.photoravel_be.domain.guidebook.dto.request.GuidebookRequestDto;
 import trendravel.photoravel_be.domain.guidebook.dto.request.GuidebookUpdateDto;
 import trendravel.photoravel_be.domain.guidebook.dto.response.GuidebookListResponseDto;
@@ -31,21 +33,25 @@ public class GuidebookServiceTest {
     @Autowired
     GuidebookRepository guidebookRepository;
     
+    @Autowired
+    MemberRepository memberRepository;
+    
     GuidebookRequestDto guidebookRequestDto1;
     GuidebookRequestDto guidebookRequestDto2;
     GuidebookUpdateDto guidebookUpdateDto;
     
+    MemberEntity member;
     @BeforeEach
     void before() {
         
         guidebookRequestDto1 = new GuidebookRequestDto();
-        guidebookRequestDto1.setUserId(1L);
+        guidebookRequestDto1.setUserId("mem");
         guidebookRequestDto1.setTitle("아산 여행하기");
         guidebookRequestDto1.setContent("아산에는");
         guidebookRequestDto1.setRegion(Region.아산);
         
         guidebookRequestDto2 = new GuidebookRequestDto();
-        guidebookRequestDto2.setUserId(1L);
+        guidebookRequestDto2.setUserId("mem");
         guidebookRequestDto2.setTitle("천안 여행하기");
         guidebookRequestDto2.setContent("천안에는");
         guidebookRequestDto2.setRegion(Region.천안);
@@ -54,6 +60,18 @@ public class GuidebookServiceTest {
         guidebookUpdateDto.setTitle("제목 수정이요");
         guidebookUpdateDto.setContent("내용 수정이요");
         guidebookUpdateDto.setRegion(Region.천안);
+        
+        
+        member = MemberEntity.builder()
+                .email("aaa")
+                .memberId("mem")
+                .nickname("donguk")
+                .name("신동욱")
+                .password("1234")
+                .profileImg("test.png")
+                .build();
+        
+        memberRepository.save(member);
         
     }
 
@@ -67,7 +85,6 @@ public class GuidebookServiceTest {
         
         //then
         Guidebook findGuidebook = guidebookRepository.findById(id).get();
-        assertThat(findGuidebook.getUserId()).isEqualTo(guidebookRequestDto1.getUserId());
         assertThat(findGuidebook.getTitle()).isEqualTo(guidebookRequestDto1.getTitle());
         assertThat(findGuidebook.getContent()).isEqualTo(guidebookRequestDto1.getContent());
         assertThat(findGuidebook.getRegion()).isEqualTo(guidebookRequestDto1.getRegion());
