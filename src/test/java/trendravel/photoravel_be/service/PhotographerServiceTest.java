@@ -110,7 +110,7 @@ public class PhotographerServiceTest {
         photographerService.createPhotographer(photo2, list);
         
         //when
-        List<PhotographerListResponseDto> all = photographerService.getPhotographerList("all");
+        List<PhotographerListResponseDto> all = photographerService.getPhotographerList("career");
         List<PhotographerListResponseDto> region = photographerService.getPhotographerList("천안");
         
         //then

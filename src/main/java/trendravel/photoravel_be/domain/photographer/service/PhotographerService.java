@@ -33,10 +33,12 @@ public class PhotographerService {
         
         List<Photographer> photographers;
         
-        if (region.equals("all")) {
-            photographers = photographerRepository.findAll();
+        if (region.equals("count")) {
+            photographers = photographerRepository.getPhotographerByMatchingCount();
+        }  else if (region.equals("career")){
+            photographers = photographerRepository.getPhotographerByCareer();
         } else { // 지역으로 검색
-            photographers = photographerRepository.findByRegion(Region.valueOf(region));
+            photographers = photographerRepository.getPhotographerByRegion(Region.valueOf(region));
         }
         
         if (photographers.isEmpty()) {
@@ -117,7 +119,7 @@ public class PhotographerService {
     
     @Transactional
     public PhotographerSingleResponseDto updatePhotographer(PhotographerUpdateDto photographerUpdateDto,
-                                                          List<MultipartFile> images) {
+                                                            List<MultipartFile> images) {
         
         Photographer photographer = photographerRepository.findByAccountId(photographerUpdateDto.getAccountId()).orElseThrow(
                 () -> new ApiException(PhotographerErrorCode.PHOTOGRAPHER_NOT_FOUND));
