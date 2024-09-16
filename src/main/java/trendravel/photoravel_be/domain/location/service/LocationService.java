@@ -259,15 +259,22 @@ public class LocationService {
 
 
     private List<String> deleteSubDomainImages(Location location){
-        List<String> deleteImages = new ArrayList<>(location.getImages());
-        log.info("{}",location.getImages().get(0));
+        List<String> deleteImages = new ArrayList<>();
+        if(location.getImages() != null){
+            deleteImages.addAll(location.getImages());
+        }
+
         for (Spot spot : location.getSpot()) {
+            if(spot.getImages() == null){
+                continue;
+            }
             deleteImages.addAll(spot.getImages());
-            log.info(spot.getImages().get(0));
         }
         for (Review review : location.getReview()) {
+            if(review.getImages() == null){
+                continue;
+            }
             deleteImages.addAll(review.getImages());
-            log.info(review.getImages().get(0));
         }
         return deleteImages;
     }

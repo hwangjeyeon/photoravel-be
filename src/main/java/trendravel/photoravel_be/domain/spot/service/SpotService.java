@@ -231,10 +231,14 @@ public class SpotService {
 
     private List<String> deleteSubDomainImages(Spot spot){
         List<String> deleteImages = new ArrayList<>();
-        deleteImages.addAll(spot.getImages());
+        if(spot.getImages() != null){
+            deleteImages.addAll(spot.getImages());
+        }
         for (Review review : spot.getReviews()) {
+            if(review.getImages() == null){
+                continue;
+            }
             deleteImages.addAll(review.getImages());
-            log.info(review.getImages().get(0).toString());
         }
         return deleteImages;
     }
