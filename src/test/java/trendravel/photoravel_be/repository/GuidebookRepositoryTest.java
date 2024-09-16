@@ -49,7 +49,7 @@ public class GuidebookRepositoryTest {
     }
     
     
-//    @Test
+    @Test
     @DisplayName("가이드북 저장 테스트")
     @Order(2)
     void saveGuidebookRepository() {
@@ -69,7 +69,7 @@ public class GuidebookRepositoryTest {
         assertThat(findGuidebook2.getId()).isEqualTo(2L);
     }
     
-//    @Test
+    @Test
     @DisplayName("가이드북 리스트 반환 테스트")
     void getListGuidebookRepository() {
         

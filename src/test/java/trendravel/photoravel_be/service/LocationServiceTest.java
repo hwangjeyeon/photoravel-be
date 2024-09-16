@@ -215,7 +215,7 @@ class LocationServiceTest {
     @Transactional
     @Order(5)
     void deleteLocationServiceTest(){
-        Long newId = locationService.createLocation(locationRequestDto).getLocationId();
+        Long newId = locationRepository.save(location).getId();
         locationRequestDto.setLocationId(newId);
         locationService.deleteLocation(locationRequestDto.getLocationId());
 

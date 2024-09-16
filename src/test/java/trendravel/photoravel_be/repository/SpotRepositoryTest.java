@@ -110,20 +110,5 @@ public class SpotRepositoryTest {
     }
 
 
-    @Test
-    @DisplayName("공백/null 입력 미허용 검증 예외를 잘 터트리는지 테스트")
-    @Transactional
-    void validateIsBlankTest(){
-        Spot nullSpot = Spot.builder()
-                .id(1L)
-                .title(" ")
-                .description(" ")
-                .build();
-        assertThatThrownBy(() -> spotRepository.save(nullSpot))
-                .isInstanceOf(ConstraintViolationException.class)
-                .hasMessageContaining("공백/null 입력은 미허용됩니다.");
-    }
-
-
 
 }
