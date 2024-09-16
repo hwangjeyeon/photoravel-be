@@ -103,10 +103,12 @@ public class GuidebookService {
         키워드 기반 가이드북은 프론트 측과 상의하여 잠시 보류
          */
         
-        if (region.equals("all")) {
-            guidebooks = guidebookRepository.findAll();
-        } else {
-            guidebooks = guidebookRepository.findByRegion(Region.valueOf(region));
+        if (region.equals("newest")) {
+            guidebooks = guidebookRepository.getGuidebookByNewest();
+        } else if (region.equals("view")) {
+            guidebooks = guidebookRepository.getGuidebookByViews();
+        } else { //지역으로 검색
+            guidebooks = guidebookRepository.getGuidebookByRegion(Region.valueOf(region));
         }
         
         if (guidebooks.isEmpty()) {

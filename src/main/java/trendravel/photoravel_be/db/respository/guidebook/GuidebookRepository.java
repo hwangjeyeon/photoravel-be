@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface GuidebookRepository extends JpaRepository<Guidebook, Long> {
+public interface GuidebookRepository extends JpaRepository<Guidebook, Long>, GuidebookRepositoryCustom {
     
     List<Guidebook> findByRegion(Region region);
 

@@ -101,7 +101,7 @@ public class GuidebookServiceTest {
         guidebookService.createGuidebook(guidebookRequestDto2);
         
         //when
-        List<GuidebookListResponseDto> list1 = guidebookService.getGuidebookList("all");
+        List<GuidebookListResponseDto> list1 = guidebookService.getGuidebookList("newest");
         List<GuidebookListResponseDto> list2 = guidebookService.getGuidebookList("천안");
         
         //then
