@@ -45,4 +45,6 @@ public class PhotographerSingleResponseDto {
     @Schema(description = "최근 리뷰")
     private List<RecentReviewsDto> recentReviewDtos;
     
+    @Schema(description = "매칭 횟수")
+    private Integer matchingCount;
 }

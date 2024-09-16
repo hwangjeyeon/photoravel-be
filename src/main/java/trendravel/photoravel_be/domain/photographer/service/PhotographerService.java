@@ -55,6 +55,7 @@ public class PhotographerService {
                         .ratingAvg(String.format("%.2f", ratingAverage(photographer.getReviews())))
                         .reviewCount(photographer.getReviews().size())
                         .careerYear(photographer.getCareerYear())
+                        .matchingCount(photographer.getMatchingCount())
                         .build())
                 .collect(Collectors.toList());
     }
@@ -79,6 +80,7 @@ public class PhotographerService {
                 .updatedAt(photographer.getUpdatedAt())
                 .ratingAvg(String.format("%.2f", ratingAverage(photographer.getReviews())))
                 .careerYear(photographer.getCareerYear())
+                .matchingCount(photographer.getMatchingCount())
                 .build();
     }
     
@@ -99,6 +101,7 @@ public class PhotographerService {
                 //이미지 업로드 처리는 List이고 엔티티는 문자열이기에 get(0)으로 처리 
                 .profileImg(imageServiceFacade.uploadImageFacade(images).get(0))
                 .careerYear(photographerRequestDto.getCareerYear())
+                .matchingCount(0)
                 .build());
     }
     

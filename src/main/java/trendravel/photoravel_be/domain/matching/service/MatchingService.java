@@ -9,6 +9,7 @@ import trendravel.photoravel_be.commom.error.PhotographerErrorCode;
 import trendravel.photoravel_be.commom.exception.ApiException;
 import trendravel.photoravel_be.db.match.Matching;
 import trendravel.photoravel_be.db.match.enums.MatchingStatus;
+import trendravel.photoravel_be.db.photographer.Photographer;
 import trendravel.photoravel_be.db.respository.matching.MatchingRepository;
 import trendravel.photoravel_be.db.respository.member.MemberRepository;
 import trendravel.photoravel_be.db.respository.photographer.PhotographerRepository;
@@ -95,5 +96,10 @@ public class MatchingService {
     @Transactional
     public void complete(MatchingRequestDto matchingRequestDto) {
         updateMatchingStatus(matchingRequestDto, MatchingStatus.COMPLETED, MatchingStatus.ACCEPTED);
+        
+        Photographer photographer =
+                photographerRepository.findByAccountId(matchingRequestDto.getPhotographerId()).orElseThrow(
+                        () -> new ApiException(PhotographerErrorCode.PHOTOGRAPHER_NOT_FOUND));
+        photographer.increaseMatchingCount();
     }
 }

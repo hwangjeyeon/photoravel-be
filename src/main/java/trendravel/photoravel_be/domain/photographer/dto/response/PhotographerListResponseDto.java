@@ -41,4 +41,7 @@ public class PhotographerListResponseDto {
     @Schema(description = "경력")
     private Integer careerYear;
     
+    @Schema(description = "매칭 횟수")
+    private Integer matchingCount;
+    
 }
