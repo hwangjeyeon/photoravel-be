@@ -26,7 +26,6 @@ public class GuidebookTest {
         //when
         Guidebook guidebook = Guidebook.builder()
                 .id(1L)
-                .userId(1L)
                 .title("아산 여행하기")
                 .content("이것은 내용")
                 .images(image)
@@ -36,7 +35,6 @@ public class GuidebookTest {
         
         //then
         assertThat(guidebook.getId()).isEqualTo(1L);
-        assertThat(guidebook.getUserId()).isEqualTo(1L);
         assertThat(guidebook.getTitle()).isEqualTo("아산 여행하기");
         assertThat(guidebook.getContent()).isEqualTo("이것은 내용");
         assertThat(guidebook.getRegion()).isEqualTo(Region.아산);
@@ -56,7 +54,6 @@ public class GuidebookTest {
         image.add("이미지 url 1");
         Guidebook guidebook = Guidebook.builder()
                 .id(1L)
-                .userId(1L)
                 .title("아산 여행하기")
                 .content("이것은 내용")
                 .region(Region.아산)
