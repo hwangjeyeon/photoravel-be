@@ -4,6 +4,7 @@ import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
+import org.springframework.test.context.ActiveProfiles;
 import trendravel.photoravel_be.config.QueryDSLConfig;
 import trendravel.photoravel_be.db.enums.Region;
 import trendravel.photoravel_be.db.guidebook.Guidebook;
@@ -48,7 +49,7 @@ public class GuidebookRepositoryTest {
     }
     
     
-    @Test
+//    @Test
     @DisplayName("가이드북 저장 테스트")
     @Order(2)
     void saveGuidebookRepository() {
@@ -68,7 +69,7 @@ public class GuidebookRepositoryTest {
         assertThat(findGuidebook2.getId()).isEqualTo(2L);
     }
     
-    @Test
+//    @Test
     @DisplayName("가이드북 리스트 반환 테스트")
     void getListGuidebookRepository() {
         

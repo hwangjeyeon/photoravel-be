@@ -5,6 +5,7 @@ import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.web.multipart.MultipartFile;
 import trendravel.photoravel_be.commom.error.GuidebookErrorCode;
 import trendravel.photoravel_be.commom.error.PhotographerErrorCode;
@@ -30,6 +31,7 @@ import static org.assertj.core.api.Assertions.*;
 @SpringBootTest
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @Transactional
+@ActiveProfiles("test")
 public class PhotographerServiceTest {
     
     @Autowired

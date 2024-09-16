@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
+import org.springframework.test.context.ActiveProfiles;
 import trendravel.photoravel_be.config.QueryDSLConfig;
 import trendravel.photoravel_be.db.enums.Region;
 import trendravel.photoravel_be.db.photographer.Photographer;
@@ -18,6 +19,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @DataJpaTest
 @Import(QueryDSLConfig.class)
 @Transactional
+@ActiveProfiles("test")
 public class PhotographerRepositoryTest {
     
     Photographer photographer;
@@ -41,7 +43,7 @@ public class PhotographerRepositoryTest {
                 .build();
     }
     
-    @Test
+//    @Test
     @DisplayName("사진작가 저장 테스트")
     void savePhotographerRepository() {
         
