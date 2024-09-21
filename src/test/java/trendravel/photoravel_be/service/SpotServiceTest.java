@@ -75,6 +75,7 @@ class SpotServiceTest {
                 , memberRepository, imageService);
         spotRequestDto = new SpotRequestDto();
         member = MemberEntity.builder()
+                .id(1L)
                 .email("asfd")
                 .memberId("hwangjeyeon")
                 .nickname("hwangs")
@@ -291,7 +292,7 @@ class SpotServiceTest {
         spotRequestDto.setLocationId(4L);
         assertThatThrownBy(() -> spotService.readSingleSpot(1L,2L))
                 .isInstanceOf(ApiException.class)
-                .hasMessageContaining(LocationErrorCode.LOCATION_NOT_FOUND.getErrorDescription());
+                .hasMessageContaining(SpotErrorCode.SPOT_NOT_FOUND.getErrorDescription());
     }
 
     @Order(8)

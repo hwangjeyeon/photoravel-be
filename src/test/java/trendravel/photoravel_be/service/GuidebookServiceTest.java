@@ -65,6 +65,7 @@ public class GuidebookServiceTest {
         
         
         member = MemberEntity.builder()
+                .id(1L)
                 .email("aaa")
                 .memberId("mem")
                 .nickname("donguk")

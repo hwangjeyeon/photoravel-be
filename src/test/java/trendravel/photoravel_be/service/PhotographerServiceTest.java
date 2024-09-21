@@ -99,8 +99,11 @@ public class PhotographerServiceTest {
         assertThat(find.getDescription()).isEqualTo(photo1.getDescription());
         assertThat(find.getRegion()).isEqualTo(photo1.getRegion());
     }
-    
-    @Test
+
+    /**
+     * 테스트 빌드 시, 실제 버킷에 데이터를 넣는 문제 발생. 따라서 해당 테스트는 삭제 필요.
+     */
+//    @Test
     @Order(2)
     @DisplayName("사진작가 목록 READ 테스트")
     void getList() {

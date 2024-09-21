@@ -74,6 +74,7 @@ class ReviewServiceTest {
         reviewService = new ReviewService(reviewRepository, spotRepository, locationRepository,
                 photographerRepository, memberRepository, imageService);
         member = MemberEntity.builder()
+                .id(1L)
                 .email("asfd")
                 .memberId("hwangjeyeon")
                 .nickname("hwangs")

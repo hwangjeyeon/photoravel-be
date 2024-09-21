@@ -13,7 +13,7 @@ import software.amazon.awssdk.services.s3.S3Client;
 import java.net.URI;
 
 @Configuration
-@Profile({"dev", "test"})
+@Profile({"dev"})
 public class S3ConfigInLocal extends S3Config{
 
     @Value("${spring.cloud.aws.region.static}")

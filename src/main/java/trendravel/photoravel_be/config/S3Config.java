@@ -12,7 +12,7 @@ import software.amazon.awssdk.services.s3.S3Client;
 import java.net.URI;
 
 @Configuration
-@Profile("prod")
+@Profile({"prod","test"})
 public class S3Config {
 
     @Value("${spring.cloud.aws.credentials.access-key}")

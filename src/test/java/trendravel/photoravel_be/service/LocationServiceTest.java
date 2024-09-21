@@ -21,7 +21,6 @@ import trendravel.photoravel_be.db.review.enums.ReviewTypes;
 import trendravel.photoravel_be.domain.location.dto.request.LocationKeywordDto;
 import trendravel.photoravel_be.domain.location.dto.request.LocationNowPositionDto;
 import trendravel.photoravel_be.domain.location.dto.response.LocationMultiReadResponseDto;
-import trendravel.photoravel_be.domain.location.dto.response.LocationResponseDto;
 import trendravel.photoravel_be.domain.location.dto.response.LocationSingleReadResponseDto;
 import trendravel.photoravel_be.domain.location.service.LocationService;
 import trendravel.photoravel_be.domain.location.dto.request.LocationRequestDto;
@@ -68,6 +67,7 @@ class LocationServiceTest {
     void before(){
         locationService = new LocationService(locationRepository, imageService, memberRepository);
         member = MemberEntity.builder()
+                .id(1L)
                 .email("asfd")
                 .memberId("hwangjeyeon")
                 .nickname("hwangs")
