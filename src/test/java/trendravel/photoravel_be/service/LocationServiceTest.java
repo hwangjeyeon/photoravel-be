@@ -21,6 +21,7 @@ import trendravel.photoravel_be.db.review.enums.ReviewTypes;
 import trendravel.photoravel_be.domain.location.dto.request.LocationKeywordDto;
 import trendravel.photoravel_be.domain.location.dto.request.LocationNowPositionDto;
 import trendravel.photoravel_be.domain.location.dto.response.LocationMultiReadResponseDto;
+import trendravel.photoravel_be.domain.location.dto.response.LocationResponseDto;
 import trendravel.photoravel_be.domain.location.dto.response.LocationSingleReadResponseDto;
 import trendravel.photoravel_be.domain.location.service.LocationService;
 import trendravel.photoravel_be.domain.location.dto.request.LocationRequestDto;
@@ -163,22 +164,22 @@ class LocationServiceTest {
     @Order(1)
     void createLocationServiceTest(){
 
-        locationService.createLocation(locationRequestDto);
+        Long id = locationService.createLocation(locationRequestDto).getLocationId();
 
         assertThat(locationRepository.findById(
-                locationRequestDto.getLocationId())
+                        id)
                 .get().getName()).isEqualTo("순천향대학교");
         assertThat(locationRepository.findById(
-                locationRequestDto.getLocationId())
+                        id)
                 .get().getAddress()).isEqualTo("아산시 신창면 순천향로46");
         assertThat(locationRepository.findById(
-                locationRequestDto.getLocationId())
+                        id)
                 .get().getLatitude()).isEqualTo(35.24);
         assertThat(locationRepository.findById(
-                locationRequestDto.getLocationId())
+                        id)
                 .get().getLongitude()).isEqualTo(46.61);
         assertThat(locationRepository.findById(
-                locationRequestDto.getLocationId())
+                        id)
                 .get().getDescription()).isEqualTo("순천향대학교입니다.");
     }
 
@@ -188,25 +189,25 @@ class LocationServiceTest {
     @Transactional
     @Order(2)
     void updateLocationServiceTest(){
-        locationService.createLocation(locationRequestDto);
-        locationRequestDto.setLocationId(2L);
+        Long createId = locationService.createLocation(locationRequestDto).getLocationId();
+        locationRequestDto.setLocationId(createId);
         locationRequestDto.setName("미디어랩스");
-        locationService.updateLocation(locationRequestDto);
+        Long id = locationService.updateLocation(locationRequestDto).getLocationId();
 
         assertThat(locationRepository.findById(
-                        locationRequestDto.getLocationId())
+                        id)
                 .get().getName()).isEqualTo("미디어랩스");
         assertThat(locationRepository.findById(
-                        locationRequestDto.getLocationId())
+                        id)
                 .get().getAddress()).isEqualTo("아산시 신창면 순천향로46");
         assertThat(locationRepository.findById(
-                        locationRequestDto.getLocationId())
+                        id)
                 .get().getLatitude()).isEqualTo(35.24);
         assertThat(locationRepository.findById(
-                        locationRequestDto.getLocationId())
+                        id)
                 .get().getLongitude()).isEqualTo(46.61);
         assertThat(locationRepository.findById(
-                        locationRequestDto.getLocationId())
+                        id)
                 .get().getDescription()).isEqualTo("순천향대학교입니다.");
     }
 

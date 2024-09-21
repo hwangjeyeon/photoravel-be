@@ -48,10 +48,10 @@ public class PhotographerRepositoryTest {
     @DisplayName("사진작가 저장 테스트")
     void savePhotographerRepository() {
         
-        photographerRepository.save(photographer);
-        Photographer findPhotographer = photographerRepository.findById(photographer.getId()).get();
+        Long id = photographerRepository.save(photographer).getId();
+        Photographer findPhotographer = photographerRepository.findById(id).get();
         
-        assertThat(findPhotographer.getId()).isEqualTo(photographer.getId());
+        assertThat(findPhotographer.getId()).isEqualTo(id);
         assertThat(findPhotographer.getAccountId()).isEqualTo(photographer.getAccountId());
         assertThat(findPhotographer.getPassword()).isEqualTo(photographer.getPassword());
         assertThat(findPhotographer.getName()).isEqualTo(photographer.getName());
