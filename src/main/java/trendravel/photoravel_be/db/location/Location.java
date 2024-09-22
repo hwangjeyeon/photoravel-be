@@ -7,6 +7,7 @@ import org.hibernate.annotations.ColumnDefault;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.GeometryFactory;
 import trendravel.photoravel_be.db.BaseEntity;
+import trendravel.photoravel_be.db.enums.Category;
 import trendravel.photoravel_be.db.member.MemberEntity;
 import trendravel.photoravel_be.domain.location.dto.request.LocationRequestDto;
 import trendravel.photoravel_be.db.review.Review;
@@ -60,7 +61,8 @@ public class Location extends BaseEntity {
     @ColumnDefault("0")
     private int views;
 
-    //유저 엔티티 생성 후, 연관관계 필드 추가 필요
+    @Column(nullable = false)
+    private Category category;
 
 
     @OneToMany(mappedBy = "location", orphanRemoval = true)
@@ -98,6 +100,7 @@ public class Location extends BaseEntity {
         if(!newImages.isEmpty()){
             this.images.addAll(newImages);
         }
+        this.category = location.getCategory();
     }
 
     public void updateLocation(LocationUpdateImagesDto location){
@@ -114,6 +117,7 @@ public class Location extends BaseEntity {
                 this.images.remove(deleteImage);
             }
         }
+        this.category = location.getCategory();
     }
 
     public void increaseViews(){
