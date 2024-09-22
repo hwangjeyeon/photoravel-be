@@ -3,7 +3,7 @@ package trendravel.photoravel_be.entity;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import trendravel.photoravel_be.db.spot.Spot;
-import trendravel.photoravel_be.domain.spot.dto.request.SpotRequestDto;
+import trendravel.photoravel_be.domain.spot.dto.request.SpotUpdatedImagesDto;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -63,12 +63,11 @@ class SpotTest {
         image.add("https://s3.ap-northeast-2.amazonaws.com/mybucket/cat.jpg");
         image.add("https://s3.ap-northeast-2.amazonaws.com/mybucket/sheep.jpg");
 
-        SpotRequestDto spotRequestDto = new SpotRequestDto();
+        SpotUpdatedImagesDto spotRequestDto = new SpotUpdatedImagesDto();
         spotRequestDto.setLatitude(24.12);
         spotRequestDto.setLongitude(32.53);
         spotRequestDto.setDescription("우리집 근처 고기집입니다");
         spotRequestDto.setTitle("우리집 근처 고기집");
-        spotRequestDto.setUserId("Messi");
 
         //when
         spot.updateSpot(spotRequestDto);

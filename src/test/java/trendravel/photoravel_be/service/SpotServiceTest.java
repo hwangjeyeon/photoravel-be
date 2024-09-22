@@ -21,6 +21,7 @@ import trendravel.photoravel_be.db.review.enums.ReviewTypes;
 import trendravel.photoravel_be.db.spot.Spot;
 import trendravel.photoravel_be.domain.review.dto.response.RecentReviewsDto;
 import trendravel.photoravel_be.domain.review.service.ReviewService;
+import trendravel.photoravel_be.domain.spot.dto.request.SpotUpdatedImagesDto;
 import trendravel.photoravel_be.domain.spot.dto.response.SpotSingleReadResponseDto;
 import trendravel.photoravel_be.domain.spot.service.SpotService;
 import trendravel.photoravel_be.domain.spot.dto.request.SpotRequestDto;
@@ -58,6 +59,7 @@ class SpotServiceTest {
     ImageServiceFacade imageService;
 
     SpotRequestDto spotRequestDto;
+    SpotUpdatedImagesDto spotUpdatedImagesDto;
     Location location;
     Spot spot;
     Review review1;
@@ -74,8 +76,8 @@ class SpotServiceTest {
         spotService = new SpotService(spotRepository, locationRepository
                 , memberRepository, imageService);
         spotRequestDto = new SpotRequestDto();
+        spotUpdatedImagesDto = new SpotUpdatedImagesDto();
         member = MemberEntity.builder()
-                .id(1L)
                 .email("asfd")
                 .memberId("hwangjeyeon")
                 .nickname("hwangs")
@@ -113,40 +115,45 @@ class SpotServiceTest {
                 .reviewType(ReviewTypes.SPOT)
                 .content("멋지네")
                 .rating(1.5)
-                .spotReview(spot)
+                .member(member)
                 .build();
         review2 = Review
                 .builder()
                 .reviewType(ReviewTypes.SPOT)
                 .content("키야")
                 .rating(2.4)
-                .spotReview(spot)
+                .member(member)
                 .build();
         review3 = Review
                 .builder()
                 .reviewType(ReviewTypes.SPOT)
                 .content("이야")
                 .rating(3.42)
-                .spotReview(spot)
+                .member(member)
                 .build();
         review4 = Review
                 .builder()
                 .reviewType(ReviewTypes.SPOT)
                 .content("그저 굿")
                 .rating(4.5)
-                .spotReview(spot)
+                .member(member)
                 .build();
         review1.setMemberReview(member);
         review2.setMemberReview(member);
         review3.setMemberReview(member);
         review4.setMemberReview(member);
 
-
         spotRequestDto.setTitle("미디어랩스건물 방문");
         spotRequestDto.setDescription("미디어랩스관입니다");
         spotRequestDto.setLatitude(46.61);
         spotRequestDto.setLongitude(35.24);
         spotRequestDto.setUserId(member.getMemberId());
+
+
+        spotUpdatedImagesDto.setTitle("미디어랩스건물 방문");
+        spotUpdatedImagesDto.setDescription("미디어랩스관입니다");
+        spotUpdatedImagesDto.setLatitude(46.61);
+        spotUpdatedImagesDto.setLongitude(35.24);
     }
 
     @Order(1)
@@ -181,22 +188,22 @@ class SpotServiceTest {
         Long id = locationRepository.save(location).getId();
         spotRequestDto.setLocationId(id);
         Long spotId = spotService.createSpot(spotRequestDto).getSpotId();
-        spotRequestDto.setSpotId(spotId);
-        spotRequestDto.setTitle("미디어랩스 방문 후 모습");
-        spotService.updateSpot(spotRequestDto);
+        spotUpdatedImagesDto.setSpotId(spotId);
+        spotUpdatedImagesDto.setTitle("미디어랩스 방문 후 모습");
+        spotService.updateSpot(spotUpdatedImagesDto);
 
         assertThat(spotRepository.findById(
                         spotId)
-                .get().getTitle()).isEqualTo(spotRequestDto.getTitle());
+                .get().getTitle()).isEqualTo(spotUpdatedImagesDto.getTitle());
         assertThat(spotRepository.findById(
                         spotId)
-                .get().getLatitude()).isEqualTo(spotRequestDto.getLatitude());
+                .get().getLatitude()).isEqualTo(spotUpdatedImagesDto.getLatitude());
         assertThat(spotRepository.findById(
                         spotId)
-                .get().getLongitude()).isEqualTo(spotRequestDto.getLongitude());
+                .get().getLongitude()).isEqualTo(spotUpdatedImagesDto.getLongitude());
         assertThat(spotRepository.findById(
                         spotId)
-                .get().getDescription()).isEqualTo(spotRequestDto.getDescription());
+                .get().getDescription()).isEqualTo(spotUpdatedImagesDto.getDescription());
     }
 
     @Order(3)
@@ -281,7 +288,7 @@ class SpotServiceTest {
         spotRequestDto.setLocationId(4L);
         assertThatThrownBy(() -> spotService.readSingleSpot(5L,1L))
                 .isInstanceOf(ApiException.class)
-                .hasMessageContaining(LocationErrorCode.LOCATION_NOT_FOUND.getErrorDescription());
+                .hasMessageContaining(SpotErrorCode.SPOT_NOT_FOUND.getErrorDescription());
     }
 
     @Order(7)
@@ -300,8 +307,8 @@ class SpotServiceTest {
     @Test
     @Transactional
     void updateSpotExceptionTest(){
-        spotRequestDto.setSpotId(4L);
-        assertThatThrownBy(() -> spotService.updateSpot(spotRequestDto))
+        spotUpdatedImagesDto.setSpotId(4L);
+        assertThatThrownBy(() -> spotService.updateSpot(spotUpdatedImagesDto))
                 .isInstanceOf(ApiException.class)
                 .hasMessageContaining(SpotErrorCode.SPOT_NOT_FOUND.getErrorDescription());
     }

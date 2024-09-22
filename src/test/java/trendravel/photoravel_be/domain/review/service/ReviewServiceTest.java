@@ -24,6 +24,7 @@ import trendravel.photoravel_be.db.review.Review;
 import trendravel.photoravel_be.db.review.enums.ReviewTypes;
 import trendravel.photoravel_be.db.spot.Spot;
 import trendravel.photoravel_be.domain.review.dto.request.ReviewRequestDto;
+import trendravel.photoravel_be.domain.review.dto.request.ReviewUpdateImagesDto;
 import trendravel.photoravel_be.domain.review.dto.response.ReviewResponseDto;
 
 import java.util.List;
@@ -57,6 +58,9 @@ class ReviewServiceTest {
 
     ReviewRequestDto locationReviewRequestDto = new ReviewRequestDto();
     ReviewRequestDto spotReviewRequestDto = new ReviewRequestDto();
+    ReviewUpdateImagesDto locationReviewUpdateRequestDto = new ReviewUpdateImagesDto();
+    ReviewUpdateImagesDto spotReviewUpdateRequestDto = new ReviewUpdateImagesDto();
+
     Location location;
     Spot spot;
     Review locationReview;
@@ -168,12 +172,25 @@ class ReviewServiceTest {
         locationReviewRequestDto.setTypeId(locationId);
         locationReviewRequestDto.setUserId(member.getMemberId());
 
+        locationReviewUpdateRequestDto.setReviewId(locationId);
+        locationReviewUpdateRequestDto.setReviewType(locationReview.getReviewType());
+        locationReviewUpdateRequestDto.setContent(locationReview.getContent());
+        locationReviewUpdateRequestDto.setRating(locationReview.getRating());
+        locationReviewUpdateRequestDto.setTypeId(locationId);
+
         spotReviewRequestDto.setReviewId(spotId);
         spotReviewRequestDto.setReviewType(spotReview.getReviewType());
         spotReviewRequestDto.setRating(spotReview.getRating());
         spotReviewRequestDto.setContent(spotReview.getContent());
         spotReviewRequestDto.setTypeId(spotId);
         spotReviewRequestDto.setUserId(member.getMemberId());
+
+
+        spotReviewUpdateRequestDto.setReviewId(spotId);
+        spotReviewUpdateRequestDto.setReviewType(spotReview.getReviewType());
+        spotReviewUpdateRequestDto.setRating(spotReview.getRating());
+        spotReviewUpdateRequestDto.setContent(spotReview.getContent());
+        spotReviewUpdateRequestDto.setTypeId(spotId);
     }
 
     @Test
@@ -217,37 +234,37 @@ class ReviewServiceTest {
     void updateReviewTest (){
         Long locationId = reviewService.createReview(locationReviewRequestDto).getReviewId();
         Long spotId = reviewService.createReview(spotReviewRequestDto).getReviewId();
-        locationReviewRequestDto.setReviewId(locationId);
-        spotReviewRequestDto.setReviewId(spotId);
-        locationReviewRequestDto.setRating(2.1);
-        spotReviewRequestDto.setRating(1.0);
+        locationReviewUpdateRequestDto.setReviewId(locationId);
+        spotReviewUpdateRequestDto.setReviewId(spotId);
+        locationReviewUpdateRequestDto.setRating(2.1);
+        spotReviewUpdateRequestDto.setRating(1.0);
 
-        reviewService.updateReview(locationReviewRequestDto);
-        reviewService.updateReview(spotReviewRequestDto);
+        reviewService.updateReview(locationReviewUpdateRequestDto);
+        reviewService.updateReview(spotReviewUpdateRequestDto);
 
-        Review findLocationReview = reviewRepository.findById(locationReviewRequestDto
+        Review findLocationReview = reviewRepository.findById(locationReviewUpdateRequestDto
                 .getReviewId()).orElse(null);
 
-        Review findSpotReview = reviewRepository.findById(spotReviewRequestDto
+        Review findSpotReview = reviewRepository.findById(spotReviewUpdateRequestDto
                 .getReviewId()).orElse(null);
 
         assertThat(findLocationReview.getReviewType())
-                .isEqualTo(locationReviewRequestDto.getReviewType());
+                .isEqualTo(locationReviewUpdateRequestDto.getReviewType());
         assertThat(findLocationReview.getContent())
-                .isEqualTo(locationReviewRequestDto.getContent());
+                .isEqualTo(locationReviewUpdateRequestDto.getContent());
         assertThat(findLocationReview.getRating())
-                .isEqualTo(locationReviewRequestDto.getRating());
+                .isEqualTo(locationReviewUpdateRequestDto.getRating());
         assertThat(findLocationReview.getLocationReview().getId())
-                .isEqualTo(locationReviewRequestDto.getTypeId());
+                .isEqualTo(locationReviewUpdateRequestDto.getTypeId());
 
         assertThat(findSpotReview.getReviewType())
-                .isEqualTo(spotReviewRequestDto.getReviewType());
+                .isEqualTo(spotReviewUpdateRequestDto.getReviewType());
         assertThat(findSpotReview.getContent())
-                .isEqualTo(spotReviewRequestDto.getContent());
+                .isEqualTo(spotReviewUpdateRequestDto.getContent());
         assertThat(findSpotReview.getRating())
-                .isEqualTo(spotReviewRequestDto.getRating());
+                .isEqualTo(spotReviewUpdateRequestDto.getRating());
         assertThat(findSpotReview.getSpotReview().getId())
-                .isEqualTo(spotReviewRequestDto.getTypeId());
+                .isEqualTo(spotReviewUpdateRequestDto.getTypeId());
     }
 
 
@@ -362,8 +379,8 @@ class ReviewServiceTest {
     @Transactional
     @Order(11)
     void updateReviewExceptionTest(){
-        locationReviewRequestDto.setReviewId(5L);
-        assertThatThrownBy(() -> reviewService.updateReview(locationReviewRequestDto))
+        locationReviewUpdateRequestDto.setReviewId(5L);
+        assertThatThrownBy(() -> reviewService.updateReview(locationReviewUpdateRequestDto))
                 .isInstanceOf(ApiException.class)
                 .hasMessageContaining(ReviewErrorCode.REVIEW_NOT_FOUND.getErrorDescription());
     }

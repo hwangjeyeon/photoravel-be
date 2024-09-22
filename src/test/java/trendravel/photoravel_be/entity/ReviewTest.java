@@ -3,8 +3,8 @@ package trendravel.photoravel_be.entity;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import trendravel.photoravel_be.db.review.Review;
-import trendravel.photoravel_be.domain.review.dto.request.ReviewRequestDto;
 import trendravel.photoravel_be.db.review.enums.ReviewTypes;
+import trendravel.photoravel_be.domain.review.dto.request.ReviewUpdateImagesDto;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -89,13 +89,13 @@ class ReviewTest {
 
         image.add("https://s3.ap-northeast-2.amazonaws.com/mybucket/cat.jpg");
         image.add("https://s3.ap-northeast-2.amazonaws.com/mybucket/sheep.jpg");
-        ReviewRequestDto locationReviewRequestDto = new ReviewRequestDto();
+        ReviewUpdateImagesDto locationReviewRequestDto = new ReviewUpdateImagesDto();
         locationReviewRequestDto.setReviewId(1L);
         locationReviewRequestDto.setReviewType(ReviewTypes.LOCATION);
         locationReviewRequestDto.setContent("다시보니 별로네요");
         locationReviewRequestDto.setRating(2.0);
 
-        ReviewRequestDto spotReviewRequestDto = new ReviewRequestDto();
+        ReviewUpdateImagesDto spotReviewRequestDto = new ReviewUpdateImagesDto();
         spotReviewRequestDto.setReviewId(2L);
         spotReviewRequestDto.setReviewType(ReviewTypes.SPOT);
         spotReviewRequestDto.setRating(4.0);

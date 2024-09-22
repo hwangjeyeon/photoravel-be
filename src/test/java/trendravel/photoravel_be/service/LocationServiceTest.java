@@ -20,6 +20,7 @@ import trendravel.photoravel_be.db.review.Review;
 import trendravel.photoravel_be.db.review.enums.ReviewTypes;
 import trendravel.photoravel_be.domain.location.dto.request.LocationKeywordDto;
 import trendravel.photoravel_be.domain.location.dto.request.LocationNowPositionDto;
+import trendravel.photoravel_be.domain.location.dto.request.LocationUpdateImagesDto;
 import trendravel.photoravel_be.domain.location.dto.response.LocationMultiReadResponseDto;
 import trendravel.photoravel_be.domain.location.dto.response.LocationSingleReadResponseDto;
 import trendravel.photoravel_be.domain.location.service.LocationService;
@@ -54,6 +55,7 @@ class LocationServiceTest {
     ImageServiceFacade imageService;
 
     LocationRequestDto locationRequestDto;
+    LocationUpdateImagesDto locationUpdateImagesDto;
     Location location;
     Location location2;
     Review review1;
@@ -67,7 +69,6 @@ class LocationServiceTest {
     void before(){
         locationService = new LocationService(locationRepository, imageService, memberRepository);
         member = MemberEntity.builder()
-                .id(1L)
                 .email("asfd")
                 .memberId("hwangjeyeon")
                 .nickname("hwangs")
@@ -88,6 +89,7 @@ class LocationServiceTest {
                 .point(new GeometryFactory().createPoint(
                         new Coordinate(35.24
                                 , 46.61)))
+                .member(member)
                 .build();
         location.getPoint().setSRID(4326);
         location.setMemberLocation(member);
@@ -101,6 +103,7 @@ class LocationServiceTest {
                 .views(0)
                 .point(new GeometryFactory().createPoint(
                         new Coordinate(35.22, 46.59)))
+                .member(member)
                 .build();
         location2.getPoint().setSRID(4326);
         location2.setMemberLocation(member);
@@ -146,7 +149,6 @@ class LocationServiceTest {
         review3.setMemberReview(member);
         review4.setMemberReview(member);
 
-
         locationRequestDto = new LocationRequestDto();
         locationRequestDto.setLocationId(1L);
         locationRequestDto.setName("순천향대학교");
@@ -156,6 +158,13 @@ class LocationServiceTest {
         locationRequestDto.setDescription("순천향대학교입니다.");
         locationRequestDto.setUserId(member.getMemberId());
 
+        locationUpdateImagesDto = new LocationUpdateImagesDto();
+        locationUpdateImagesDto.setLocationId(1L);
+        locationUpdateImagesDto.setName("순천향대학교");
+        locationUpdateImagesDto.setAddress("아산시 신창면 순천향로46");
+        locationUpdateImagesDto.setLatitude(35.24);
+        locationUpdateImagesDto.setLongitude(46.61);
+        locationUpdateImagesDto.setDescription("순천향대학교입니다.");
     }
 
     @Test
@@ -190,9 +199,9 @@ class LocationServiceTest {
     @Order(2)
     void updateLocationServiceTest(){
         Long createId = locationService.createLocation(locationRequestDto).getLocationId();
-        locationRequestDto.setLocationId(createId);
-        locationRequestDto.setName("미디어랩스");
-        Long id = locationService.updateLocation(locationRequestDto).getLocationId();
+        locationUpdateImagesDto.setLocationId(createId);
+        locationUpdateImagesDto.setName("미디어랩스");
+        Long id = locationService.updateLocation(locationUpdateImagesDto).getLocationId();
 
         assertThat(locationRepository.findById(
                         id)
@@ -328,7 +337,7 @@ class LocationServiceTest {
     @Order(7)
     void updateExceptionServiceTest(){
         locationRequestDto.setLocationId(3L);
-        assertThatThrownBy(() -> locationService.updateLocation(locationRequestDto))
+        assertThatThrownBy(() -> locationService.updateLocation(locationUpdateImagesDto))
                 .isInstanceOf(ApiException.class)
                 .hasMessageContaining(LocationErrorCode.LOCATION_NOT_FOUND.getErrorDescription());
     }
