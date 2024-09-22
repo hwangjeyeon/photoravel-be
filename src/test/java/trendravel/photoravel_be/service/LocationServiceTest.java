@@ -12,6 +12,7 @@ import org.springframework.test.context.ActiveProfiles;
 import trendravel.photoravel_be.commom.error.LocationErrorCode;
 import trendravel.photoravel_be.commom.exception.ApiException;
 import trendravel.photoravel_be.commom.image.service.ImageServiceFacade;
+import trendravel.photoravel_be.db.enums.Category;
 import trendravel.photoravel_be.db.location.Location;
 import trendravel.photoravel_be.db.member.MemberEntity;
 import trendravel.photoravel_be.db.respository.member.MemberRepository;
@@ -90,6 +91,7 @@ class LocationServiceTest {
                         new Coordinate(35.24
                                 , 46.61)))
                 .member(member)
+                .category(Category.None)
                 .build();
         location.getPoint().setSRID(4326);
         location.setMemberLocation(member);
@@ -104,6 +106,7 @@ class LocationServiceTest {
                 .point(new GeometryFactory().createPoint(
                         new Coordinate(35.22, 46.59)))
                 .member(member)
+                .category(Category.None)
                 .build();
         location2.getPoint().setSRID(4326);
         location2.setMemberLocation(member);
@@ -157,6 +160,7 @@ class LocationServiceTest {
         locationRequestDto.setLongitude(46.61);
         locationRequestDto.setDescription("순천향대학교입니다.");
         locationRequestDto.setUserId(member.getMemberId());
+        locationRequestDto.setCategory(Category.None);
 
         locationUpdateImagesDto = new LocationUpdateImagesDto();
         locationUpdateImagesDto.setLocationId(1L);
@@ -165,6 +169,7 @@ class LocationServiceTest {
         locationUpdateImagesDto.setLatitude(35.24);
         locationUpdateImagesDto.setLongitude(46.61);
         locationUpdateImagesDto.setDescription("순천향대학교입니다.");
+        locationUpdateImagesDto.setCategory(Category.None);
     }
 
     @Test

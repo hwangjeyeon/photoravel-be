@@ -61,7 +61,7 @@ public class Location extends BaseEntity {
     @ColumnDefault("0")
     private int views;
 
-    @Column(nullable = false)
+    @Column
     private Category category;
 
 
