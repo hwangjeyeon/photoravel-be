@@ -8,11 +8,9 @@ import org.springframework.stereotype.Component;
 public class ImageNameRebuildUtils {
 
     private static final String IMAGE_EXTENSION_SEPARATOR = ".";
-
-    public static String getImageName(String originalFileName){
-        return originalFileName.substring(0,
-                originalFileName.lastIndexOf(IMAGE_EXTENSION_SEPARATOR));
-    }
+    private static final String FOLDER_NAME = "photoravle-cloudfront/";
+    private static final String CLOUD_FRONT = "https://photravle-images.shop/";
+    private static final String FOLDER_SEPARATOR = "/";
 
     public static String buildImageName(String originalFileName){
         int imageExtensionIndex = originalFileName.lastIndexOf(IMAGE_EXTENSION_SEPARATOR);
@@ -21,7 +19,19 @@ public class ImageNameRebuildUtils {
         String imageName = originalFileName.substring(0, imageExtensionIndex);
         String now = String.valueOf(System.currentTimeMillis());
 
-        return imageName + "_" + now + imageExtension;
+        return FOLDER_NAME + imageName + "_" + now + imageExtension;
+    }
+
+    public static String buildSaveImageName(String imageName){
+        String imageOriginalName = imageName.substring(imageName.lastIndexOf(FOLDER_SEPARATOR)+1);
+
+        return CLOUD_FRONT + imageOriginalName;
+    }
+
+    public static String findDeleteImageName(String imageName){
+        String imageOriginalName = imageName.substring(imageName.lastIndexOf(FOLDER_SEPARATOR)+1);
+        log.info("{}",imageOriginalName);
+        return FOLDER_NAME + imageOriginalName;
     }
 
 }
