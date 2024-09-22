@@ -225,7 +225,7 @@ public class LocationService {
 
     @Transactional
     public LocationResponseDto updateLocation(
-            LocationRequestDto locationRequestDto) {
+            LocationUpdateImagesDto locationRequestDto) {
 
         Location location = locationRepository.findById(
                 locationRequestDto.getLocationId())
@@ -233,6 +233,7 @@ public class LocationService {
 
 
         location.updateLocation(locationRequestDto);
+        imageServiceFacade.updateImageFacade(new ArrayList<>(), locationRequestDto.getDeleteImages());
 
 
         return LocationResponseDto
@@ -246,6 +247,7 @@ public class LocationService {
                 .createdAt(location.getCreatedAt())
                 .updatedAt(location.getUpdatedAt())
                 .userName(location.getMember().getNickname())
+                .images(location.getImages())
                 .build();
     }
 

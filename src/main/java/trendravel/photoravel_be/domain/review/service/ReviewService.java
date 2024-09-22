@@ -23,6 +23,7 @@ import trendravel.photoravel_be.db.respository.location.LocationRepository;
 import trendravel.photoravel_be.db.respository.review.ReviewRepository;
 import trendravel.photoravel_be.db.respository.spot.SpotRepository;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -244,7 +245,7 @@ public class ReviewService {
 
     @Transactional
     public ReviewResponseDto updateReview(
-            ReviewRequestDto reviewRequestDto) {
+            ReviewUpdateImagesDto reviewRequestDto) {
 
         Review review = reviewRepository.findById(
                 reviewRequestDto.getReviewId())
@@ -252,6 +253,7 @@ public class ReviewService {
 
 
         review.updateReview(reviewRequestDto);
+        imageServiceFacade.updateImageFacade(new ArrayList<>(), reviewRequestDto.getDeleteImages());
 
         return ReviewResponseDto
                 .builder()
@@ -262,6 +264,7 @@ public class ReviewService {
                 .createdAt(review.getCreatedAt())
                 .updatedAt(review.getUpdatedAt())
                 .userName(review.getMember().getNickname())
+                .images(review.getImages())
                 .build();
     }
 

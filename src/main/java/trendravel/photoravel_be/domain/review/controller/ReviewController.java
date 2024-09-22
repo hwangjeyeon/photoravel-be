@@ -76,7 +76,7 @@ public class ReviewController {
             contentEncoding = MediaType.APPLICATION_JSON_VALUE)
     @PatchMapping(value = "/private/review/update")
     public Api<ReviewResponseDto> updateReview(@RequestBody @Valid
-                                               ReviewRequestDto reviewRequestDto){
+                                                   ReviewUpdateImagesDto reviewRequestDto){
 
         return Api.UPDATED(reviewService.updateReview(reviewRequestDto));
     }
