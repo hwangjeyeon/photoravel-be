@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import org.springframework.http.MediaType;
+import trendravel.photoravel_be.db.enums.Category;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -44,4 +45,6 @@ public class LocationMultiReadResponseDto {
     @Schema(description = "장소 수정일")
     private LocalDateTime updatedAt;
 
+    @Schema(description = "카테고리")
+    private String category;
 }

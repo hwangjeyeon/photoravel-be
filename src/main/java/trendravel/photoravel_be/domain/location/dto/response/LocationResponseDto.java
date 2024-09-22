@@ -5,6 +5,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 import lombok.Data;
 import org.springframework.http.MediaType;
+import trendravel.photoravel_be.db.enums.Category;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -30,7 +31,7 @@ public class LocationResponseDto {
     @Schema(description = "장소 이미지들")
     private List<String> images;
 
-    //유저 객체 추가 필요
+
     @Schema(description = "장소 작성 유저")
     private String userName;
 
@@ -38,5 +39,8 @@ public class LocationResponseDto {
     private LocalDateTime createdAt;
     @Schema(description = "장소 수정일")
     private LocalDateTime updatedAt;
+
+    @Schema(description = "카테고리")
+    private String category;
 
 }

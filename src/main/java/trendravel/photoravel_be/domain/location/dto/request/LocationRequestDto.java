@@ -6,6 +6,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import org.hibernate.validator.constraints.Length;
 import org.springframework.http.MediaType;
+import trendravel.photoravel_be.db.enums.Category;
 
 
 @Schema(description = "장소 CREATE/UPDATE(이미지 미포함) 요청 DTO",
@@ -34,5 +35,8 @@ public class LocationRequestDto {
     private String name;
     @Schema(description = "유저아이디")
     private String userId;
+
+    @Schema(description = "업데이트할 카테고리")
+    private Category category;
 
 }

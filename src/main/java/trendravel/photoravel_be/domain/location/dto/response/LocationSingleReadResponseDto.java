@@ -5,6 +5,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 import lombok.Data;
 import org.springframework.http.MediaType;
+import trendravel.photoravel_be.db.enums.Category;
 import trendravel.photoravel_be.domain.review.dto.response.RecentReviewsDto;
 
 import java.time.LocalDateTime;
@@ -48,5 +49,8 @@ public class LocationSingleReadResponseDto {
     private LocalDateTime createdAt;
     @Schema(description = "장소 수정일")
     private LocalDateTime updatedAt;
+
+    @Schema(description = "카테고리")
+    private String category;
 
 }
