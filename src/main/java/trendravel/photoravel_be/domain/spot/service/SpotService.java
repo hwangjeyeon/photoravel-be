@@ -118,7 +118,7 @@ public class SpotService {
     public SpotSingleReadResponseDto readSingleSpot(Long locationId, Long spotId) {
         List<Spot> spots = locationRepository.findById(locationId)
                 .map(Location::getSpot)
-                .orElseThrow(() -> new ApiException(LocationErrorCode.LOCATION_NOT_FOUND));
+                .orElseThrow(() -> new ApiException(SpotErrorCode.SPOT_NOT_FOUND));
 
         Spot spot = spots.stream().
                 filter(s -> s.getId().equals(spotId)).findFirst()
@@ -199,13 +199,14 @@ public class SpotService {
 
     @Transactional
     public SpotResponseDto updateSpot(
-            SpotRequestDto spotRequestDto) {
+            SpotUpdatedImagesDto spotRequestDto) {
 
         Spot spot = spotRepository.findById(
                 spotRequestDto.getSpotId())
                 .orElseThrow(() -> new ApiException(SpotErrorCode.SPOT_NOT_FOUND));
 
         spot.updateSpot(spotRequestDto);
+        imageServiceFacade.updateImageFacade(new ArrayList<>(), spotRequestDto.getDeleteImages());
 
         return SpotResponseDto
                 .builder()
@@ -217,6 +218,7 @@ public class SpotService {
                 .createdAt(spot.getCreatedAt())
                 .updatedAt(spot.getUpdatedAt())
                 .userName(spot.getMember().getNickname())
+                .images(spot.getImages())
                 .views(0)
                 .build();
     }
@@ -231,10 +233,14 @@ public class SpotService {
 
     private List<String> deleteSubDomainImages(Spot spot){
         List<String> deleteImages = new ArrayList<>();
-        deleteImages.addAll(spot.getImages());
+        if(spot.getImages() != null){
+            deleteImages.addAll(spot.getImages());
+        }
         for (Review review : spot.getReviews()) {
+            if(review.getImages() == null){
+                continue;
+            }
             deleteImages.addAll(review.getImages());
-            log.info(review.getImages().get(0).toString());
         }
         return deleteImages;
     }

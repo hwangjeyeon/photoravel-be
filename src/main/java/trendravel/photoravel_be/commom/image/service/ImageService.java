@@ -34,8 +34,8 @@ public class ImageService{
         if(images == null){
             return;
         }
-        uploadImageToStorage(images, rebuildImageName, minioClient);
-//      uploadImageToStorage(images, amazonS3);
+//        uploadImageToStorage(images, rebuildImageName, minioClient);
+      uploadImageToStorage(images, rebuildImageName, amazonS3);
     }
 
 
@@ -63,12 +63,11 @@ public class ImageService{
      */
 
     public void deleteAllImages(List<String> deleteImages){
-        deleteImagesInStorage(deleteImages, minioClient);
-//        deleteImagesInStorage(deleteImages, amazonS3);
+//        deleteImagesInStorage(deleteImages, minioClient);
+        deleteImagesInStorage(deleteImages, amazonS3);
     }
 
     private void deleteImagesInStorage(List<String> deleteImages, S3Client storage) {
-        log.info("{}", deleteImages.get(0));
         for (String imageName : deleteImages) {
             DeleteObjectRequest deleteObjectRequest = DeleteObjectRequest
                     .builder()
@@ -79,9 +78,9 @@ public class ImageService{
         }
     }
 
-    private List<String> sliceUrlAndGetImageNames(List<String> imageUrls) {
+    List<String> rebuildSaveImageName(List<String> imageUrls) {
         return imageUrls.stream()
-                .map(p -> p.substring(p.lastIndexOf("/")+1))
+                .map(ImageNameRebuildUtils::buildSaveImageName)
                 .toList();
     }
 
@@ -90,6 +89,12 @@ public class ImageService{
         return multipartFiles.stream()
                 .map(p-> ImageNameRebuildUtils
                         .buildImageName(p.getOriginalFilename()))
+                .toList();
+    }
+
+    List<String> deleteImageNames(List<String> imageUrls){
+        return imageUrls.stream()
+                .map(ImageNameRebuildUtils::findDeleteImageName)
                 .toList();
     }
 

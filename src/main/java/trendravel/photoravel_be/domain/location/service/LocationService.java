@@ -13,6 +13,7 @@ import trendravel.photoravel_be.commom.error.LocationErrorCode;
 import trendravel.photoravel_be.commom.error.MemberErrorCode;
 import trendravel.photoravel_be.commom.exception.ApiException;
 import trendravel.photoravel_be.commom.image.service.ImageServiceFacade;
+import trendravel.photoravel_be.db.enums.Category;
 import trendravel.photoravel_be.db.member.MemberEntity;
 import trendravel.photoravel_be.db.respository.member.MemberRepository;
 import trendravel.photoravel_be.db.review.Review;
@@ -64,6 +65,8 @@ public class LocationService {
                                 new Coordinate(locationRequestDto.getLatitude()
                                         , locationRequestDto.getLongitude())))
                 .member(member)
+                .category(locationRequestDto.getCategory() == null
+                        ? Category.None : locationRequestDto.getCategory())
                 .build();
         location.getPoint().setSRID(4326);
         location.setMemberLocation(member);
@@ -82,6 +85,7 @@ public class LocationService {
                 .createdAt(location.getCreatedAt())
                 .updatedAt(location.getUpdatedAt())
                 .userName(location.getMember().getNickname())
+                .category(location.getCategory().getMessage())
                 .build();
     }
 
@@ -101,6 +105,8 @@ public class LocationService {
                         new Coordinate(locationRequestDto.getLatitude()
                                 , locationRequestDto.getLongitude())))
                 .member(member)
+                .category(locationRequestDto.getCategory() == null
+                        ? Category.None : locationRequestDto.getCategory())
                 .build();
         location.getPoint().setSRID(4326);
         location.setMemberLocation(member);
@@ -117,6 +123,7 @@ public class LocationService {
                 .createdAt(location.getCreatedAt())
                 .updatedAt(location.getUpdatedAt())
                 .userName(location.getMember().getNickname())
+                .category(location.getCategory().getMessage())
                 .build();
     }
 
@@ -148,6 +155,7 @@ public class LocationService {
                         ? location.getReview().size() : 99)
                 .recentReviewDtos(reviews)
                 .userName(member.getNickname())
+                .category(location.getCategory().getMessage())
                 .build();
     }
 
@@ -187,7 +195,7 @@ public class LocationService {
                         Double.parseDouble(String.format("%.2f",
                                 ratingAverage(p.getReview()))),
                         p.getReview().size() < 100 ? p.getReview().size() : 99,
-                        p.getCreatedAt(), p.getUpdatedAt())
+                        p.getCreatedAt(), p.getUpdatedAt(), p.getCategory().getMessage())
                 )
                 .toList();
     }
@@ -220,12 +228,13 @@ public class LocationService {
                 .createdAt(location.getCreatedAt())
                 .updatedAt(location.getUpdatedAt())
                 .userName(location.getMember().getNickname())
+                .category(location.getCategory().getMessage())
                 .build();
     }
 
     @Transactional
     public LocationResponseDto updateLocation(
-            LocationRequestDto locationRequestDto) {
+            LocationUpdateImagesDto locationRequestDto) {
 
         Location location = locationRepository.findById(
                 locationRequestDto.getLocationId())
@@ -233,6 +242,7 @@ public class LocationService {
 
 
         location.updateLocation(locationRequestDto);
+        imageServiceFacade.updateImageFacade(new ArrayList<>(), locationRequestDto.getDeleteImages());
 
 
         return LocationResponseDto
@@ -246,6 +256,8 @@ public class LocationService {
                 .createdAt(location.getCreatedAt())
                 .updatedAt(location.getUpdatedAt())
                 .userName(location.getMember().getNickname())
+                .images(location.getImages())
+                .category(location.getCategory().getMessage())
                 .build();
     }
 
@@ -259,15 +271,22 @@ public class LocationService {
 
 
     private List<String> deleteSubDomainImages(Location location){
-        List<String> deleteImages = new ArrayList<>(location.getImages());
-        log.info("{}",location.getImages().get(0));
+        List<String> deleteImages = new ArrayList<>();
+        if(location.getImages() != null){
+            deleteImages.addAll(location.getImages());
+        }
+
         for (Spot spot : location.getSpot()) {
+            if(spot.getImages() == null){
+                continue;
+            }
             deleteImages.addAll(spot.getImages());
-            log.info(spot.getImages().get(0));
         }
         for (Review review : location.getReview()) {
+            if(review.getImages() == null){
+                continue;
+            }
             deleteImages.addAll(review.getImages());
-            log.info(review.getImages().get(0));
         }
         return deleteImages;
     }

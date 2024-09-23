@@ -7,7 +7,9 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
+import org.springframework.test.context.ActiveProfiles;
 import trendravel.photoravel_be.config.QueryDSLConfig;
 import trendravel.photoravel_be.db.enums.Region;
 import trendravel.photoravel_be.db.photographer.Photographer;
@@ -15,9 +17,10 @@ import trendravel.photoravel_be.db.respository.photographer.PhotographerReposito
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@DataJpaTest
+@SpringBootTest
 @Import(QueryDSLConfig.class)
 @Transactional
+@ActiveProfiles("test")
 public class PhotographerRepositoryTest {
     
     Photographer photographer;
@@ -45,10 +48,10 @@ public class PhotographerRepositoryTest {
     @DisplayName("사진작가 저장 테스트")
     void savePhotographerRepository() {
         
-        photographerRepository.save(photographer);
-        Photographer findPhotographer = photographerRepository.findById(photographer.getId()).get();
+        Long id = photographerRepository.save(photographer).getId();
+        Photographer findPhotographer = photographerRepository.findById(id).get();
         
-        assertThat(findPhotographer.getId()).isEqualTo(photographer.getId());
+        assertThat(findPhotographer.getId()).isEqualTo(id);
         assertThat(findPhotographer.getAccountId()).isEqualTo(photographer.getAccountId());
         assertThat(findPhotographer.getPassword()).isEqualTo(photographer.getPassword());
         assertThat(findPhotographer.getName()).isEqualTo(photographer.getName());

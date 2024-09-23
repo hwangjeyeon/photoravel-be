@@ -6,6 +6,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import org.hibernate.validator.constraints.Length;
 import org.springframework.http.MediaType;
+import trendravel.photoravel_be.db.enums.Category;
 
 import java.util.List;
 
@@ -37,5 +38,8 @@ public class LocationUpdateImagesDto {
 
     @Schema(description = "삭제할 이미지 목록")
     private List<String> deleteImages;
+
+    @Schema(description = "업데이트할 카테고리")
+    private Category category;
 
 }

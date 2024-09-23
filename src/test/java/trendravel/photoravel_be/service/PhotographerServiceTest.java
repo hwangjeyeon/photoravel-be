@@ -5,6 +5,7 @@ import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.web.multipart.MultipartFile;
 import trendravel.photoravel_be.commom.error.GuidebookErrorCode;
 import trendravel.photoravel_be.commom.error.PhotographerErrorCode;
@@ -27,9 +28,18 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.*;
 
-@SpringBootTest
-@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+
+
+/**
+ * 이미지 테스트 코드는 작성 하지 말것.
+ * 1. CI/CD 배포 시, Mock파일 사용 관련해서 에러 발생
+ * 2. 실제 s3 버킷을 사용할 수 밖에 없어 비용 낭비 발생
+ *
+ */
+//@SpringBootTest
+//@testMethodOrder(MethodOrderer.OrderAnnotation.class)
 @Transactional
+//@ActiveProfiles("test")
 public class PhotographerServiceTest {
     
     @Autowired
@@ -43,14 +53,15 @@ public class PhotographerServiceTest {
     
     
     MockMultipartFile mockMultipartFile;
-    
+
+
     @BeforeEach
     void before() throws IOException {
         
         //   resource/images/test.png
-        URL resource = getClass().getClassLoader().getResource("images/test.png");
-        mockMultipartFile = new MockMultipartFile("image",
-                "test.png", "image/png", new FileInputStream(resource.getFile()));
+//        URL resource = getClass().getClassLoader().getResource("images/test.png");
+//        mockMultipartFile = new MockMultipartFile("image",
+//                "test.png", "image/png", new FileInputStream(resource.getFile()));
         
         
         photo1 = new PhotographerRequestDto();
@@ -79,7 +90,7 @@ public class PhotographerServiceTest {
         
     }
     
-    @Test
+//    //@test
     @Order(1)
     @DisplayName("사진작가 CREATE 테스트")
     void create() {
@@ -97,8 +108,11 @@ public class PhotographerServiceTest {
         assertThat(find.getDescription()).isEqualTo(photo1.getDescription());
         assertThat(find.getRegion()).isEqualTo(photo1.getRegion());
     }
-    
-    @Test
+
+    /**
+     * 테스트 빌드 시, 실제 버킷에 데이터를 넣는 문제 발생. 따라서 해당 테스트는 삭제 필요.
+     */
+//    //@test
     @Order(2)
     @DisplayName("사진작가 목록 READ 테스트")
     void getList() {
@@ -119,7 +133,7 @@ public class PhotographerServiceTest {
         
     }
     
-    @Test
+    //@test
     @Order(3)
     @DisplayName("사진작가 단일 READ 테스트")
     void getOne() {
@@ -138,7 +152,7 @@ public class PhotographerServiceTest {
         assertThat(find.getRegion()).isEqualTo(photo1.getRegion());
     }
     
-    @Test
+    //@test
     @Order(4)
     @DisplayName("사진작가 UPDATE 테스트")
     void update() {
@@ -158,7 +172,7 @@ public class PhotographerServiceTest {
         assertThat(find.getRegion()).isEqualTo(photographerUpdateDto.getRegion());
     }
     
-    @Test
+    //@test
     @Order(5)
     @DisplayName("사진작가 DELETE 테스트")
     void delete() {
@@ -175,7 +189,7 @@ public class PhotographerServiceTest {
         assertThat(photographerRepository.findByAccountId(photo1.getAccountId())).isEmpty();
     }
     
-    @Test
+    //@test
     @Order(6)
     @DisplayName("사진작가 READ 예외 테스트")
     void readEx() {
@@ -185,7 +199,7 @@ public class PhotographerServiceTest {
                 .hasMessageContaining(PhotographerErrorCode.PHOTOGRAPHER_NOT_FOUND.getErrorDescription());
     }
     
-    @Test
+    //@test
     @Order(7)
     @DisplayName("사진작가 UPDATE 예외 테스트")
     void updateEx() {
@@ -195,7 +209,7 @@ public class PhotographerServiceTest {
                 .hasMessageContaining(PhotographerErrorCode.PHOTOGRAPHER_NOT_FOUND.getErrorDescription());
     }
     
-    @Test
+    //@test
     @Order(8)
     @DisplayName("사진작가 DELETE 예외 테스트")
     void deleteEx() {

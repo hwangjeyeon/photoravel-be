@@ -3,7 +3,7 @@ package trendravel.photoravel_be.entity;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import trendravel.photoravel_be.db.location.Location;
-import trendravel.photoravel_be.domain.location.dto.request.LocationRequestDto;
+import trendravel.photoravel_be.domain.location.dto.request.LocationUpdateImagesDto;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -72,13 +72,12 @@ class LocationTest {
 
         image.add("https://s3.ap-northeast-2.amazonaws.com/mybucket/cat.jpg");
         image.add("https://s3.ap-northeast-2.amazonaws.com/mybucket/sheep.jpg");
-        LocationRequestDto locationRequestDto = new LocationRequestDto();
+        LocationUpdateImagesDto locationRequestDto = new LocationUpdateImagesDto();
         locationRequestDto.setLatitude(24.12);
         locationRequestDto.setLongitude(32.53);
         locationRequestDto.setAddress("김포시 풍무동 양도로49");
         locationRequestDto.setDescription("우리집 근처입니다");
         locationRequestDto.setName("우리집");
-        locationRequestDto.setUserId("hwangjeyeon");
 
         //when
         location.updateLocation(locationRequestDto);

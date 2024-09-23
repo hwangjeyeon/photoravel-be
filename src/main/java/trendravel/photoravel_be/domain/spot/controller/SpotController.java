@@ -70,7 +70,7 @@ public class SpotController {
             contentEncoding = MediaType.APPLICATION_JSON_VALUE)
     @PatchMapping(value = "/private/spot/update")
     public Api<SpotResponseDto> spotUpdate(@RequestBody @Valid
-                                       SpotRequestDto spotRequestDto) {
+                                               SpotUpdatedImagesDto spotRequestDto) {
 
         return Api.UPDATED(spotService.updateSpot(spotRequestDto));
     }

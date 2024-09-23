@@ -8,9 +8,11 @@ import org.locationtech.jts.geom.GeometryFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.ActiveProfiles;
 import trendravel.photoravel_be.commom.error.LocationErrorCode;
 import trendravel.photoravel_be.commom.exception.ApiException;
 import trendravel.photoravel_be.commom.image.service.ImageServiceFacade;
+import trendravel.photoravel_be.db.enums.Category;
 import trendravel.photoravel_be.db.location.Location;
 import trendravel.photoravel_be.db.member.MemberEntity;
 import trendravel.photoravel_be.db.respository.member.MemberRepository;
@@ -19,6 +21,7 @@ import trendravel.photoravel_be.db.review.Review;
 import trendravel.photoravel_be.db.review.enums.ReviewTypes;
 import trendravel.photoravel_be.domain.location.dto.request.LocationKeywordDto;
 import trendravel.photoravel_be.domain.location.dto.request.LocationNowPositionDto;
+import trendravel.photoravel_be.domain.location.dto.request.LocationUpdateImagesDto;
 import trendravel.photoravel_be.domain.location.dto.response.LocationMultiReadResponseDto;
 import trendravel.photoravel_be.domain.location.dto.response.LocationSingleReadResponseDto;
 import trendravel.photoravel_be.domain.location.service.LocationService;
@@ -34,6 +37,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @SpringBootTest
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+@ActiveProfiles("test")
 class LocationServiceTest {
 
     @Autowired
@@ -52,6 +56,7 @@ class LocationServiceTest {
     ImageServiceFacade imageService;
 
     LocationRequestDto locationRequestDto;
+    LocationUpdateImagesDto locationUpdateImagesDto;
     Location location;
     Location location2;
     Review review1;
@@ -85,6 +90,8 @@ class LocationServiceTest {
                 .point(new GeometryFactory().createPoint(
                         new Coordinate(35.24
                                 , 46.61)))
+                .member(member)
+                .category(Category.None)
                 .build();
         location.getPoint().setSRID(4326);
         location.setMemberLocation(member);
@@ -98,6 +105,8 @@ class LocationServiceTest {
                 .views(0)
                 .point(new GeometryFactory().createPoint(
                         new Coordinate(35.22, 46.59)))
+                .member(member)
+                .category(Category.None)
                 .build();
         location2.getPoint().setSRID(4326);
         location2.setMemberLocation(member);
@@ -143,7 +152,6 @@ class LocationServiceTest {
         review3.setMemberReview(member);
         review4.setMemberReview(member);
 
-
         locationRequestDto = new LocationRequestDto();
         locationRequestDto.setLocationId(1L);
         locationRequestDto.setName("순천향대학교");
@@ -152,7 +160,16 @@ class LocationServiceTest {
         locationRequestDto.setLongitude(46.61);
         locationRequestDto.setDescription("순천향대학교입니다.");
         locationRequestDto.setUserId(member.getMemberId());
+        locationRequestDto.setCategory(Category.None);
 
+        locationUpdateImagesDto = new LocationUpdateImagesDto();
+        locationUpdateImagesDto.setLocationId(1L);
+        locationUpdateImagesDto.setName("순천향대학교");
+        locationUpdateImagesDto.setAddress("아산시 신창면 순천향로46");
+        locationUpdateImagesDto.setLatitude(35.24);
+        locationUpdateImagesDto.setLongitude(46.61);
+        locationUpdateImagesDto.setDescription("순천향대학교입니다.");
+        locationUpdateImagesDto.setCategory(Category.None);
     }
 
     @Test
@@ -161,22 +178,22 @@ class LocationServiceTest {
     @Order(1)
     void createLocationServiceTest(){
 
-        locationService.createLocation(locationRequestDto);
+        Long id = locationService.createLocation(locationRequestDto).getLocationId();
 
         assertThat(locationRepository.findById(
-                locationRequestDto.getLocationId())
+                        id)
                 .get().getName()).isEqualTo("순천향대학교");
         assertThat(locationRepository.findById(
-                locationRequestDto.getLocationId())
+                        id)
                 .get().getAddress()).isEqualTo("아산시 신창면 순천향로46");
         assertThat(locationRepository.findById(
-                locationRequestDto.getLocationId())
+                        id)
                 .get().getLatitude()).isEqualTo(35.24);
         assertThat(locationRepository.findById(
-                locationRequestDto.getLocationId())
+                        id)
                 .get().getLongitude()).isEqualTo(46.61);
         assertThat(locationRepository.findById(
-                locationRequestDto.getLocationId())
+                        id)
                 .get().getDescription()).isEqualTo("순천향대학교입니다.");
     }
 
@@ -186,25 +203,25 @@ class LocationServiceTest {
     @Transactional
     @Order(2)
     void updateLocationServiceTest(){
-        locationService.createLocation(locationRequestDto);
-        locationRequestDto.setLocationId(2L);
-        locationRequestDto.setName("미디어랩스");
-        locationService.updateLocation(locationRequestDto);
+        Long createId = locationService.createLocation(locationRequestDto).getLocationId();
+        locationUpdateImagesDto.setLocationId(createId);
+        locationUpdateImagesDto.setName("미디어랩스");
+        Long id = locationService.updateLocation(locationUpdateImagesDto).getLocationId();
 
         assertThat(locationRepository.findById(
-                        locationRequestDto.getLocationId())
+                        id)
                 .get().getName()).isEqualTo("미디어랩스");
         assertThat(locationRepository.findById(
-                        locationRequestDto.getLocationId())
+                        id)
                 .get().getAddress()).isEqualTo("아산시 신창면 순천향로46");
         assertThat(locationRepository.findById(
-                        locationRequestDto.getLocationId())
+                        id)
                 .get().getLatitude()).isEqualTo(35.24);
         assertThat(locationRepository.findById(
-                        locationRequestDto.getLocationId())
+                        id)
                 .get().getLongitude()).isEqualTo(46.61);
         assertThat(locationRepository.findById(
-                        locationRequestDto.getLocationId())
+                        id)
                 .get().getDescription()).isEqualTo("순천향대학교입니다.");
     }
 
@@ -213,7 +230,7 @@ class LocationServiceTest {
     @Transactional
     @Order(5)
     void deleteLocationServiceTest(){
-        Long newId = locationService.createLocation(locationRequestDto).getLocationId();
+        Long newId = locationRepository.save(location).getId();
         locationRequestDto.setLocationId(newId);
         locationService.deleteLocation(locationRequestDto.getLocationId());
 
@@ -325,7 +342,7 @@ class LocationServiceTest {
     @Order(7)
     void updateExceptionServiceTest(){
         locationRequestDto.setLocationId(3L);
-        assertThatThrownBy(() -> locationService.updateLocation(locationRequestDto))
+        assertThatThrownBy(() -> locationService.updateLocation(locationUpdateImagesDto))
                 .isInstanceOf(ApiException.class)
                 .hasMessageContaining(LocationErrorCode.LOCATION_NOT_FOUND.getErrorDescription());
     }

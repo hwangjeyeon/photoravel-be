@@ -96,7 +96,7 @@ public class LocationController {
     @PatchMapping(value = "/private/location/update")
     public Api<LocationResponseDto> locationUpdate(
             @Valid @RequestBody
-            LocationRequestDto locationRequestDto) {
+            LocationUpdateImagesDto locationRequestDto) {
 
         return Api.UPDATED(locationService.updateLocation(locationRequestDto));
     }

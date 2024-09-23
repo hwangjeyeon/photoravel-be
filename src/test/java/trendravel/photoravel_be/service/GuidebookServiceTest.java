@@ -4,6 +4,7 @@ import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
 import trendravel.photoravel_be.commom.error.GuidebookErrorCode;
 import trendravel.photoravel_be.commom.exception.ApiException;
 import trendravel.photoravel_be.db.enums.Region;
@@ -25,6 +26,7 @@ import static org.assertj.core.api.Assertions.*;
 @SpringBootTest
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @Transactional
+@ActiveProfiles("test")
 public class GuidebookServiceTest {
     
     @Autowired
@@ -63,6 +65,7 @@ public class GuidebookServiceTest {
         
         
         member = MemberEntity.builder()
+                .id(1L)
                 .email("aaa")
                 .memberId("mem")
                 .nickname("donguk")

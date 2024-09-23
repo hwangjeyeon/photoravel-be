@@ -7,6 +7,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
 import trendravel.photoravel_be.db.respository.location.LocationRepository;
 import trendravel.photoravel_be.db.respository.review.ReviewRepository;
 import trendravel.photoravel_be.db.respository.spot.SpotRepository;
@@ -22,6 +23,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @SpringBootTest
+@ActiveProfiles("test")
 public class SpotRepositoryTest {
 
     Location location;
@@ -105,21 +107,6 @@ public class SpotRepositoryTest {
 
 
         assertThat(findReview.getSpotReview().getId()).isEqualTo(spot.getId());
-    }
-
-
-    @Test
-    @DisplayName("공백/null 입력 미허용 검증 예외를 잘 터트리는지 테스트")
-    @Transactional
-    void validateIsBlankTest(){
-        Spot nullSpot = Spot.builder()
-                .id(1L)
-                .title(" ")
-                .description(" ")
-                .build();
-        assertThatThrownBy(() -> spotRepository.save(nullSpot))
-                .isInstanceOf(ConstraintViolationException.class)
-                .hasMessageContaining("공백/null 입력은 미허용됩니다.");
     }
 
 

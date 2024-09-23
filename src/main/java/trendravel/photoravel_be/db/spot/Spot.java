@@ -86,17 +86,27 @@ public class Spot extends BaseEntity {
         this.description = spot.getDescription();
         this.latitude = spot.getLatitude();
         this.longitude = spot.getLongitude();
-        for (String deleteImage : spot.getDeleteImages()) {
-            this.images.remove(deleteImage);
+        this.images.removeAll(images);
+        if(spot.getDeleteImages() != null){
+            for (String deleteImage : spot.getDeleteImages()) {
+                this.images.remove(deleteImage);
+            }
         }
-        this.images.addAll(images);
+        if(!images.isEmpty()){
+            this.images.addAll(images);
+        }
     }
 
-    public void updateSpot(SpotRequestDto spot){
+    public void updateSpot(SpotUpdatedImagesDto spot){
         this.title = spot.getTitle();
         this.description = spot.getDescription();
         this.latitude = spot.getLatitude();
         this.longitude = spot.getLongitude();
+        if(spot.getDeleteImages() != null){
+            for (String deleteImage : spot.getDeleteImages()) {
+                this.images.remove(deleteImage);
+            }
+        }
     }
 
     public void increaseViews(){
