@@ -10,22 +10,21 @@ import trendravel.photoravel_be.commom.response.Result;
 import trendravel.photoravel_be.domain.guidebook.dto.request.GuidebookRequestDto;
 import trendravel.photoravel_be.domain.guidebook.dto.request.GuidebookUpdateDto;
 import trendravel.photoravel_be.domain.guidebook.dto.request.GuidebookUpdateImageDto;
-import trendravel.photoravel_be.domain.guidebook.dto.response.GuidebookListResponseDto;
 import trendravel.photoravel_be.domain.guidebook.dto.response.GuidebookResponseDto;
 import trendravel.photoravel_be.domain.guidebook.service.GuidebookService;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("/guidebooks")
+@RequestMapping("/private/guidebooks")
 @RequiredArgsConstructor
-public class GuidebookController {
+public class PrivateGuidebookController {
     
     private final GuidebookService guidebookService;
     
     @Schema(description = "가이드북 CREATE 요청 (이미지 미포함)",
             contentEncoding = MediaType.APPLICATION_JSON_VALUE)
-    @PostMapping("/private/create")
+    @PostMapping("/create")
     public Api<GuidebookResponseDto> guidebookCreate(
             @RequestBody GuidebookRequestDto guidebookRequestDto) {
         
@@ -34,7 +33,7 @@ public class GuidebookController {
     
     @Schema(description = "가이드북 CREATE 요청 (이미지 포함)",
             contentEncoding = MediaType.MULTIPART_FORM_DATA_VALUE)
-    @PostMapping(value = "/private/create",
+    @PostMapping(value = "/create",
             consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
     public Api<GuidebookResponseDto> guidebookCreate(
@@ -44,25 +43,9 @@ public class GuidebookController {
         return Api.CREATED(guidebookService.createGuidebook(guidebookRequestDto, images));
     }
     
-    
-    @Schema(description = "가이드북 목록 READ 요청")
-    @GetMapping("/public")
-    public Api<List<GuidebookListResponseDto>> guidebooksList(
-            @RequestParam String region) {
-        
-        return Api.READ(guidebookService.getGuidebookList(region));
-    }
-    
-    @Schema(description = "가이드북 상제 정보 READ 요청")
-    @GetMapping("/public/{guidebookId}/detail")
-    public Api<GuidebookResponseDto> guidebookDetail(@PathVariable Long guidebookId) {
-        
-        return Api.READ(guidebookService.getGuidebook(guidebookId));
-    }
-    
     @Schema(description = "가이드북 UPDATE 요청 (이미지 미포함)",
             contentEncoding = MediaType.APPLICATION_JSON_VALUE)
-    @PatchMapping("/private/update")
+    @PatchMapping("/update")
     public Api<GuidebookResponseDto> updateGuidebook(
             @RequestBody GuidebookUpdateDto guidebookUpdateDto) {
         
@@ -82,7 +65,7 @@ public class GuidebookController {
     }
     
     @Schema(description = "가이드북 DELETE 요청")
-    @DeleteMapping("/private/{guidebookId}/delete")
+    @DeleteMapping("/{guidebookId}/delete")
     public Result guidebookDelete(@PathVariable Long guidebookId) {
         
         guidebookService.deleteGuidebook(guidebookId);
