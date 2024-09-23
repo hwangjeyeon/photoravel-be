@@ -139,7 +139,7 @@ public class GuidebookService {
         Guidebook guidebook = guidebookRepository.findById(guidebookId).orElseThrow(
                 () -> new ApiException(GuidebookErrorCode.GUIDEBOOK_NOT_FOUND));
         
-        guidebook.increaseView();
+        guidebookRepository.increaseViewCount(guidebookId);
         
         return GuidebookResponseDto.builder()
                 .id(guidebook.getId())

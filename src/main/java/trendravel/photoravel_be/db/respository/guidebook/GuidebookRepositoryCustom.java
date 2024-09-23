@@ -15,4 +15,6 @@ public interface GuidebookRepositoryCustom {
     List<Guidebook> getGuidebookByNewest();
     
     List<Guidebook> getGuidebookByRegion(Region region);
+    
+    void increaseViewCount(Long guidebookId);
 }

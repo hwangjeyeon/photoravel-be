@@ -4,15 +4,11 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import trendravel.photoravel_be.db.enums.Region;
 import trendravel.photoravel_be.db.guidebook.Guidebook;
-import trendravel.photoravel_be.db.match.Matching;
-import trendravel.photoravel_be.db.photographer.Photographer;
-import trendravel.photoravel_be.domain.guidebook.dto.response.GuidebookListResponseDto;
-import trendravel.photoravel_be.domain.matching.dto.response.MatchingResponseDto;
+import trendravel.photoravel_be.db.guidebook.QGuidebook;
 
 import java.util.List;
 
 import static trendravel.photoravel_be.db.guidebook.QGuidebook.guidebook;
-import static trendravel.photoravel_be.db.photographer.QPhotographer.photographer;
 
 @RequiredArgsConstructor
 public class GuidebookRepositoryImpl implements GuidebookRepositoryCustom {
@@ -34,7 +30,7 @@ public class GuidebookRepositoryImpl implements GuidebookRepositoryCustom {
     public List<Guidebook> getGuidebookByNewest() {
         List<Guidebook> guidebookList = queryFactory
                 .selectFrom(guidebook)
-                .orderBy(guidebook.createdAt.desc())
+                .orderBy(guidebook.updatedAt.desc())
                 .limit(20) 
                 .fetch();
         
@@ -52,6 +48,16 @@ public class GuidebookRepositoryImpl implements GuidebookRepositoryCustom {
                 .fetch();
         
         return guidebookList;
+    }
+    
+    @Override
+    public void increaseViewCount(Long guidebookId) {
+        QGuidebook guidebook = QGuidebook.guidebook;
+        
+        queryFactory.update(guidebook)
+                .set(guidebook.views, guidebook.views.add(1))
+                .where(guidebook.id.eq(guidebookId))
+                .execute();
     }
     
     
