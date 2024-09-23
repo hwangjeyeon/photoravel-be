@@ -25,7 +25,7 @@ public class PhotographerController {
     
     @Schema(description = "사진작가 회원 가입(CREATE) 요청",
             contentEncoding = MediaType.MULTIPART_FORM_DATA_VALUE)
-    @PostMapping(value = "/join",
+    @PostMapping(value = "/public/join",
             consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
     public Result createPhotographer(
@@ -39,7 +39,7 @@ public class PhotographerController {
     
     @Schema(description = "사진작가 로그인 요청",
             contentEncoding = MediaType.APPLICATION_JSON_VALUE)
-    @PostMapping("/login")
+    @PostMapping("/public/login")
     public Result loginPhotographer(@RequestBody PhotographerLoginRequestDto loginRequestDto) {
         
         photographerService.authenticate(loginRequestDto.getUsername(),
@@ -50,14 +50,14 @@ public class PhotographerController {
     
     @Schema(description = "사진작가 목록 READ 요청",
             contentEncoding = MediaType.APPLICATION_JSON_VALUE)
-    @GetMapping
+    @GetMapping("/public")
     public Api<List<PhotographerListResponseDto>> getPhotographerList(@RequestParam String region) {
         
         return Api.READ(photographerService.getPhotographerList(region));
     }
     
     @Schema(description = "사진작가 상세 정보 READ 요청")
-    @GetMapping("/{photographerId}/detail")
+    @GetMapping("/public/{photographerId}/detail")
     public Api<PhotographerSingleResponseDto> getPhotographer(@PathVariable String photographerId) {
         
         return Api.READ(photographerService.getPhotographer(photographerId));
