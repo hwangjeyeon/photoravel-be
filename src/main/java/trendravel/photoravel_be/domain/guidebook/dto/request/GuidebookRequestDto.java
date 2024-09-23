@@ -9,8 +9,6 @@ import trendravel.photoravel_be.db.enums.Region;
 @Data
 public class GuidebookRequestDto {
     
-    @Schema(description = "가이드북 ID")
-    private Long id;
     @Schema(description = "유저 아이디")
     private String userId;
     @Schema(description = "제목")
