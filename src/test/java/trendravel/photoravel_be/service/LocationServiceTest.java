@@ -12,6 +12,8 @@ import trendravel.photoravel_be.commom.error.LocationErrorCode;
 import trendravel.photoravel_be.commom.exception.ApiException;
 import trendravel.photoravel_be.commom.image.service.ImageServiceFacade;
 import trendravel.photoravel_be.db.location.Location;
+import trendravel.photoravel_be.db.member.MemberEntity;
+import trendravel.photoravel_be.db.respository.member.MemberRepository;
 import trendravel.photoravel_be.db.respository.review.ReviewRepository;
 import trendravel.photoravel_be.db.review.Review;
 import trendravel.photoravel_be.db.review.enums.ReviewTypes;
@@ -40,6 +42,9 @@ class LocationServiceTest {
     @Autowired
     ReviewRepository reviewRepository;
 
+    @Autowired
+    MemberRepository memberRepository;
+
 
     @MockBean
     LocationService locationService;
@@ -53,10 +58,22 @@ class LocationServiceTest {
     Review review2;
     Review review3;
     Review review4;
+    MemberEntity member;
+
 
     @BeforeEach
     void before(){
-        locationService = new LocationService(locationRepository, imageService);
+        locationService = new LocationService(locationRepository, imageService, memberRepository);
+        member = MemberEntity.builder()
+                .email("asfd")
+                .memberId("hwangjeyeon")
+                .nickname("hwangs")
+                .name("황제연")
+                .password("1234")
+                .profileImg("1123asd.png")
+                .build();
+        memberRepository.save(member);
+
         location = Location
                 .builder()
                 .name("순천향대학교")
@@ -70,6 +87,7 @@ class LocationServiceTest {
                                 , 46.61)))
                 .build();
         location.getPoint().setSRID(4326);
+        location.setMemberLocation(member);
         location2 = Location
                 .builder()
                 .name("경찰대학교")
@@ -82,6 +100,7 @@ class LocationServiceTest {
                         new Coordinate(35.22, 46.59)))
                 .build();
         location2.getPoint().setSRID(4326);
+        location2.setMemberLocation(member);
 
         review1 = Review
                 .builder()
@@ -89,6 +108,7 @@ class LocationServiceTest {
                 .content("멋지네")
                 .rating(1.5)
                 .locationReview(location)
+                .member(member)
                 .build();
         review2 = Review
                 .builder()
@@ -96,6 +116,7 @@ class LocationServiceTest {
                 .content("키야")
                 .rating(2.4)
                 .locationReview(location)
+                .member(member)
                 .build();
         review3 = Review
                 .builder()
@@ -103,6 +124,7 @@ class LocationServiceTest {
                 .content("이야")
                 .rating(3.42)
                 .locationReview(location)
+                .member(member)
                 .build();
         review4 = Review
                 .builder()
@@ -110,13 +132,16 @@ class LocationServiceTest {
                 .content("그저 굿")
                 .rating(4.5)
                 .locationReview(location)
+                .member(member)
                 .build();
         review1.setLocationReview(location);
         review2.setLocationReview(location);
         review3.setLocationReview(location);
         review4.setLocationReview(location);
-
-
+        review1.setMemberReview(member);
+        review2.setMemberReview(member);
+        review3.setMemberReview(member);
+        review4.setMemberReview(member);
 
 
         locationRequestDto = new LocationRequestDto();
@@ -126,6 +151,7 @@ class LocationServiceTest {
         locationRequestDto.setLatitude(35.24);
         locationRequestDto.setLongitude(46.61);
         locationRequestDto.setDescription("순천향대학교입니다.");
+        locationRequestDto.setUserId(member.getMemberId());
 
     }
 
@@ -200,10 +226,10 @@ class LocationServiceTest {
     @Order(3)
     void readSingleLocationServiceTest(){
         //given
-        locationRepository.save(location);
+        Long id = locationRepository.save(location).getId();
         locationRepository.save(location2);
         locationService.createLocation(locationRequestDto);
-        Location findLocation = locationRepository.findById(5L).orElse(null);
+        Location findLocation = locationRepository.findById(id).orElse(null);
 
         reviewRepository.save(review1);
         reviewRepository.save(review2);
@@ -212,7 +238,7 @@ class LocationServiceTest {
 
         //when
         LocationSingleReadResponseDto locationSingleReadResponseDto
-                = locationService.readSingleLocation(3L);
+                = locationService.readSingleLocation(id);
         List<RecentReviewsDto> findRecentReviews =
                 locationSingleReadResponseDto.getRecentReviewDtos();
 

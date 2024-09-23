@@ -11,10 +11,12 @@ import trendravel.photoravel_be.commom.error.LocationErrorCode;
 import trendravel.photoravel_be.commom.error.ReviewErrorCode;
 import trendravel.photoravel_be.commom.error.SpotErrorCode;
 import trendravel.photoravel_be.commom.exception.ApiException;
-import trendravel.photoravel_be.commom.image.service.ImageService;
 import trendravel.photoravel_be.commom.image.service.ImageServiceFacade;
 import trendravel.photoravel_be.db.location.Location;
+import trendravel.photoravel_be.db.member.MemberEntity;
 import trendravel.photoravel_be.db.respository.location.LocationRepository;
+import trendravel.photoravel_be.db.respository.member.MemberRepository;
+import trendravel.photoravel_be.db.respository.photographer.PhotographerRepository;
 import trendravel.photoravel_be.db.respository.review.ReviewRepository;
 import trendravel.photoravel_be.db.respository.spot.SpotRepository;
 import trendravel.photoravel_be.db.review.Review;
@@ -40,6 +42,10 @@ class ReviewServiceTest {
     SpotRepository spotRepository;
     @Autowired
     ReviewRepository reviewRepository;
+    @Autowired
+    PhotographerRepository photographerRepository;
+    @Autowired
+    MemberRepository memberRepository;
 
     @MockBean
     ReviewService reviewService;
@@ -59,10 +65,22 @@ class ReviewServiceTest {
     Review review4;
     Long findLocationId;
     Long findSpotId;
+    MemberEntity member;
 
     @BeforeEach
     void before(){
-        reviewService = new ReviewService(reviewRepository, spotRepository, locationRepository, imageService);
+        reviewService = new ReviewService(reviewRepository, spotRepository, locationRepository,
+                photographerRepository, memberRepository, imageService);
+        member = MemberEntity.builder()
+                .email("asfd")
+                .memberId("hwangjeyeon")
+                .nickname("hwangs")
+                .name("황제연")
+                .password("1234")
+                .profileImg("1123asd.png")
+                .build();
+        memberRepository.save(member);
+
         location = Location
                 .builder()
                 .name("순천향대학교")
@@ -133,20 +151,26 @@ class ReviewServiceTest {
                 .build();
         review1.setLocationReview(location);
         review2.setLocationReview(location);
+        review1.setMemberReview(member);
+        review2.setMemberReview(member);
         review3.setSpotReview(spot);
         review4.setSpotReview(spot);
+        review3.setMemberReview(member);
+        review4.setMemberReview(member);
 
         locationReviewRequestDto.setReviewId(locationId);
         locationReviewRequestDto.setReviewType(locationReview.getReviewType());
         locationReviewRequestDto.setContent(locationReview.getContent());
         locationReviewRequestDto.setRating(locationReview.getRating());
         locationReviewRequestDto.setTypeId(locationId);
+        locationReviewRequestDto.setUserId(member.getMemberId());
 
         spotReviewRequestDto.setReviewId(spotId);
         spotReviewRequestDto.setReviewType(spotReview.getReviewType());
         spotReviewRequestDto.setRating(spotReview.getRating());
         spotReviewRequestDto.setContent(spotReview.getContent());
         spotReviewRequestDto.setTypeId(spotId);
+        spotReviewRequestDto.setUserId(member.getMemberId());
     }
 
     @Test

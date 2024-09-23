@@ -38,8 +38,6 @@ public class LocationMultiReadResponseDto {
     @Schema(description = "장소 리뷰 수")
     private Integer reviewCounts;
 
-    //유저 객체 추가 필요
-
 
     @Schema(description = "장소 생성일")
     private LocalDateTime createAt;

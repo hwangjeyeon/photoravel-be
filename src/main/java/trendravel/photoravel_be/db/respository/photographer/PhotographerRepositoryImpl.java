@@ -27,7 +27,7 @@ public class PhotographerRepositoryImpl implements PhotographerRepositoryCustom 
         
         return recentReviews.stream()
                 .map(p -> new RecentReviewsDto(p.getContent(),
-                        p.getRating(), p.getImages()))
+                        p.getRating(), p.getImages(), p.getMember().getNickname()))
                 .toList();
     }
     

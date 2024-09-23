@@ -13,7 +13,6 @@ import trendravel.photoravel_be.domain.matching.service.MatchingService;
 import java.util.List;
 
 @RestController
-@RequestMapping("/matching")
 @RequiredArgsConstructor
 public class MatchingController {
     
@@ -21,7 +20,7 @@ public class MatchingController {
     
     @Schema(description = "매칭 PENDING (CREATE) 요청",
             contentEncoding = MediaType.APPLICATION_JSON_VALUE)
-    @PostMapping("/pending")
+    @PostMapping("/private/matching/pending")
     Result pendingMatching(@RequestBody MatchingRequestDto matchingRequestDto) {
         
         matchingService.pendingMatching(matchingRequestDto);
@@ -30,23 +29,23 @@ public class MatchingController {
     
     @Schema(description = "유저의 매칭 목록 조회",
             contentEncoding = MediaType.APPLICATION_JSON_VALUE)
-    @GetMapping("/user/{memberId}")
+    @GetMapping("/private/matching/user/{memberId}")
     Api<List<MatchingResponseDto>> getMemberMatching(@PathVariable String memberId) {
         
-        return Api.OK(matchingService.getMatchingList(memberId));
+        return Api.OK(matchingService.getMatchingListByMemberId(memberId));
     }
     
     @Schema(description = "사진작가의 매칭 목록 조회",
             contentEncoding = MediaType.APPLICATION_JSON_VALUE)
-    @GetMapping("/photographer/{accountId}")
+    @GetMapping("/private/matching/photographer/{accountId}")
     Api<List<MatchingResponseDto>> getPhotographerMatching(@PathVariable String accountId) {
         
-        return Api.OK(matchingService.getMatchingList(accountId));
+        return Api.OK(matchingService.getMatchingListByPhotographerId(accountId));
     }
 
     @Schema(description = "매칭 취소",
             contentEncoding = MediaType.APPLICATION_JSON_VALUE)
-    @PatchMapping("/cancel")
+    @PatchMapping("/private/matching/cancel")
     Result cancelMatching(@RequestBody MatchingRequestDto matchingRequestDto) {
         
         matchingService.cancel(matchingRequestDto);
@@ -56,7 +55,7 @@ public class MatchingController {
     
     @Schema(description = "매칭 수락",
             contentEncoding = MediaType.APPLICATION_JSON_VALUE)
-    @PatchMapping("/accept")
+    @PatchMapping("/private/matching/accept")
     Result acceptMatching(@RequestBody MatchingRequestDto matchingRequestDto) {
         
         matchingService.accept(matchingRequestDto);
@@ -66,7 +65,7 @@ public class MatchingController {
     
     @Schema(description = "매칭 거절",
             contentEncoding = MediaType.APPLICATION_JSON_VALUE)
-    @PatchMapping("/reject")
+    @PatchMapping("/private/matching/reject")
     Result rejectMatching(@RequestBody MatchingRequestDto matchingRequestDto) {
         
         matchingService.reject(matchingRequestDto);
@@ -76,7 +75,7 @@ public class MatchingController {
     
     @Schema(description = "매칭 종료",
             contentEncoding = MediaType.APPLICATION_JSON_VALUE)
-    @PatchMapping("complete")
+    @PatchMapping("/private/matching/complete")
     Result completeMatching(@RequestBody MatchingRequestDto matchingRequestDto) {
         
         matchingService.complete(matchingRequestDto);

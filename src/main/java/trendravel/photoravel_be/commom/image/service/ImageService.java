@@ -30,24 +30,23 @@ public class ImageService{
     @Value("${spring.cloud.aws.s3.bucket}")
     private String bucketName;
 
-    public void uploadImages(List<MultipartFile> images){
+    public void uploadImages(List<MultipartFile> images, List<String> rebuildImageName){
         if(images == null){
             return;
         }
-        uploadImagesAndReturnUrl(images, minioClient);
-//      uploadImagesAndReturnUrl(images, amazonS3);
+        uploadImageToStorage(images, rebuildImageName, minioClient);
+//      uploadImageToStorage(images, amazonS3);
     }
 
 
-    private List<String> uploadImagesAndReturnUrl(List<MultipartFile> images, S3Client storage) {
-        List<String> rebuildImageName = getImagesName(images);
+    private void uploadImageToStorage (List<MultipartFile> images, List<String> rebuildImageNames, S3Client storage) {
 
         for (int i = 0; i < images.size(); i++) {
             try{
                 PutObjectRequest objectRequest = PutObjectRequest
                         .builder()
                         .bucket(bucketName)
-                        .key(rebuildImageName.get(i))
+                        .key(rebuildImageNames.get(i))
                         .build();
                 storage.putObject(objectRequest,
                         RequestBody.fromByteBuffer(ByteBuffer.wrap(images.get(i).getBytes())));
@@ -55,8 +54,6 @@ public class ImageService{
                 throw new ImageSystemException(ErrorCode.IMAGES_UPLOAD_ERROR,e);
             }
         }
-
-        return rebuildImageName;
     }
 
 
@@ -71,10 +68,8 @@ public class ImageService{
     }
 
     private void deleteImagesInStorage(List<String> deleteImages, S3Client storage) {
-        List<String> imageNames = sliceUrlAndGetImageNames(deleteImages);
-        log.info("{}", imageNames.get(0));
-        for (String imageName : imageNames) {
-            log.info("{}", imageName);
+        log.info("{}", deleteImages.get(0));
+        for (String imageName : deleteImages) {
             DeleteObjectRequest deleteObjectRequest = DeleteObjectRequest
                     .builder()
                     .bucket(bucketName)

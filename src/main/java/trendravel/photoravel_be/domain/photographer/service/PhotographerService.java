@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import trendravel.photoravel_be.commom.error.PhotographerErrorCode;
 import trendravel.photoravel_be.commom.exception.ApiException;
-import trendravel.photoravel_be.commom.image.service.ImageService;
+import trendravel.photoravel_be.commom.image.service.ImageServiceFacade;
 import trendravel.photoravel_be.db.enums.Region;
 import trendravel.photoravel_be.db.photographer.Photographer;
 import trendravel.photoravel_be.db.respository.photographer.PhotographerRepository;
@@ -26,7 +26,7 @@ import java.util.stream.Collectors;
 public class PhotographerService {
     
     private final PhotographerRepository photographerRepository;
-    private final ImageService imageService;
+    private final ImageServiceFacade imageServiceFacade;
     
     @Transactional
     public List<PhotographerListResponseDto> getPhotographerList(String region) {
@@ -97,7 +97,7 @@ public class PhotographerService {
                 .region(photographerRequestDto.getRegion())
                 .description(photographerRequestDto.getDescription())
                 //이미지 업로드 처리는 List이고 엔티티는 문자열이기에 get(0)으로 처리 
-                .profileImg(imageService.uploadImages(images).get(0))
+                .profileImg(imageServiceFacade.uploadImageFacade(images).get(0))
                 .careerYear(photographerRequestDto.getCareerYear())
                 .build());
     }
@@ -122,9 +122,9 @@ public class PhotographerService {
         //기존 이미지 삭제
         List<String> originImage = new ArrayList<>();
         originImage.add(photographer.getProfileImg());
-        imageService.deleteAllImages(originImage);
+        imageServiceFacade.deleteAllImagesFacade(originImage);
         
-        photographer.updatePhotographer(photographerUpdateDto, imageService.uploadImages(images));
+        photographer.updatePhotographer(photographerUpdateDto, imageServiceFacade.uploadImageFacade(images));
         
         List<RecentReviewsDto> reviews = photographerRepository.recentReviews(photographer.getId());
         
@@ -171,6 +171,10 @@ public class PhotographerService {
         
         Photographer photographer = photographerRepository.findByAccountId(photographerId).orElseThrow(
                 () -> new ApiException(PhotographerErrorCode.PHOTOGRAPHER_NOT_FOUND));
+        
+        List<String> img = new ArrayList<>();
+        img.add(photographer.getProfileImg());
+        imageServiceFacade.deleteAllImagesFacade(img);
         
         photographerRepository.deleteByAccountId(photographerId);
         

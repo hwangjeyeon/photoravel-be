@@ -17,7 +17,6 @@ import trendravel.photoravel_be.domain.guidebook.service.GuidebookService;
 import java.util.List;
 
 @RestController
-@RequestMapping("")
 @RequiredArgsConstructor
 public class GuidebookController {
     

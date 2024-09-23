@@ -32,10 +32,6 @@ public class SpotMultiReadResponseDto {
     @Schema(description = "각 스팟별 조회수")
     private int views;
 
-    //유저 객체 추가 필요
-
-
-    // 유저 객체 전달 필요
     @Schema(description = "스팟 생성일")
     private LocalDateTime createAt;
     @Schema(description = "스팟 수정일")

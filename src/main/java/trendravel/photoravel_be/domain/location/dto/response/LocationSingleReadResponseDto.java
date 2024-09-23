@@ -38,6 +38,9 @@ public class LocationSingleReadResponseDto {
     private Integer reviewCounts;
 
     //유저 객체 추가 필요
+    @Schema(description = "장소 작성 유저")
+    private String userName;
+
     @Schema(description = "최근 업데이트된 리뷰 목록 (최대 3개)")
     private List<RecentReviewsDto> recentReviewDtos;
 

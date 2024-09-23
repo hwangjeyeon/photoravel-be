@@ -31,6 +31,8 @@ public class LocationResponseDto {
     private List<String> images;
 
     //유저 객체 추가 필요
+    @Schema(description = "장소 작성 유저")
+    private String userName;
 
     @Schema(description = "장소 생성일")
     private LocalDateTime createdAt;

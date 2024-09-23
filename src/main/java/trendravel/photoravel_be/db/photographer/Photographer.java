@@ -66,7 +66,7 @@ public class Photographer extends BaseEntity {
         this.description = photographerUpdateDto.getDescription();
     }
     
-    @OneToMany(mappedBy = "photographerReview")
+    @OneToMany(mappedBy = "photographerReview", orphanRemoval = true)
     @Builder.Default
     private List<Review> reviews = new ArrayList<>();
     

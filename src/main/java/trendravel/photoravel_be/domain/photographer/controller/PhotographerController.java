@@ -17,7 +17,6 @@ import trendravel.photoravel_be.domain.photographer.service.PhotographerService;
 import java.util.List;
 
 @RestController
-@RequestMapping("")
 @RequiredArgsConstructor
 public class PhotographerController {
     
@@ -66,7 +65,7 @@ public class PhotographerController {
     
     @Schema(description = "사진작가 정보 UPDATE 요청 (이미지 미포함)",
             contentEncoding = MediaType.APPLICATION_JSON_VALUE)
-    @PatchMapping("/update")
+    @PatchMapping("/private/photographers/update")
     public Api<PhotographerSingleResponseDto> updatePhotographer(
             @RequestBody PhotographerUpdateDto photographerUpdateDto) {
         

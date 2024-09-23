@@ -20,20 +20,24 @@ public class ImageServiceFacade {
 
     @Transactional
     public List<String> uploadImageFacade(List<MultipartFile> imageFiles) {
-        eventPublisher.publishEvent(new ImageUploadEvent(imageFiles));
-        return imageService.getImagesName(imageFiles);
+        List<String> rebuildImageNames = imageService.getImagesName(imageFiles);
+        eventPublisher.publishEvent(new ImageUploadEvent(imageFiles, rebuildImageNames));
+        return rebuildImageNames;
     }
 
     @Transactional
     public List<String> updateImageFacade(List<MultipartFile> newImages,
                                           List<String> deleteImages){
-        eventPublisher.publishEvent(new ImageDeleteEvent(deleteImages));
-        eventPublisher.publishEvent(new ImageUploadEvent(newImages));
+
         if(newImages == null || newImages.isEmpty()){
             return new ArrayList<>();
         }
+        List<String> rebuildImageNames = imageService.getImagesName(newImages);
+        eventPublisher.publishEvent(new ImageDeleteEvent(deleteImages));
+        eventPublisher.publishEvent(new ImageUploadEvent(newImages, rebuildImageNames));
 
-        return imageService.getImagesName(newImages);
+
+        return rebuildImageNames;
     }
 
     @Transactional

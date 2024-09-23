@@ -5,8 +5,11 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import trendravel.photoravel_be.commom.error.GuidebookErrorCode;
+import trendravel.photoravel_be.commom.error.MemberErrorCode;
 import trendravel.photoravel_be.commom.exception.ApiException;
-import trendravel.photoravel_be.commom.image.service.ImageService;
+import trendravel.photoravel_be.commom.image.service.ImageServiceFacade;
+import trendravel.photoravel_be.db.member.MemberEntity;
+import trendravel.photoravel_be.db.respository.member.MemberRepository;
 import trendravel.photoravel_be.domain.guidebook.dto.request.GuidebookRequestDto;
 import trendravel.photoravel_be.domain.guidebook.dto.request.GuidebookUpdateDto;
 import trendravel.photoravel_be.domain.guidebook.dto.request.GuidebookUpdateImageDto;
@@ -16,10 +19,7 @@ import trendravel.photoravel_be.db.guidebook.Guidebook;
 import trendravel.photoravel_be.db.enums.Region;
 import trendravel.photoravel_be.db.respository.guidebook.GuidebookRepository;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -27,26 +27,31 @@ import java.util.stream.Collectors;
 public class GuidebookService {
     
     private final GuidebookRepository guidebookRepository;
-    private final ImageService imageService;
+    private final ImageServiceFacade imageServiceFacade;
+    private final MemberRepository memberRepository; 
     
     @Transactional
     public GuidebookResponseDto createGuidebook(
             GuidebookRequestDto guidebookRequestDto,
             List<MultipartFile> images) {
         
-        Guidebook guidebook = guidebookRepository.save(Guidebook.builder()
-                .userId(guidebookRequestDto.getUserId())
+        Guidebook guidebook = Guidebook.builder()
                 .title(guidebookRequestDto.getTitle())
                 .content(guidebookRequestDto.getContent())
                 .region(guidebookRequestDto.getRegion())
-                .images(imageService.uploadImages(images))
+                .images(imageServiceFacade.uploadImageFacade(images))
                 .views(0)
-                .build());
+                .build();
         
+        MemberEntity member = memberRepository.findByMemberId(guidebookRequestDto.getUserId())
+                .orElseThrow(() -> new ApiException(MemberErrorCode.USER_NOT_FOUND));
+        
+        guidebook.setMemberGuidebook(member);
+        guidebookRepository.save(guidebook);
         
         return GuidebookResponseDto.builder()
                 .id(guidebook.getId())
-                .userId(guidebook.getUserId())
+                .userId(member.getMemberId())
                 .title(guidebook.getTitle())
                 .content(guidebook.getContent())
                 .region(guidebook.getRegion())
@@ -61,17 +66,22 @@ public class GuidebookService {
     public GuidebookResponseDto createGuidebook(
             GuidebookRequestDto guidebookRequestDto) {
         
-        Guidebook guidebook = guidebookRepository.save(Guidebook.builder()
-                .userId(guidebookRequestDto.getUserId())
+        Guidebook guidebook = Guidebook.builder()
                 .title(guidebookRequestDto.getTitle())
                 .content(guidebookRequestDto.getContent())
                 .region(guidebookRequestDto.getRegion())
                 .views(0)
-                .build());
+                .build();
+        
+        MemberEntity member = memberRepository.findByMemberId(guidebookRequestDto.getUserId())
+                .orElseThrow(() -> new ApiException(MemberErrorCode.USER_NOT_FOUND));
+        
+        guidebook.setMemberGuidebook(member);
+        guidebookRepository.save(guidebook);
         
         return GuidebookResponseDto.builder()
                 .id(guidebook.getId())
-                .userId(guidebook.getUserId())
+                .userId(member.getMemberId())
                 .title(guidebook.getTitle())
                 .content(guidebook.getContent())
                 .region(guidebook.getRegion())
@@ -103,15 +113,17 @@ public class GuidebookService {
             throw new ApiException(GuidebookErrorCode.GUIDEBOOK_NOT_FOUND);
         }
         
-
+        
         return guidebooks.stream()
                 .map(guidebook -> GuidebookListResponseDto.builder()
                         .id(guidebook.getId())
-                        .userId(guidebook.getUserId())
+                        .userId(guidebook.getMember().getMemberId())
                         .title(guidebook.getTitle())
                         .region(guidebook.getRegion())
                         .views(guidebook.getViews())
-                        .image(!guidebook.getImages().isEmpty() ? guidebook.getImages().get(0) : null)
+                        .image((guidebook.getImages() == null || guidebook.getImages().isEmpty())
+                                ? null
+                                : guidebook.getImages().get(0))
                         .createdAt(guidebook.getCreatedAt())
                         .updatedAt(guidebook.getUpdatedAt())
                         .build())
@@ -129,7 +141,7 @@ public class GuidebookService {
         
         return GuidebookResponseDto.builder()
                 .id(guidebook.getId())
-                .userId(guidebook.getUserId())
+                .userId(guidebook.getMember().getMemberId())
                 .title(guidebook.getTitle())
                 .content(guidebook.getContent())
                 .region(guidebook.getRegion())
@@ -148,13 +160,12 @@ public class GuidebookService {
                 () -> new ApiException(GuidebookErrorCode.GUIDEBOOK_NOT_FOUND));
         
         
-
         guidebook.updateGuidebook(guidebookUpdateImageDto,
-                imageService.updateImages(images, guidebookUpdateImageDto.getDeleteImages()));
+                imageServiceFacade.updateImageFacade(images, guidebookUpdateImageDto.getDeleteImages()));
         
         return GuidebookResponseDto.builder()
                 .id(guidebook.getId())
-                .userId(guidebook.getUserId())
+                .userId(guidebook.getMember().getMemberId())
                 .title(guidebook.getTitle())
                 .content(guidebook.getContent())
                 .region(guidebook.getRegion())
@@ -171,12 +182,12 @@ public class GuidebookService {
         Guidebook guidebook = guidebookRepository.findById(guidebookUpdateDto.getId()).orElseThrow(
                 () -> new ApiException(GuidebookErrorCode.GUIDEBOOK_NOT_FOUND));
         
-
+        
         guidebook.updateGuidebook(guidebookUpdateDto);
         
         return GuidebookResponseDto.builder()
                 .id(guidebook.getId())
-                .userId(guidebook.getUserId())
+                .userId(guidebook.getMember().getMemberId())
                 .title(guidebook.getTitle())
                 .content(guidebook.getContent())
                 .region(guidebook.getRegion())
@@ -193,7 +204,7 @@ public class GuidebookService {
         guidebookRepository.deleteById(guidebookId);
         
         if (guidebook.getImages() != null) {
-            imageService.deleteAllImages(guidebook.getImages());
+            imageServiceFacade.deleteAllImagesFacade(guidebook.getImages());
         }
         
     }

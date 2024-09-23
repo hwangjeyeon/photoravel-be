@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import trendravel.photoravel_be.db.BaseEntity;
+import trendravel.photoravel_be.db.member.MemberEntity;
 import trendravel.photoravel_be.domain.guidebook.dto.request.GuidebookRequestDto;
 import trendravel.photoravel_be.db.enums.Region;
 import trendravel.photoravel_be.domain.guidebook.dto.request.GuidebookUpdateDto;
@@ -27,13 +28,9 @@ public class Guidebook extends BaseEntity {
     private Long id;
     
     @Column(nullable = false)
-    private Long userId;
-    
-    @Column(nullable = false)
     private String title;
     
-    @Lob
-    @Column(nullable = false)
+    @Column(nullable = false, columnDefinition = "TEXT")
     private String content;
     
     
@@ -49,6 +46,15 @@ public class Guidebook extends BaseEntity {
     private Region region;
     
     private int views;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "memberEntity_id")
+    private MemberEntity member;
+    
+    public void setMemberGuidebook(MemberEntity member) {
+        this.member = member;
+        member.getGuidebookMember().add(this);
+    }
     
     public void updateGuidebook(GuidebookUpdateImageDto guidebookUpdateImageDto, List<String> newImages) {
         this.title = guidebookUpdateImageDto.getTitle();

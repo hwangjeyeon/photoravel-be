@@ -30,7 +30,9 @@ public class ReviewResponseDto {
     @Schema(description = "리뷰 이미지")
     private List<String> images;
 
-    // 유저 객체 추가 필요
+    @Schema(description = "리뷰 작성 유저")
+    private String userName;
+
     @Schema(description = "리뷰 생성일")
     private LocalDateTime createdAt;
     @Schema(description = "리뷰 수정일")
