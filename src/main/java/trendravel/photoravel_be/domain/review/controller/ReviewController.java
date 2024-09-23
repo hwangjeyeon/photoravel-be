@@ -49,14 +49,14 @@ public class ReviewController {
     }
 
     @Schema(description = "특정 장소의 모든 리뷰 READ 요청/응답")
-    @GetMapping(value = "/location/{locationId}/detail/reviews")
+    @GetMapping(value = "/public/location/{locationId}/detail/reviews")
     public Api<List<ReviewResponseDto>> readLocationReviews(@PathVariable("locationId")
                                                           Long locationId){
         return Api.READ(reviewService.readAllLocationReview(locationId));
     }
 
     @Schema(description = "특정 스팟의 모든 리뷰 READ 요청/응답")
-    @GetMapping(value = "/location/{locationId}/spot/{spotId}/detail/reviews")
+    @GetMapping(value = "/public/location/{locationId}/spot/{spotId}/detail/reviews")
     public Api<List<ReviewResponseDto>> readLocationReviews(@PathVariable("locationId")
                                                             Long locationId,
                                                             @PathVariable("spotId")
@@ -65,7 +65,7 @@ public class ReviewController {
     }
     
     @Schema(description = "특정 사진작가의 모든 리뷰 READ 요청/응답")
-    @GetMapping(value = "/photographers/{photographerId}/detail/reviews")
+    @GetMapping(value = "/public/photographers/{photographerId}/detail/reviews")
     public Api<List<ReviewResponseDto>> readPhotographerReviews(@PathVariable("photographerId") 
                                                                     String accountId){
         return Api.READ(reviewService.readAllPhotographerReview(accountId));
