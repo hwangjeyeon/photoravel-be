@@ -1,7 +1,9 @@
 package trendravel.photoravel_be.domain.member.controller;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import trendravel.photoravel_be.commom.response.Api;
 import trendravel.photoravel_be.domain.member.dto.MemberUpdateResponse;
 import trendravel.photoravel_be.domain.member.dto.MemberUpdateRequest;
@@ -23,10 +25,14 @@ public class MemberPrivateController {
         return Api.OK(response);
     }
 
-    // TODO 이미지 서비스
-    @PatchMapping("/info")
-    public Api<MemberUpdateResponse> patchInfo(@RequestBody MemberUpdateRequest request) {
-        MemberUpdateResponse response = memberService.memberUpdate(request);
+    @PatchMapping(value = "/info",
+            consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    public Api<MemberUpdateResponse> patchInfo(
+            @RequestPart(value = "request") MemberUpdateRequest request,
+            @RequestPart(value = "image") MultipartFile image
+    ) {
+        MemberUpdateResponse response = memberService.memberUpdate(request, image);
         return Api.OK(response);
     }
 
