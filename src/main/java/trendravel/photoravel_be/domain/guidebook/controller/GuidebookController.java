@@ -43,22 +43,22 @@ public class GuidebookController {
         return Api.CREATED(guidebookService.createGuidebook(guidebookRequestDto, images));
     }
     
-    
+
     @Schema(description = "가이드북 목록 READ 요청")
     @GetMapping("/public/guidebooks")
     public Api<List<GuidebookListResponseDto>> guidebooksList(
             @RequestParam String region) {
-        
+
         return Api.READ(guidebookService.getGuidebookList(region));
     }
-    
+
     @Schema(description = "가이드북 상제 정보 READ 요청")
     @GetMapping("/public/guidebooks/{guidebookId}/detail")
     public Api<GuidebookResponseDto> guidebookDetail(@PathVariable Long guidebookId) {
-        
+
         return Api.READ(guidebookService.getGuidebook(guidebookId));
     }
-    
+
     @Schema(description = "가이드북 UPDATE 요청 (이미지 미포함)",
             contentEncoding = MediaType.APPLICATION_JSON_VALUE)
     @PatchMapping("/private/guidebooks/update")

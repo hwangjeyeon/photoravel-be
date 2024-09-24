@@ -21,7 +21,7 @@ import java.util.List;
 public class PhotographerController {
     
     private final PhotographerService photographerService;
-    
+
     @Schema(description = "사진작가 회원 가입(CREATE) 요청",
             contentEncoding = MediaType.MULTIPART_FORM_DATA_VALUE)
     @PostMapping(value = "/public/photographers/join",
@@ -30,35 +30,35 @@ public class PhotographerController {
     public Result createPhotographer(
             @RequestPart(value = "data") PhotographerRequestDto photographerRequestDto,
             @RequestPart(value = "image", required = false) List<MultipartFile> images) {
-        
+
         photographerService.createPhotographer(photographerRequestDto, images);
-        
+
         return Result.CREATED();
     }
-    
+
     @Schema(description = "사진작가 로그인 요청",
             contentEncoding = MediaType.APPLICATION_JSON_VALUE)
     @PostMapping("/public/photographers/login")
     public Result loginPhotographer(@RequestBody PhotographerLoginRequestDto loginRequestDto) {
-        
+
         photographerService.authenticate(loginRequestDto.getUsername(),
                 loginRequestDto.getPassword());
-        
+
         return Result.OK();
     }
-    
+
     @Schema(description = "사진작가 목록 READ 요청",
             contentEncoding = MediaType.APPLICATION_JSON_VALUE)
     @GetMapping("/public/photographers")
     public Api<List<PhotographerListResponseDto>> getPhotographerList(@RequestParam String region) {
-        
+
         return Api.READ(photographerService.getPhotographerList(region));
     }
-    
+
     @Schema(description = "사진작가 상세 정보 READ 요청")
     @GetMapping("/public/photographers/{photographerId}/detail")
     public Api<PhotographerSingleResponseDto> getPhotographer(@PathVariable String photographerId) {
-        
+
         return Api.READ(photographerService.getPhotographer(photographerId));
     }
     

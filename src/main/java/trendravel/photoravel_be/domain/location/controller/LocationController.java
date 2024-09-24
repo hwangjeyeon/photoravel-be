@@ -53,14 +53,14 @@ public class LocationController {
     }
 
     @Schema(description = "단일 장소 모든 정보 READ 요청/응답")
-    @GetMapping(value = "/location/{locationId}/detail")
+    @GetMapping(value = "/public/location/{locationId}/detail")
     public Api<LocationSingleReadResponseDto> locationSingleRead(@PathVariable("locationId")
                                                            Long locationId){
         return Api.READ(locationService.readSingleLocation(locationId));
     }
 
     @Schema(description = "주변 범위 내 모든 장소 READ 요청/응답")
-    @GetMapping(value = "/nowPosition")
+    @GetMapping(value = "/public/nowPosition")
     public Api<List<LocationMultiReadResponseDto>> locationMultiRead(
             @RequestParam("latitude") double latitude,
             @RequestParam("longitude") double longitude,
@@ -74,7 +74,7 @@ public class LocationController {
     }
 
     @Schema(description = "(주변 범위 + 검색 키워드) 기반 모든 장소 READ 요청/응답")
-    @GetMapping(value = "/search/location")
+    @GetMapping(value = "/public/search/location")
     public Api<List<LocationMultiReadResponseDto>> locationMultiRead(
             @RequestParam("latitude") double latitude,
             @RequestParam("longitude") double longitude,

@@ -50,7 +50,7 @@ public class SpotController {
     }
 
     @Schema(description = "단일 스팟 모든 정보 READ 요청/응답")
-    @GetMapping(value = "/location/{locationSearchId}/spot/{spotSearchId}/detail")
+    @GetMapping(value = "/public/location/{locationSearchId}/spot/{spotSearchId}/detail")
     public Api<SpotSingleReadResponseDto> spotSingleRead(@PathVariable("locationSearchId")
                                                 Long locationSearchId,
                                                          @PathVariable("spotSearchId")
@@ -59,7 +59,7 @@ public class SpotController {
     }
 
     @Schema(description = "특정 장소의 모든 스팟 정보 READ 교청/응답")
-    @GetMapping(value = "/location/{locationSearchId}/spots")
+    @GetMapping(value = "/public/location/{locationSearchId}/spots")
     public Api<List<SpotMultiReadResponseDto>> spotMultiRead(@PathVariable("locationSearchId")
                                                        Long locationSearchId){
         return Api.READ(spotService.readMultiSpot(locationSearchId));
