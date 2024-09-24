@@ -9,8 +9,10 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 import trendravel.photoravel_be.commom.error.MemberErrorCode;
 import trendravel.photoravel_be.commom.exception.ApiException;
+import trendravel.photoravel_be.commom.image.service.ImageServiceFacade;
 import trendravel.photoravel_be.db.inmemorydb.entity.Token;
 import trendravel.photoravel_be.db.member.MemberEntity;
 import trendravel.photoravel_be.db.respository.member.MemberRepository;
@@ -21,6 +23,8 @@ import trendravel.photoravel_be.domain.member.dto.*;
 import trendravel.photoravel_be.domain.token.model.TokenDto;
 import trendravel.photoravel_be.domain.token.model.TokenResponse;
 import trendravel.photoravel_be.domain.token.service.TokenService;
+
+import java.util.List;
 
 @Slf4j
 @Service
@@ -33,6 +37,7 @@ public class MemberService {
     private final PasswordEncoder passwordEncoder;
     private final RedisTemplate<String, Token> redisTemplate;
     private final AuthenticationService authenticationService;
+    private final ImageServiceFacade imageServiceFacade;
 
     @Transactional
     public TokenResponse login(BaseMemberDto baseMemberDto) {
@@ -61,14 +66,14 @@ public class MemberService {
     }
 
     @Transactional
-    public MemberResponse localRegister(MemberRegisterRequest request) {
+    public MemberResponse localRegister(MemberRegisterRequest request, MultipartFile image) {
         MemberEntity memberEntity = MemberEntity.builder()
                 .memberId(request.getMemberId())
                 .password(passwordEncoder.encode(request.getPassword()))
                 .name(request.getName())
                 .nickname(request.getNickname())
                 .email(request.getEmail())
-                .profileImg(request.getProfileImg())
+                .profileImg(imageServiceFacade.uploadImageFacade(List.of(image)).get(0))
                 .build();
         MemberEntity saved = memberRepository.save(memberEntity);
 
@@ -85,10 +90,8 @@ public class MemberService {
     }
 
     @Transactional
-    public MemberUpdateResponse memberUpdate(MemberUpdateRequest request) {
+    public MemberUpdateResponse memberUpdate(MemberUpdateRequest request, MultipartFile image) {
 
-        // 스프링 시큐리티 컨텍스트 홀더에서 인증 객체를 찾음으로써 인증된 사용자인지 검증
-        // jwt 토큰 인증 필터를 거칠 때 홀더에 인증 객체를 저장하기 때문.
         UserSession principal = (UserSession) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         MemberEntity memberEntity = memberRepository.findByMemberId(principal.getUsername())
                 .orElseThrow(() -> new ApiException(MemberErrorCode.UNAUTHORIZED));
@@ -97,17 +100,19 @@ public class MemberService {
         // 인증 객체랑 토큰 안의 회원 정보랑 비교 검사를 해야할까..?
         // 왜냐하면 다른 회원이 정보를 수정할지도 모르니까
 
-        memberEntity.setMemberId(request.getMemberId());
-        memberEntity.setPassword(passwordEncoder.encode(request.getPassword()));
-        memberEntity.setName(request.getName());
-        memberEntity.setNickname(request.getNickname());
-        memberEntity.setProfileImg(request.getProfileImg());
-
-        MemberEntity saved = memberRepository.save(memberEntity);
+        memberEntity.updateMember(
+                request.getMemberId(),
+                request.getPassword(),
+                request.getName(),
+                request.getNickname(),
+                request.getEmail(),
+                // 기존 이미지 삭제..?
+                imageServiceFacade.updateImageFacade(List.of(image), List.of(memberEntity.getProfileImg())).toString()
+        );
 
         redisTemplate.opsForHash().delete("refresh_token", request.getMemberId());
-        TokenDto accessToken = tokenService.issueAccessToken(saved.getMemberId());
-        TokenDto refreshToken = tokenService.issueRefreshToken(saved.getMemberId());
+        TokenDto accessToken = tokenService.issueAccessToken(memberEntity.getMemberId());
+        TokenDto refreshToken = tokenService.issueRefreshToken(memberEntity.getMemberId());
 
 
         TokenResponse token = TokenResponse.builder()
@@ -116,19 +121,19 @@ public class MemberService {
                 .build();
 
         // 회원 정보 수정 후 UserDetails를 업데이트
-        UserSession userSession = (UserSession) authenticationService.loadUserByUsername(saved.getMemberId());
+        UserSession userSession = (UserSession) authenticationService.loadUserByUsername(memberEntity.getMemberId());
         Authentication authentication = new UsernamePasswordAuthenticationToken(userSession, null, userSession.getAuthorities());
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
         return MemberUpdateResponse.builder()
-                .memberId(saved.getMemberId())
-                .email(saved.getEmail())
-                .password(saved.getPassword())
-                .name(saved.getName())
-                .nickname(saved.getNickname())
-                .profileImg(saved.getProfileImg())
-                .createdAt(saved.getCreatedAt())
-                .updatedAt(saved.getUpdatedAt())
+                .memberId(memberEntity.getMemberId())
+                .email(memberEntity.getEmail())
+                .password(memberEntity.getPassword())
+                .name(memberEntity.getName())
+                .nickname(memberEntity.getNickname())
+                .profileImg(memberEntity.getProfileImg())
+                .createdAt(memberEntity.getCreatedAt())
+                .updatedAt(memberEntity.getUpdatedAt())
                 .token(token)
                 .build();
     }
