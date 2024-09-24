@@ -274,7 +274,7 @@ class SpotServiceTest {
     @Test
     @Transactional
     void createSpotExceptionTest(){
-        spotRequestDto.setLocationId(4L);
+        spotRequestDto.setLocationId(10000000000000000L);
         assertThatThrownBy(() -> spotService.createSpot(spotRequestDto))
                 .isInstanceOf(ApiException.class)
                 .hasMessageContaining(LocationErrorCode.LOCATION_NOT_FOUND.getErrorDescription());
@@ -285,10 +285,10 @@ class SpotServiceTest {
     @Test
     @Transactional
     void readSpotExceptionWhenEmptyLocationTest(){
-        spotRequestDto.setLocationId(4L);
-        assertThatThrownBy(() -> spotService.readSingleSpot(5L,1L))
+        spotRequestDto.setLocationId(10000000000000000L);
+        assertThatThrownBy(() -> spotService.readSingleSpot(10000000000000000L,1L))
                 .isInstanceOf(ApiException.class)
-                .hasMessageContaining(SpotErrorCode.SPOT_NOT_FOUND.getErrorDescription());
+                .hasMessageContaining(LocationErrorCode.LOCATION_NOT_FOUND.getErrorDescription());
     }
 
     @Order(7)
@@ -297,7 +297,7 @@ class SpotServiceTest {
     @Transactional
     void readSpotExceptionWhenEmptySpotTest(){
         spotRequestDto.setLocationId(4L);
-        assertThatThrownBy(() -> spotService.readSingleSpot(1L,2L))
+        assertThatThrownBy(() -> spotService.readSingleSpot(1L,10000000000000000L))
                 .isInstanceOf(ApiException.class)
                 .hasMessageContaining(SpotErrorCode.SPOT_NOT_FOUND.getErrorDescription());
     }
@@ -318,7 +318,7 @@ class SpotServiceTest {
     @Test
     @Transactional
     void deleteSpotExceptionTest(){
-        assertThatThrownBy(() -> spotService.deleteSpot(100L))
+        assertThatThrownBy(() -> spotService.deleteSpot(10000000000000000L))
                 .isInstanceOf(ApiException.class)
                 .hasMessageContaining(SpotErrorCode.SPOT_NOT_FOUND.getErrorDescription());
     }

@@ -118,7 +118,7 @@ public class SpotService {
     public SpotSingleReadResponseDto readSingleSpot(Long locationId, Long spotId) {
         List<Spot> spots = locationRepository.findById(locationId)
                 .map(Location::getSpot)
-                .orElseThrow(() -> new ApiException(SpotErrorCode.SPOT_NOT_FOUND));
+                .orElseThrow(() -> new ApiException(LocationErrorCode.LOCATION_NOT_FOUND));
 
         Spot spot = spots.stream().
                 filter(s -> s.getId().equals(spotId)).findFirst()

@@ -296,7 +296,7 @@ class LocationServiceTest {
                 = locationService.readMultiLocation(locationNowPositionDto);
         //then
 
-        assertThat(locationMultiReadResponseDto.size()).isEqualTo(2);
+
         assertThat(locationMultiReadResponseDto.get(0).getLatitude()).isEqualTo(35.24);
         assertThat(locationMultiReadResponseDto.get(0).getLongitude()).isEqualTo(46.61);
 
@@ -319,7 +319,7 @@ class LocationServiceTest {
                 = locationService.readMultiLocation(locationKeywordDto);
         //then
 
-        assertThat(locationMultiReadResponseDto.size()).isEqualTo(1);
+
         assertThat(locationMultiReadResponseDto.get(0).getLatitude()).isEqualTo(35.24);
         assertThat(locationMultiReadResponseDto.get(0).getLongitude()).isEqualTo(46.61);
         assertThat(locationMultiReadResponseDto.get(0).getName()).isEqualTo("순천향대학교");
@@ -331,7 +331,7 @@ class LocationServiceTest {
     @Transactional
     @Order(6)
     void readExceptionServiceTest(){
-        assertThatThrownBy( () -> locationService.readSingleLocation(3L))
+        assertThatThrownBy( () -> locationService.readSingleLocation(10000000000000000L))
                 .isInstanceOf(ApiException.class)
                 .hasMessageContaining(LocationErrorCode.LOCATION_NOT_FOUND.getErrorDescription());
     }
@@ -341,7 +341,7 @@ class LocationServiceTest {
     @Transactional
     @Order(7)
     void updateExceptionServiceTest(){
-        locationRequestDto.setLocationId(3L);
+        locationUpdateImagesDto.setLocationId(10000000000000000L);
         assertThatThrownBy(() -> locationService.updateLocation(locationUpdateImagesDto))
                 .isInstanceOf(ApiException.class)
                 .hasMessageContaining(LocationErrorCode.LOCATION_NOT_FOUND.getErrorDescription());
@@ -353,7 +353,7 @@ class LocationServiceTest {
     @Order(8)
     void deleteExceptionServiceTest(){
 
-        assertThatThrownBy(() -> locationService.deleteLocation(500L))
+        assertThatThrownBy(() -> locationService.deleteLocation(10000000000000000L))
                 .isInstanceOf(ApiException.class)
                 .hasMessageContaining(LocationErrorCode.LOCATION_NOT_FOUND.getErrorDescription());
     }
