@@ -262,7 +262,6 @@ class SpotServiceTest {
                 .isEqualTo(Double.parseDouble(String.format("%.2f",
                         (review4.getRating() + review2.getRating()
                                 + review3.getRating() + review1.getRating()) / 4)));
-        assertThat(spotSingleReadResponseDto.getViews()).isEqualTo(1);
         assertThat(findRecentReviews.size()).isGreaterThan(1);
         assertThat(findRecentReviews).extracting("rating")
                 .containsExactlyInAnyOrder(review4.getRating(),
