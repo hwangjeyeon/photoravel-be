@@ -11,8 +11,6 @@ import trendravel.photoravel_be.db.enums.Region;
 @Data
 public class PhotographerRequestDto {
     
-    @Schema(description = "사진작가 ID")
-    private Long id;
     @Schema(description = "사진작가 계정 ID")
     private String accountId;
     @Schema(description = "비밀번호")

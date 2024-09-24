@@ -2,6 +2,8 @@ package trendravel.photoravel_be.db.respository.photographer;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
+import trendravel.photoravel_be.db.enums.Region;
+import trendravel.photoravel_be.db.photographer.Photographer;
 import trendravel.photoravel_be.db.review.Review;
 import trendravel.photoravel_be.domain.review.dto.response.RecentReviewsDto;
 
@@ -29,6 +31,43 @@ public class PhotographerRepositoryImpl implements PhotographerRepositoryCustom 
                 .map(p -> new RecentReviewsDto(p.getContent(),
                         p.getRating(), p.getImages(), p.getMember().getNickname()))
                 .toList();
+    }
+    
+    @Override
+    public List<Photographer> getPhotographerByCareer() {
+        
+        List<Photographer> photographerList = queryFactory
+                .selectFrom(photographer)
+                .orderBy(photographer.careerYear.desc())
+                .limit(20)
+                .fetch();
+        
+        return photographerList;
+    }
+    
+    @Override
+    public List<Photographer> getPhotographerByMatchingCount() {
+        
+        List<Photographer> photographerList = queryFactory
+                .selectFrom(photographer)
+                .orderBy(photographer.matchingCount.desc())
+                .limit(20)
+                .fetch();
+        
+        return photographerList;
+    }
+    
+    @Override
+    public List<Photographer> getPhotographerByRegion(Region region) {
+        
+        List<Photographer> photographerList = queryFactory
+                .selectFrom(photographer)
+                .where(photographer.region.eq(region))  
+                .orderBy(photographer.matchingCount.desc())  
+                .limit(20)  // 상위 20개만 선택
+                .fetch();
+        
+        return photographerList;
     }
     
     

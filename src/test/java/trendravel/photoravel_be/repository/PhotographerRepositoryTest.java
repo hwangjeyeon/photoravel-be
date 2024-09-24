@@ -41,6 +41,7 @@ public class PhotographerRepositoryTest {
                 .description("신동욱입니다")
                 .profileImg(profileImg)
                 .careerYear(1)
+                .matchingCount(0)
                 .build();
     }
     
