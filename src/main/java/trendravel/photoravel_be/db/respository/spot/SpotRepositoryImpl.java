@@ -10,6 +10,7 @@ import java.util.List;
 
 
 import static trendravel.photoravel_be.db.review.QReview.review;
+import static trendravel.photoravel_be.db.spot.QSpot.spot;
 
 
 @RequiredArgsConstructor
@@ -33,5 +34,11 @@ public class SpotRepositoryImpl implements SpotRepositoryCustom {
                 .toList();
     }
 
-
+    @Override
+    public void increaseViews(Long id) {
+        queryFactory.update(spot)
+                .set(spot.views, spot.views.add(1))
+                .where(spot.id.eq(id))
+                .execute();
+    }
 }

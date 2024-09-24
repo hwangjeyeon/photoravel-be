@@ -109,10 +109,6 @@ public class Spot extends BaseEntity {
         }
     }
 
-    public void increaseViews(){
-        this.views++;
-    }
-
 
 
 }

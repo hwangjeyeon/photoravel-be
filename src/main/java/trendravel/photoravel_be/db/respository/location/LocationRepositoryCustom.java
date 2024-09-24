@@ -12,5 +12,6 @@ public interface LocationRepositoryCustom {
     List<RecentReviewsDto> recentReviews(Long id);
     List<Location> searchNowPosition(LocationNowPositionDto locationNowPositionDto);
     List<Location> searchKeyword(LocationKeywordDto locationKeywordDto);
+    void increaseViews(Long id);
 
 }
