@@ -12,5 +12,5 @@ public class MemberUpdateRequest {
     private String password;
     private String name;
     private String nickname;
-    private String profileImg;
+    private String email;
 }

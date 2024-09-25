@@ -1,7 +1,9 @@
 package trendravel.photoravel_be.domain.member.controller;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import trendravel.photoravel_be.commom.response.Api;
 import trendravel.photoravel_be.domain.member.dto.MemberInfoCheckResponse;
 import trendravel.photoravel_be.domain.member.dto.MemberLoginRequest;
@@ -17,11 +19,14 @@ public class MemberPublicController {
 
     private final MemberService memberService;
 
-    @PostMapping("/register")
+    @PatchMapping(value = "/register",
+            consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE)
     public Api<MemberResponse> localRegister(
-            @RequestBody MemberRegisterRequest request
-    ) {
-        MemberResponse response = memberService.localRegister(request);
+            @RequestPart(value = "request") MemberRegisterRequest request,
+            @RequestPart(value = "image") MultipartFile image
+            ) {
+        MemberResponse response = memberService.localRegister(request, image);
 
         return Api.CREATED(response);
     }
