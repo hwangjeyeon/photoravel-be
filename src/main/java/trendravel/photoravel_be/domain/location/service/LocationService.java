@@ -127,7 +127,7 @@ public class LocationService {
                 .build();
     }
 
-    @Transactional(readOnly = true)
+    @Transactional
     public LocationSingleReadResponseDto readSingleLocation(Long id){
         Location location = locationRepository.findById(id)
                 .orElseThrow(() -> new ApiException(LocationErrorCode.LOCATION_NOT_FOUND));
@@ -135,7 +135,7 @@ public class LocationService {
         MemberEntity member = memberRepository.findByMemberId(location.getMember().getMemberId())
                 .orElseThrow(() -> new ApiException(MemberErrorCode.USER_NOT_FOUND));
 
-        location.increaseViews();
+        locationRepository.increaseViews(id);
         List<RecentReviewsDto> reviews = locationRepository.recentReviews(location.getId());
 
         return LocationSingleReadResponseDto.builder()

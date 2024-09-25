@@ -34,8 +34,8 @@ public class ImageService{
         if(images == null){
             return;
         }
-//        uploadImageToStorage(images, rebuildImageName, minioClient);
-      uploadImageToStorage(images, rebuildImageName, amazonS3);
+        uploadImageToStorage(images, rebuildImageName, minioClient);
+//      uploadImageToStorage(images, rebuildImageName, amazonS3);
     }
 
 
@@ -63,8 +63,8 @@ public class ImageService{
      */
 
     public void deleteAllImages(List<String> deleteImages){
-//        deleteImagesInStorage(deleteImages, minioClient);
-        deleteImagesInStorage(deleteImages, amazonS3);
+        deleteImagesInStorage(deleteImages, minioClient);
+//        deleteImagesInStorage(deleteImages, amazonS3);
     }
 
     private void deleteImagesInStorage(List<String> deleteImages, S3Client storage) {

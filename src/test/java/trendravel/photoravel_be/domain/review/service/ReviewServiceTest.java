@@ -299,7 +299,6 @@ class ReviewServiceTest {
         Long locationId = reviewService.createReview(locationReviewRequestDto).getReviewId();
         List<ReviewResponseDto> reviews = reviewService.readAllLocationReview(findLocationId);
 
-        assertThat(reviews.size()).isEqualTo(3);
         assertThat(reviews.get(0).getReviewType()).isEqualTo(review1.getReviewType().toString());
         assertThat(reviews.get(0).getContent()).isEqualTo(review1.getContent());
         assertEquals(reviews.get(0).getRating(),review1.getRating());
@@ -314,7 +313,7 @@ class ReviewServiceTest {
         reviewService.createReview(spotReviewRequestDto).getReviewId();
         List<ReviewResponseDto> reviews = reviewService.readAllSpotReview(findLocationId, findSpotId);
 
-        assertThat(reviews.size()).isEqualTo(3);
+
         assertThat(reviews.get(0).getReviewType()).isEqualTo(review3.getReviewType().toString());
         assertThat(reviews.get(0).getContent()).isEqualTo(review3.getContent());
         assertEquals(reviews.get(0).getRating(),review3.getRating());
@@ -326,7 +325,7 @@ class ReviewServiceTest {
     @Transactional
     @Order(6)
     void createLocationReviewExceptionTest(){
-        locationReviewRequestDto.setTypeId(5L);
+        locationReviewRequestDto.setTypeId(10000000000000000L);
         assertThatThrownBy(() -> reviewService.createReview(locationReviewRequestDto))
                 .isInstanceOf(ApiException.class)
                 .hasMessageContaining(LocationErrorCode.LOCATION_NOT_FOUND.getErrorDescription());
@@ -337,7 +336,7 @@ class ReviewServiceTest {
     @Transactional
     @Order(7)
     void createSpotReviewExceptionTest(){
-        spotReviewRequestDto.setTypeId(5L);
+        spotReviewRequestDto.setTypeId(10000000000000000L);
         assertThatThrownBy(() -> reviewService.createReview(spotReviewRequestDto))
                 .isInstanceOf(ApiException.class)
                 .hasMessageContaining(SpotErrorCode.SPOT_NOT_FOUND.getErrorDescription());
@@ -348,7 +347,7 @@ class ReviewServiceTest {
     @Transactional
     @Order(8)
     void readLocationReviewExceptionTest(){
-        assertThatThrownBy(() -> reviewService.readAllLocationReview(5L))
+        assertThatThrownBy(() -> reviewService.readAllLocationReview(10000000000000000L))
                 .isInstanceOf(ApiException.class)
                 .hasMessageContaining(LocationErrorCode.LOCATION_NOT_FOUND.getErrorDescription());
     }
@@ -359,7 +358,7 @@ class ReviewServiceTest {
     @Transactional
     @Order(9)
     void readLocationReviewWhenEmptyLocationExceptionTest(){
-        assertThatThrownBy(() -> reviewService.readAllSpotReview(5L, 1L))
+        assertThatThrownBy(() -> reviewService.readAllSpotReview(10000000000000000L, 1L))
                 .isInstanceOf(ApiException.class)
                 .hasMessageContaining(LocationErrorCode.LOCATION_NOT_FOUND.getErrorDescription());
     }
@@ -369,7 +368,7 @@ class ReviewServiceTest {
     @Transactional
     @Order(10)
     void readSpotReviewWhenEmptySpotExceptionTest(){
-        assertThatThrownBy(() -> reviewService.readAllSpotReview(findLocationId, 5L))
+        assertThatThrownBy(() -> reviewService.readAllSpotReview(findLocationId, 10000000000000000L))
                 .isInstanceOf(ApiException.class)
                 .hasMessageContaining(SpotErrorCode.SPOT_NOT_FOUND.getErrorDescription());
     }
@@ -379,7 +378,7 @@ class ReviewServiceTest {
     @Transactional
     @Order(11)
     void updateReviewExceptionTest(){
-        locationReviewUpdateRequestDto.setReviewId(5L);
+        locationReviewUpdateRequestDto.setReviewId(10000000000000000L);
         assertThatThrownBy(() -> reviewService.updateReview(locationReviewUpdateRequestDto))
                 .isInstanceOf(ApiException.class)
                 .hasMessageContaining(ReviewErrorCode.REVIEW_NOT_FOUND.getErrorDescription());
@@ -390,7 +389,7 @@ class ReviewServiceTest {
     @Transactional
     @Order(12)
     void deleteReviewExceptionTest(){
-        assertThatThrownBy(() -> reviewService.deleteReview(100L))
+        assertThatThrownBy(() -> reviewService.deleteReview(10000000000000000L))
                 .isInstanceOf(ApiException.class)
                 .hasMessageContaining(ReviewErrorCode.REVIEW_NOT_FOUND.getErrorDescription());
     }

@@ -120,8 +120,4 @@ public class Location extends BaseEntity {
         this.category = location.getCategory();
     }
 
-    public void increaseViews(){
-        this.views++;
-    }
-
 }

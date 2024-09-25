@@ -114,16 +114,16 @@ public class SpotService {
     }
 
 
-    @Transactional(readOnly = true)
+    @Transactional
     public SpotSingleReadResponseDto readSingleSpot(Long locationId, Long spotId) {
         List<Spot> spots = locationRepository.findById(locationId)
                 .map(Location::getSpot)
-                .orElseThrow(() -> new ApiException(SpotErrorCode.SPOT_NOT_FOUND));
+                .orElseThrow(() -> new ApiException(LocationErrorCode.LOCATION_NOT_FOUND));
 
         Spot spot = spots.stream().
                 filter(s -> s.getId().equals(spotId)).findFirst()
                 .orElseThrow(() -> new ApiException(SpotErrorCode.SPOT_NOT_FOUND));
-        spot.increaseViews();
+        spotRepository.increaseViews(spot.getId());
 
         List<RecentReviewsDto> reviews = spotRepository.recentReviews(spot.getId());
 

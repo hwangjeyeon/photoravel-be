@@ -4,6 +4,7 @@ import com.querydsl.core.types.dsl.BooleanTemplate;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.Point;
@@ -22,6 +23,7 @@ import static trendravel.photoravel_be.db.location.QLocation.location;
 import static trendravel.photoravel_be.db.review.QReview.review;
 
 @RequiredArgsConstructor
+@Slf4j
 public class LocationRepositoryImpl implements LocationRepositoryCustom{
 
     private final JPAQueryFactory queryFactory;
@@ -89,6 +91,11 @@ public class LocationRepositoryImpl implements LocationRepositoryCustom{
                 points, range, location.point);
     }
 
-
-
+    @Override
+    public void increaseViews(Long id) {
+        queryFactory.update(location)
+                .set(location.views, location.views.add(1))
+                .where(location.id.eq(id))
+                .execute();
+    }
 }
