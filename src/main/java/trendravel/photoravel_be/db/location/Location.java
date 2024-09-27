@@ -9,7 +9,6 @@ import org.locationtech.jts.geom.GeometryFactory;
 import trendravel.photoravel_be.db.BaseEntity;
 import trendravel.photoravel_be.db.enums.Category;
 import trendravel.photoravel_be.db.member.MemberEntity;
-import trendravel.photoravel_be.domain.location.dto.request.LocationRequestDto;
 import trendravel.photoravel_be.db.review.Review;
 import trendravel.photoravel_be.db.spot.Spot;
 import org.locationtech.jts.geom.Point;
@@ -61,7 +60,8 @@ public class Location extends BaseEntity {
     @ColumnDefault("0")
     private int views;
 
-    @Column
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
     private Category category;
 
 
