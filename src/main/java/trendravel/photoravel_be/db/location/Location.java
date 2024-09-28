@@ -90,7 +90,7 @@ public class Location extends BaseEntity {
         this.description = location.getDescription();
         this.name = location.getName();
         this.point = new GeometryFactory()
-                .createPoint(new Coordinate(latitude, longitude));
+                .createPoint(new Coordinate(longitude, latitude));
         this.point.setSRID(4326);
         if(location.getDeleteImages() != null){
             for (String deleteImage : location.getDeleteImages()) {
@@ -110,7 +110,7 @@ public class Location extends BaseEntity {
         this.description = location.getDescription();
         this.name = location.getName();
         this.point = new GeometryFactory()
-                .createPoint(new Coordinate(latitude, longitude));
+                .createPoint(new Coordinate(longitude, latitude));
         this.point.setSRID(4326);
         if(location.getDeleteImages() != null){
             for (String deleteImage : location.getDeleteImages()) {

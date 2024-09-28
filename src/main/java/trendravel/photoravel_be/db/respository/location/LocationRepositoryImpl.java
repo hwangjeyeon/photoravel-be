@@ -79,8 +79,8 @@ public class LocationRepositoryImpl implements LocationRepositoryCustom{
     private BooleanTemplate inRangeDistance(
             double latitude, double longitude, double range) {
         Point points = new GeometryFactory()
-                .createPoint(new Coordinate(latitude
-                        , longitude));
+                .createPoint(new Coordinate(longitude
+                        , latitude));
 
         if(isNull(points)){
             return null;
