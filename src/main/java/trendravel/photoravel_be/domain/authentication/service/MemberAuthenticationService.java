@@ -10,9 +10,8 @@ import trendravel.photoravel_be.db.member.MemberEntity;
 import trendravel.photoravel_be.db.respository.member.MemberRepository;
 import trendravel.photoravel_be.domain.authentication.session.UserSession;
 
-@Service
 @RequiredArgsConstructor
-public class AuthenticationService implements UserDetailsService {
+public class MemberAuthenticationService implements UserDetailsService {
 
     private final MemberRepository memberRepository;
 
@@ -28,11 +27,13 @@ public class AuthenticationService implements UserDetailsService {
         return UserSession.builder()
                 .email(memberEntity.getEmail())
                 .memberId(memberEntity.getMemberId())
+                .password(memberEntity.getPassword())
                 .name(memberEntity.getName())
                 .nickname(memberEntity.getNickname())
                 .profileImg(memberEntity.getProfileImg())
                 .createdAt(memberEntity.getCreatedAt())
                 .updatedAt(memberEntity.getUpdatedAt())
+                .role("ROLE_MEMBER")
                 .build();
     }
 }
