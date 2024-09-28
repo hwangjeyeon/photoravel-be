@@ -5,6 +5,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.Order;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -15,11 +16,15 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
+import trendravel.photoravel_be.commom.accessHandler.JwtAccessDeniedHandler;
+import trendravel.photoravel_be.commom.entryPoint.JwtAuthenticationEntryPoint;
 import trendravel.photoravel_be.db.inmemorydb.entity.Token;
-import trendravel.photoravel_be.domain.authentication.service.AuthenticationService;
+import trendravel.photoravel_be.domain.authentication.service.MemberAuthenticationService;
+import trendravel.photoravel_be.domain.authentication.service.PhotographerAuthenticationService;
 import trendravel.photoravel_be.domain.token.service.TokenService;
-import trendravel.photoravel_be.filter.JwtAuthenticationFilter;
+import trendravel.photoravel_be.filter.JwtMemberAuthenticationFilter;
 import trendravel.photoravel_be.filter.JwtExceptionFilter;
+import trendravel.photoravel_be.filter.JwtPhotographerAuthenticationFilter;
 
 import java.util.Collections;
 
@@ -29,7 +34,8 @@ import java.util.Collections;
 public class SecurityConfig {
 
     private final ObjectMapper objectMapper;
-    private final AuthenticationService authenticationService;
+    private final MemberAuthenticationService authenticationService;
+    private final PhotographerAuthenticationService photographerAuthenticationService;
     private final TokenService tokenService;
     private final RedisTemplate<String, Token> redisTemplate;
 
@@ -58,25 +64,28 @@ public class SecurityConfig {
                     configurer.sessionCreationPolicy(SessionCreationPolicy.STATELESS);
                 })
                 .authorizeHttpRequests(request -> {
+                    request.requestMatchers("/private/photographers/**").hasRole("PHOTOGRAPHER");
+                    request.requestMatchers("/private/member/**").hasRole("MEMBER");
+                    request.requestMatchers("/private/**").authenticated();
                     request.requestMatchers("/swagger-ui.html").permitAll();
                     request.requestMatchers("/swagger-ui/**").permitAll();
                     request.requestMatchers("/v3/api-docs/**").permitAll();
                     request.requestMatchers("/public/**").permitAll();
                     request.requestMatchers("/login/**").permitAll();
-                    request.requestMatchers("/private/member/**").authenticated();
                     request.anyRequest().permitAll();
                 })
-                .addFilterBefore(new JwtAuthenticationFilter(authenticationService, tokenService, redisTemplate) , UsernamePasswordAuthenticationFilter.class)
-                .addFilterBefore(new JwtExceptionFilter(objectMapper), JwtAuthenticationFilter.class)
-//                .exceptionHandling(configurer -> {
-//                    configurer.accessDeniedHandler(new JwtAccessDeniedHandler(objectMapper));
-//                    configurer.authenticationEntryPoint(new JwtAuthenticationEntryPoint(objectMapper));
-//                })
+                .addFilterBefore(new JwtExceptionFilter(objectMapper), UsernamePasswordAuthenticationFilter.class)
+                .addFilterAfter(new JwtMemberAuthenticationFilter(authenticationService, tokenService, redisTemplate), JwtExceptionFilter.class)
+                .addFilterAfter(new JwtPhotographerAuthenticationFilter(photographerAuthenticationService, tokenService, redisTemplate), JwtMemberAuthenticationFilter.class)
+                .exceptionHandling(configurer -> {
+                    configurer.accessDeniedHandler(new JwtAccessDeniedHandler(objectMapper));
+                    configurer.authenticationEntryPoint(new JwtAuthenticationEntryPoint(objectMapper));
+                })
                 .build();
     }
 
     @Bean
-    public BCryptPasswordEncoder bCryptPasswordEncoder() {
+    public BCryptPasswordEncoder memberBCryptPasswordEncoder() {
         return new BCryptPasswordEncoder();
     }
 }
