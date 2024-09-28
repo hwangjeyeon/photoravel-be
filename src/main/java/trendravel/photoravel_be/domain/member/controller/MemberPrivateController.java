@@ -17,14 +17,6 @@ public class MemberPrivateController {
 
     private final MemberService memberService;
 
-    @GetMapping("/info/{memberId}")
-    public Api<MemberResponse> getMemberInfo(
-            @PathVariable String memberId
-    ) {
-        MemberResponse response = memberService.getMemberInfo(memberId);
-        return Api.OK(response);
-    }
-
     @PatchMapping(value = "/info",
             consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)

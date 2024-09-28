@@ -19,13 +19,15 @@ public class MemberPublicController {
 
     private final MemberService memberService;
 
-    @PatchMapping(value = "/register",
+    @PostMapping(value = "/register",
             consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
     public Api<MemberResponse> localRegister(
             @RequestPart(value = "request") MemberRegisterRequest request,
             @RequestPart(value = "image") MultipartFile image
             ) {
+        // 생각해보니 이미지를 필수로 넣어야하나?
+        // 이미지를 첨부하지 않으면 default img가 필요할 것 같은데..
         MemberResponse response = memberService.localRegister(request, image);
 
         return Api.CREATED(response);
@@ -39,6 +41,13 @@ public class MemberPublicController {
         return Api.OK(response);
     }
 
+    @GetMapping("/info/{memberId}")
+    public Api<MemberResponse> getMemberInfo(
+            @PathVariable String memberId
+    ) {
+        MemberResponse response = memberService.getMemberInfo(memberId);
+        return Api.OK(response);
+    }
 
     @GetMapping("/{email}/email-check")
     public Api<MemberInfoCheckResponse> emailCheck(
