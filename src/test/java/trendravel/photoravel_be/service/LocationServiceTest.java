@@ -88,8 +88,8 @@ class LocationServiceTest {
                 .description("순천향대학교입니다.")
                 .views(0)
                 .point(new GeometryFactory().createPoint(
-                        new Coordinate(35.24
-                                , 46.61)))
+                        new Coordinate(46.61
+                                , 35.24)))
                 .member(member)
                 .category(Category.None)
                 .build();
@@ -104,7 +104,7 @@ class LocationServiceTest {
                 .description("경찰대학교입니다..")
                 .views(0)
                 .point(new GeometryFactory().createPoint(
-                        new Coordinate(35.22, 46.59)))
+                        new Coordinate(46.59, 35.22)))
                 .member(member)
                 .category(Category.None)
                 .build();
@@ -289,7 +289,7 @@ class LocationServiceTest {
                 = new LocationNowPositionDto();
         locationNowPositionDto.setLatitude(35.23);
         locationNowPositionDto.setLongitude(46.60);
-        locationNowPositionDto.setRange(2000);
+        locationNowPositionDto.setRange(20000);
         //when
         List<LocationMultiReadResponseDto> locationMultiReadResponseDto
                 = locationService.readMultiLocation(locationNowPositionDto);

@@ -95,8 +95,8 @@ class SpotServiceTest {
                 .address("아산시 신창면 순천향로46")
                 .description("순천향대학교입니다.")
                 .point(new GeometryFactory().createPoint(
-                        new Coordinate(35.24
-                                , 46.61)))
+                        new Coordinate(46.61
+                                , 35.24)))
                 .views(0)
                 .build();
         location.getPoint().setSRID(4326);
@@ -295,8 +295,9 @@ class SpotServiceTest {
     @Test
     @Transactional
     void readSpotExceptionWhenEmptySpotTest(){
-        spotRequestDto.setLocationId(4L);
-        assertThatThrownBy(() -> spotService.readSingleSpot(1L,10000000000000000L))
+        spotRequestDto.setLocationId(100000000000000L);
+        Long id = locationRepository.save(location).getId();
+        assertThatThrownBy(() -> spotService.readSingleSpot(id,10000000000000000L))
                 .isInstanceOf(ApiException.class)
                 .hasMessageContaining(SpotErrorCode.SPOT_NOT_FOUND.getErrorDescription());
     }

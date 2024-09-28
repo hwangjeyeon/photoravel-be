@@ -62,8 +62,8 @@ public class LocationService {
                 .address(locationRequestDto.getAddress())
                 .views(0)
                 .point(new GeometryFactory().createPoint(
-                                new Coordinate(locationRequestDto.getLatitude()
-                                        , locationRequestDto.getLongitude())))
+                        new Coordinate(locationRequestDto.getLongitude()
+                                , locationRequestDto.getLatitude())))
                 .member(member)
                 .category(locationRequestDto.getCategory() == null
                         ? Category.None : locationRequestDto.getCategory())
@@ -102,8 +102,8 @@ public class LocationService {
                 .address(locationRequestDto.getAddress())
                 .views(0)
                 .point(new GeometryFactory().createPoint(
-                        new Coordinate(locationRequestDto.getLatitude()
-                                , locationRequestDto.getLongitude())))
+                        new Coordinate(locationRequestDto.getLongitude()
+                                , locationRequestDto.getLatitude())))
                 .member(member)
                 .category(locationRequestDto.getCategory() == null
                         ? Category.None : locationRequestDto.getCategory())

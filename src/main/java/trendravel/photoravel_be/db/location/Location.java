@@ -9,7 +9,6 @@ import org.locationtech.jts.geom.GeometryFactory;
 import trendravel.photoravel_be.db.BaseEntity;
 import trendravel.photoravel_be.db.enums.Category;
 import trendravel.photoravel_be.db.member.MemberEntity;
-import trendravel.photoravel_be.domain.location.dto.request.LocationRequestDto;
 import trendravel.photoravel_be.db.review.Review;
 import trendravel.photoravel_be.db.spot.Spot;
 import org.locationtech.jts.geom.Point;
@@ -61,6 +60,7 @@ public class Location extends BaseEntity {
     @ColumnDefault("0")
     private int views;
 
+    @Enumerated(EnumType.STRING)
     @Column
     private Category category;
 
@@ -90,7 +90,7 @@ public class Location extends BaseEntity {
         this.description = location.getDescription();
         this.name = location.getName();
         this.point = new GeometryFactory()
-                .createPoint(new Coordinate(latitude, longitude));
+                .createPoint(new Coordinate(longitude, latitude));
         this.point.setSRID(4326);
         if(location.getDeleteImages() != null){
             for (String deleteImage : location.getDeleteImages()) {
@@ -110,7 +110,7 @@ public class Location extends BaseEntity {
         this.description = location.getDescription();
         this.name = location.getName();
         this.point = new GeometryFactory()
-                .createPoint(new Coordinate(latitude, longitude));
+                .createPoint(new Coordinate(longitude, latitude));
         this.point.setSRID(4326);
         if(location.getDeleteImages() != null){
             for (String deleteImage : location.getDeleteImages()) {
