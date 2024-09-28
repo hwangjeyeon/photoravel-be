@@ -32,7 +32,7 @@ public class Photographer extends BaseEntity {
     @Column(length = 50, nullable = false, unique = true)
     private String accountId;
     
-    @Column(length = 50, nullable = false)
+    @Column(length = 255, nullable = false)
     private String password;
     
     @Column(length = 50, nullable = false)
@@ -55,6 +55,7 @@ public class Photographer extends BaseEntity {
     
     //images 타입에 대해 수정 필요 imageService 단에서 하나의 이미지를 처리하는 메서드 필요
     public void updatePhotographer(PhotographerUpdateDto photographerUpdateDto, List<String> images) {
+        this.accountId = photographerUpdateDto.getAccountId();
         this.password = photographerUpdateDto.getPassword();
         this.name = photographerUpdateDto.getName();
         this.region = photographerUpdateDto.getRegion();
@@ -63,6 +64,7 @@ public class Photographer extends BaseEntity {
     }
     
     public void updatePhotographer(PhotographerUpdateDto photographerUpdateDto) {
+        this.accountId = photographerUpdateDto.getAccountId();
         this.password = photographerUpdateDto.getPassword();
         this.name = photographerUpdateDto.getName();
         this.region = photographerUpdateDto.getRegion();
