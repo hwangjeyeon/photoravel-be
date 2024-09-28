@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.NoArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.time.LocalDateTime;
@@ -23,11 +24,12 @@ public class UserSession implements UserDetails {
     private String profileImg;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+    private String role;
 
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return Collections.emptyList(); // 빈 권한 리스트
+        return Collections.singletonList(new SimpleGrantedAuthority("ROLE_MEMBER"));
     }
 
     @Override
