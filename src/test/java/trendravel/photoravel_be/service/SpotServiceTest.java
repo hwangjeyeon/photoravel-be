@@ -95,8 +95,8 @@ class SpotServiceTest {
                 .address("아산시 신창면 순천향로46")
                 .description("순천향대학교입니다.")
                 .point(new GeometryFactory().createPoint(
-                        new Coordinate(35.24
-                                , 46.61)))
+                        new Coordinate(46.61
+                                , 35.24)))
                 .views(0)
                 .build();
         location.getPoint().setSRID(4326);
