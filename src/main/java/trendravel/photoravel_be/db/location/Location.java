@@ -61,7 +61,7 @@ public class Location extends BaseEntity {
     private int views;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
+    @Column
     private Category category;
 
 
