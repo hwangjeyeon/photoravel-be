@@ -31,7 +31,7 @@ public class LoginController {
     }
 
     @GetMapping("/oauth2/code/{provider}")
-    public ResponseEntity<?> authorized(@PathVariable String provider, @RequestParam("code") String code, HttpServletResponse response) {
+    public ResponseEntity<?> authorized(@PathVariable String provider, @RequestParam("code") String code) {
         log.info("authorized - provider : {}, code : {}", provider, code);
         return socialLoginService.connectToSocialLogin(provider, code);
     }
