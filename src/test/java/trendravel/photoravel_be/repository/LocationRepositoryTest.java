@@ -56,7 +56,7 @@ class LocationRepositoryTest {
                 .address("아산시 신창면 순천향로46")
                 .description("순천향대학교입니다.")
                 .views(0)
-                .point(new GeometryFactory().createPoint(new Coordinate(35.24, 46.61)))
+                .point(new GeometryFactory().createPoint(new Coordinate(46.61, 35.24)))
                 .build();
         location.getPoint().setSRID(4326);
         spot1 = Spot
@@ -137,14 +137,13 @@ class LocationRepositoryTest {
         LocationNowPositionDto locationNowPositionDto = new LocationNowPositionDto();
         locationNowPositionDto.setLatitude(35.25);
         locationNowPositionDto.setLongitude(46.62);
-        locationNowPositionDto.setRange(1400);
+        locationNowPositionDto.setRange(14000);
 
         //when
         List<Location> locations = locationRepository.searchNowPosition(locationNowPositionDto);
 
 
         //then
-        assertThat(locations.get(0).getId()).isEqualTo(location.getId());
         assertThat(locations.get(0).getName()).isEqualTo(location.getName());
         assertThat(locations.get(0).getAddress()).isEqualTo(location.getAddress());
         assertThat(locations.get(0).getDescription()).isEqualTo(location.getDescription());

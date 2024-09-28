@@ -295,8 +295,9 @@ class SpotServiceTest {
     @Test
     @Transactional
     void readSpotExceptionWhenEmptySpotTest(){
-        spotRequestDto.setLocationId(4L);
-        assertThatThrownBy(() -> spotService.readSingleSpot(1L,10000000000000000L))
+        spotRequestDto.setLocationId(100000000000000L);
+        Long id = locationRepository.save(location).getId();
+        assertThatThrownBy(() -> spotService.readSingleSpot(id,10000000000000000L))
                 .isInstanceOf(ApiException.class)
                 .hasMessageContaining(SpotErrorCode.SPOT_NOT_FOUND.getErrorDescription());
     }
