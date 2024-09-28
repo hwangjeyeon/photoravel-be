@@ -12,7 +12,6 @@ public class MemberConvertor {
         return MemberResponse.builder()
                 .memberId(saved.getMemberId())
                 .email(saved.getEmail())
-                .password(saved.getPassword())
                 .name(saved.getName())
                 .nickname(saved.getNickname())
                 .profileImg(saved.getProfileImg())
