@@ -43,7 +43,7 @@ public class SocialLoginService {
         RestTemplate restTemplate = new RestTemplate();
 
         ResponseEntity<?> response = restTemplate.postForEntity(
-                "http://localhost:8080/login/social/" + provider,
+                "http://13.124.46.20:8080/login/social/" + provider,
                 request, Object.class
         );
 
