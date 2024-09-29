@@ -149,8 +149,9 @@ public class LocationService {
                 .createdAt(location.getCreatedAt())
                 .images(location.getImages())
                 .views(location.getViews())
-                .ratingAvg(Double.parseDouble(String.format("%.2f",
-                        ratingAverage(location.getReview()))))
+                .ratingAvg(Double.isNaN(Double.parseDouble(String.format("%.2f", ratingAverage(location.getReview()))))
+                        ? 0.0
+                        : Double.parseDouble(String.format("%.2f", ratingAverage(location.getReview()))))
                 .reviewCounts(location.getReview().size() < 100
                         ? location.getReview().size() : 99)
                 .recentReviewDtos(reviews)
@@ -192,8 +193,9 @@ public class LocationService {
                         p.getId(), p.getLatitude(), p.getLongitude(),
                         p.getAddress(), p.getDescription(), p.getName(),
                         p.getImages(),p.getViews(),
-                        Double.parseDouble(String.format("%.2f",
-                                ratingAverage(p.getReview()))),
+                        Double.isNaN(ratingAverage(p.getReview()))
+                                ? 0.0
+                                : Double.parseDouble(String.format("%.2f", ratingAverage(p.getReview()))),
                         p.getReview().size() < 100 ? p.getReview().size() : 99,
                         p.getCreatedAt(), p.getUpdatedAt(), p.getCategory().getMessage())
                 )
