@@ -16,7 +16,7 @@ import trendravel.photoravel_be.commom.image.service.ImageServiceFacade;
 import trendravel.photoravel_be.db.inmemorydb.entity.Token;
 import trendravel.photoravel_be.db.member.MemberEntity;
 import trendravel.photoravel_be.db.respository.member.MemberRepository;
-import trendravel.photoravel_be.domain.authentication.service.AuthenticationService;
+import trendravel.photoravel_be.domain.authentication.service.MemberAuthenticationService;
 import trendravel.photoravel_be.domain.authentication.session.UserSession;
 import trendravel.photoravel_be.domain.member.convertor.MemberConvertor;
 import trendravel.photoravel_be.domain.member.dto.*;
@@ -34,9 +34,9 @@ public class MemberService {
     private final MemberRepository memberRepository;
     private final MemberConvertor memberConvertor;
     private final TokenService tokenService;
-    private final PasswordEncoder passwordEncoder;
+    private final PasswordEncoder memberBCryptPasswordEncoder;
     private final RedisTemplate<String, Token> redisTemplate;
-    private final AuthenticationService authenticationService;
+    private final MemberAuthenticationService authenticationService;
     private final ImageServiceFacade imageServiceFacade;
 
     @Transactional
@@ -52,7 +52,7 @@ public class MemberService {
 
         MemberEntity memberEntity = MemberEntity.builder()
                 .memberId(memberDto.getProvider() + "_" + memberDto.getId())
-                .password(passwordEncoder.encode(memberDto.getProvider() + "_" + memberDto.getId() + "key"))
+                .password(memberBCryptPasswordEncoder.encode(memberDto.getProvider() + "_" + memberDto.getId() + "key"))
                 .email(memberDto.getEmail())
                 .name(memberDto.getName())
                 .nickname(memberDto.getNickname())
@@ -69,7 +69,7 @@ public class MemberService {
     public MemberResponse localRegister(MemberRegisterRequest request, MultipartFile image) {
         MemberEntity memberEntity = MemberEntity.builder()
                 .memberId(request.getMemberId())
-                .password(passwordEncoder.encode(request.getPassword()))
+                .password(memberBCryptPasswordEncoder.encode(request.getPassword()))
                 .name(request.getName())
                 .nickname(request.getNickname())
                 .email(request.getEmail())
@@ -96,6 +96,7 @@ public class MemberService {
         MemberEntity memberEntity = memberRepository.findByMemberId(principal.getUsername())
                 .orElseThrow(() -> new ApiException(MemberErrorCode.UNAUTHORIZED));
 
+        redisTemplate.opsForHash().delete("member_refresh_token", memberEntity.getMemberId());
         // TODO..............(?)
         // 인증 객체랑 토큰 안의 회원 정보랑 비교 검사를 해야할까..?
         // 왜냐하면 다른 회원이 정보를 수정할지도 모르니까
@@ -110,7 +111,6 @@ public class MemberService {
                 imageServiceFacade.updateImageFacade(List.of(image), List.of(memberEntity.getProfileImg())).toString()
         );
 
-        redisTemplate.opsForHash().delete("refresh_token", request.getMemberId());
         TokenDto accessToken = tokenService.issueAccessToken(memberEntity.getMemberId());
         TokenDto refreshToken = tokenService.issueRefreshToken(memberEntity.getMemberId());
 
@@ -176,9 +176,11 @@ public class MemberService {
         log.info("find member : {}, memberId : {}", member.getMemberId(), memberId);
 
         if (member.getMemberId().equals(memberId)){
-            redisTemplate.opsForHash().delete("refresh_token", memberId);
-            SecurityContextHolder.clearContext();
+            String img = member.getProfileImg();
             memberRepository.delete(member);
+            imageServiceFacade.deleteAllImagesFacade(List.of(img));
+            SecurityContextHolder.clearContext();
+            redisTemplate.opsForHash().delete("member_refresh_token", memberId);
         }else {
             throw new ApiException(MemberErrorCode.UNAUTHORIZED);
         }
@@ -188,7 +190,7 @@ public class MemberService {
     public TokenResponse localLogin(MemberLoginRequest request) {
         MemberEntity memberEntity = memberRepository.findByMemberId(request.getMemberId())
                 .orElseThrow(() -> new ApiException(MemberErrorCode.MEMBER_ID_NOT_MATCH));
-        if (passwordEncoder.matches(request.getPassword(), memberEntity.getPassword())) {
+        if (memberBCryptPasswordEncoder.matches(request.getPassword(), memberEntity.getPassword())) {
             return issueTokenResponse(memberEntity);
         } else {
             throw new ApiException(MemberErrorCode.PASSWORD_NOT_MATCH);

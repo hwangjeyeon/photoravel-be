@@ -7,6 +7,7 @@ import lombok.Data;
 import org.springframework.http.MediaType;
 import trendravel.photoravel_be.db.enums.Region;
 import trendravel.photoravel_be.domain.review.dto.response.RecentReviewsDto;
+import trendravel.photoravel_be.domain.token.model.TokenResponse;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -47,4 +48,7 @@ public class PhotographerSingleResponseDto {
     
     @Schema(description = "매칭 횟수")
     private Integer matchingCount;
+
+    @Schema(description = "새로 발급된 토큰")
+    private TokenResponse tokenResponse;
 }

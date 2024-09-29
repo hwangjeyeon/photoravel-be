@@ -15,7 +15,6 @@ public class MemberResponse {
 
     private String memberId;
     private String email;
-    private String password;
     private String name;
     private String nickname;
     private String profileImg;

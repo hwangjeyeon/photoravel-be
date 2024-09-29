@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import trendravel.photoravel_be.db.enums.Region;
 
 import java.time.LocalDateTime;
 import java.util.Collection;
@@ -14,14 +15,16 @@ import java.util.Collections;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class UserSession implements UserDetails {
+public class PhotographerSession implements UserDetails {
 
-    private String email;
+    private String accountId;
     private String password;
-    private String memberId;
     private String name;
-    private String nickname;
+    private Region region;
+    private String description;
     private String profileImg;
+    private Integer careerYear;
+    private Integer matchingCount;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
     private String role;
@@ -29,7 +32,8 @@ public class UserSession implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return Collections.singletonList(new SimpleGrantedAuthority("ROLE_MEMBER"));
+        return Collections.singletonList(new SimpleGrantedAuthority("ROLE_PHOTOGRAPHER"));
+
     }
 
     @Override
@@ -38,11 +42,12 @@ public class UserSession implements UserDetails {
     }
 
     // 메소드 명은 시큐리티 기본으로 username이지만
-    /** !!!! IMPORTANT !!!! **/
+    //* !!!! IMPORTANT !!!! *
+
     // 실제로 내부 로직에서 사용하는 것은 memberId입니다.
     @Override
     public String getUsername() {
-        return memberId;
+        return accountId;
     }
 
     @Override
