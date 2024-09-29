@@ -193,8 +193,9 @@ public class LocationService {
                         p.getId(), p.getLatitude(), p.getLongitude(),
                         p.getAddress(), p.getDescription(), p.getName(),
                         p.getImages(),p.getViews(),
-                        Double.parseDouble(String.format("%.2f",
-                                ratingAverage(p.getReview()))),
+                        Double.isNaN(ratingAverage(p.getReview()))
+                                ? 0.0
+                                : Double.parseDouble(String.format("%.2f", ratingAverage(p.getReview()))),
                         p.getReview().size() < 100 ? p.getReview().size() : 99,
                         p.getCreatedAt(), p.getUpdatedAt(), p.getCategory().getMessage())
                 )
