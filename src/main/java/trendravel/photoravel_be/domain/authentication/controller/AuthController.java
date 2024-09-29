@@ -29,7 +29,7 @@ public class AuthController {
 
         String memberId = tokenService.validationTokenWithMemberId(request.getRefreshToken());
 
-        Token storedRefreshToken = (Token) redisTemplate.opsForHash().get("refresh_token", memberId);
+        Token storedRefreshToken = (Token) redisTemplate.opsForHash().get("member_refresh_token", memberId);
 
         log.info("stored refresh token: {}", storedRefreshToken.getRefreshToken());
 
@@ -56,7 +56,7 @@ public class AuthController {
         String memberId = tokenService.validationTokenWithMemberId(refreshToken);
 
         // 소셜 로그인 및 로컬 로그인 모두 로그아웃 프로세스는 동일
-        redisTemplate.opsForHash().delete("refresh_token", memberId);
+        redisTemplate.opsForHash().delete("member_refresh_token", memberId);
         // 저장된 컨텍스트 안의 principal 삭제
         SecurityContextHolder.clearContext();
 
