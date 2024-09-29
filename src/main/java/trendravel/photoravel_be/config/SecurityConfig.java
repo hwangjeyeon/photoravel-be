@@ -34,7 +34,7 @@ import java.util.Collections;
 public class SecurityConfig {
 
     private final ObjectMapper objectMapper;
-    private final MemberAuthenticationService authenticationService;
+    private final MemberAuthenticationService memberAuthenticationService;
     private final PhotographerAuthenticationService photographerAuthenticationService;
     private final TokenService tokenService;
     private final RedisTemplate<String, Token> redisTemplate;
@@ -75,7 +75,7 @@ public class SecurityConfig {
                     request.anyRequest().permitAll();
                 })
                 .addFilterBefore(new JwtExceptionFilter(objectMapper), UsernamePasswordAuthenticationFilter.class)
-                .addFilterAfter(new JwtMemberAuthenticationFilter(authenticationService, tokenService, redisTemplate), JwtExceptionFilter.class)
+                .addFilterAfter(new JwtMemberAuthenticationFilter(memberAuthenticationService, tokenService, redisTemplate), JwtExceptionFilter.class)
                 .addFilterAfter(new JwtPhotographerAuthenticationFilter(photographerAuthenticationService, tokenService, redisTemplate), JwtMemberAuthenticationFilter.class)
                 .exceptionHandling(configurer -> {
                     configurer.accessDeniedHandler(new JwtAccessDeniedHandler(objectMapper));

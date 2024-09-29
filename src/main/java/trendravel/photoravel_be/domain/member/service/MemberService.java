@@ -111,14 +111,7 @@ public class MemberService {
                 imageServiceFacade.updateImageFacade(List.of(image), List.of(memberEntity.getProfileImg())).toString()
         );
 
-        TokenDto accessToken = tokenService.issueAccessToken(memberEntity.getMemberId());
-        TokenDto refreshToken = tokenService.issueRefreshToken(memberEntity.getMemberId());
-
-
-        TokenResponse token = TokenResponse.builder()
-                .accessToken(accessToken)
-                .refreshToken(refreshToken)
-                .build();
+        TokenResponse tokenResponse = issueTokenResponse(memberEntity);
 
         // 회원 정보 수정 후 UserDetails를 업데이트
         UserSession userSession = (UserSession) authenticationService.loadUserByUsername(memberEntity.getMemberId());
@@ -134,7 +127,7 @@ public class MemberService {
                 .profileImg(memberEntity.getProfileImg())
                 .createdAt(memberEntity.getCreatedAt())
                 .updatedAt(memberEntity.getUpdatedAt())
-                .token(token)
+                .token(tokenResponse)
                 .build();
     }
 
