@@ -10,6 +10,7 @@ import trendravel.photoravel_be.db.member.MemberEntity;
 import trendravel.photoravel_be.db.respository.member.MemberRepository;
 import trendravel.photoravel_be.domain.authentication.session.UserSession;
 
+@Service("memberAuthenticationService")
 @RequiredArgsConstructor
 public class MemberAuthenticationService implements UserDetailsService {
 
