@@ -149,8 +149,9 @@ public class LocationService {
                 .createdAt(location.getCreatedAt())
                 .images(location.getImages())
                 .views(location.getViews())
-                .ratingAvg(Double.parseDouble(String.format("%.2f",
-                        ratingAverage(location.getReview()))))
+                .ratingAvg(Double.isNaN(Double.parseDouble(String.format("%.2f", ratingAverage(location.getReview()))))
+                        ? 0.0
+                        : Double.parseDouble(String.format("%.2f", ratingAverage(location.getReview()))))
                 .reviewCounts(location.getReview().size() < 100
                         ? location.getReview().size() : 99)
                 .recentReviewDtos(reviews)

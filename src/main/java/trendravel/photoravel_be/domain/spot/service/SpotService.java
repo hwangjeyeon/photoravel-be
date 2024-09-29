@@ -138,8 +138,9 @@ public class SpotService {
                 .longitude(spot.getLongitude())
                 .images(spot.getImages())
                 .views(spot.getViews())
-                .ratingAvg(Double.parseDouble
-                        (String.format("%.2f", ratingAverage(spot.getReviews()))))
+                .ratingAvg(Double.isNaN(ratingAverage(spot.getReviews()))
+                        ? 0.0
+                        : Double.parseDouble(String.format("%.2f", ratingAverage(spot.getReviews()))))
                 .recentReviewDtos(reviews)
                 .reviewCounts(spot.getReviews().size() < 100 ? spot.getReviews().size(): 99)
                 .build();
