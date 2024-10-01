@@ -101,16 +101,24 @@ public class MemberService {
         // 인증 객체랑 토큰 안의 회원 정보랑 비교 검사를 해야할까..?
         // 왜냐하면 다른 회원이 정보를 수정할지도 모르니까
 
-        memberEntity.updateMember(
-                request.getMemberId(),
-                request.getPassword(),
-                request.getName(),
-                request.getNickname(),
-                request.getEmail(),
-                // 기존 이미지 삭제..?
-                imageServiceFacade.updateImageFacade(List.of(image), List.of(memberEntity.getProfileImg())).toString()
-        );
-
+        if (image != null) {
+            memberEntity.updateMember(
+                    request.getMemberId(),
+                    request.getPassword(),
+                    request.getName(),
+                    request.getNickname(),
+                    request.getEmail(),
+                    imageServiceFacade.updateImageFacade(List.of(image), List.of(memberEntity.getProfileImg())).toString()
+            );
+        } else {
+            memberEntity.updateMember(
+                    request.getMemberId(),
+                    request.getPassword(),
+                    request.getName(),
+                    request.getNickname(),
+                    request.getEmail()
+            );
+        }
         TokenResponse tokenResponse = issueTokenResponse(memberEntity);
 
         // 회원 정보 수정 후 UserDetails를 업데이트

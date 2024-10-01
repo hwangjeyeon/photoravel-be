@@ -22,7 +22,7 @@ public class MemberPrivateController {
             produces = MediaType.APPLICATION_JSON_VALUE)
     public Api<MemberUpdateResponse> patchInfo(
             @RequestPart(value = "request") MemberUpdateRequest request,
-            @RequestPart(value = "image") MultipartFile image
+            @RequestPart(value = "image", required = false) MultipartFile image
     ) {
         MemberUpdateResponse response = memberService.memberUpdate(request, image);
         return Api.OK(response);
