@@ -71,4 +71,12 @@ public class MemberEntity extends BaseEntity {
         this.profileImg = profileImg;
     }
 
+    public void updateMember(String memberId, String password, String name, String nickname, String email) {
+        this.memberId = memberId;
+        this.password = password;
+        this.name = name;
+        this.nickname = nickname;
+        this.email = email;
+    }
+
 }
