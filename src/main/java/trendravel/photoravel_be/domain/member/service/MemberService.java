@@ -67,13 +67,19 @@ public class MemberService {
 
     @Transactional
     public MemberResponse localRegister(MemberRegisterRequest request, MultipartFile image) {
+        String profileImgUrl;
+        if (image == null || image.isEmpty()) {
+            profileImgUrl = "https://photravle-images.shop/default_profile.png";
+        } else {
+            profileImgUrl = imageServiceFacade.uploadImageFacade(List.of(image)).get(0);
+        }
         MemberEntity memberEntity = MemberEntity.builder()
                 .memberId(request.getMemberId())
                 .password(memberBCryptPasswordEncoder.encode(request.getPassword()))
                 .name(request.getName())
                 .nickname(request.getNickname())
                 .email(request.getEmail())
-                .profileImg(imageServiceFacade.uploadImageFacade(List.of(image)).get(0))
+                .profileImg(profileImgUrl)
                 .build();
         MemberEntity saved = memberRepository.save(memberEntity);
 
