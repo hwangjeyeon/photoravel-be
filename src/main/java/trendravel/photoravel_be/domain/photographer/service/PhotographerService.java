@@ -109,15 +109,20 @@ public class PhotographerService {
     
     @Transactional
     public void createPhotographer(PhotographerRequestDto photographerRequestDto, List<MultipartFile> images) {
-        
+        String profileImgUrl;
+        if (images == null || images.isEmpty()) {
+            profileImgUrl = "https://photravle-images.shop/default_profile.png";
+        } else {
+            profileImgUrl = imageServiceFacade.uploadImageFacade(images).get(0);
+        }
+
         photographerRepository.save(Photographer.builder()
                 .accountId(photographerRequestDto.getAccountId())
                 .password(photographerBCryptPasswordEncoder.encode(photographerRequestDto.getPassword()))
                 .name(photographerRequestDto.getName())
                 .region(photographerRequestDto.getRegion())
                 .description(photographerRequestDto.getDescription())
-                //이미지 업로드 처리는 List이고 엔티티는 문자열이기에 get(0)으로 처리 
-                .profileImg(imageServiceFacade.uploadImageFacade(images).get(0))
+                .profileImg(profileImgUrl)
                 .careerYear(photographerRequestDto.getCareerYear())
                 .matchingCount(0)
                 .build());
