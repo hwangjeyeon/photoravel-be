@@ -27,6 +27,7 @@ import trendravel.photoravel_be.filter.JwtExceptionFilter;
 import trendravel.photoravel_be.filter.JwtPhotographerAuthenticationFilter;
 
 import java.util.Collections;
+import java.util.List;
 
 @Configuration
 @EnableWebSecurity
@@ -50,7 +51,7 @@ public class SecurityConfig {
                     @Override
                     public CorsConfiguration getCorsConfiguration(HttpServletRequest request) {
                         CorsConfiguration config = new CorsConfiguration();
-                        config.setAllowedOrigins(Collections.singletonList("http://photoravel-fe.s3-website.ap-northeast-2.amazonaws.com"));
+                        config.setAllowedOrigins(List.of("http://52.219.148.60:80", "http://photoravel-fe.s3-website.ap-northeast-2.amazonaws.com:80", "http://localhost:80"));
                         config.setAllowedMethods(Collections.singletonList("*"));
                         config.setAllowCredentials(true);
                         config.setAllowedHeaders(Collections.singletonList("*"));
