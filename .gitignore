@@ -27,6 +27,8 @@ out/
 !**/src/test/**/out/
 *.properties
 *.yml
+src/main/generated
+src/main/resources
 
 ### NetBeans ###
 /nbproject/private/
