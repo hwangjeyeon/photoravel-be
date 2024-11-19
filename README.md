@@ -22,6 +22,23 @@ TourAPI 및 공공데이터를 활용한 충청남도 사진관광 웹애플리�
 ## 주요 기능
 ![관광데이터활용공모전주요기능](https://github.com/user-attachments/assets/7a9cb05e-7e18-409d-a7f6-748d73a0fb2d)
 
+## 담당 업무
+- Location/Spot/Review 도메인 개발 담당 (CRUD)
+- 이미지 데이터 관리 시스템 개발
+  ![관광데이터활용공모전이미지개발운영환경](https://github.com/user-attachments/assets/46a81ccd-9919-4228-a694-8fd3c7313794)    
+    - 이미지 데이터 관리환경 분리 (개발/운영환경)
+    - 개발환경은 MinIO / 운영환경은 AWS S3로 분리하되, 동일한 AWS SDK 코드로 동작하도록 구성
+
+### 이미지 저장 시퀀스 다이어그램
+  ![이미지저장 로직](https://github.com/user-attachments/assets/33254873-aefb-4518-a55f-8c9ab783f59d)
+  
+S3에는 이미지 데이터, DB에는 S3 이미지 저장위치 
+
+- 사용자 위치기반 장소 탐색 서비스 개발
+  ![위치기반장소탐색기능](https://github.com/user-attachments/assets/fd879e69-2f75-4594-9705-2dc48f8e92e8)
+  - 탐색 범위 내에 위치하는 모든 장소 탐색 (경도/위도 기반)
+  - Hibernate-Spatial을 구현한 MySQLSpatialDialect를 이용하여 개발  
+
 ## 기술 스택
 | **Java 17** | **MySQL** | **Docker** | **Hibernate-Spatial** |
 | --- | --- | --- | --- |
@@ -29,6 +46,9 @@ TourAPI 및 공공데이터를 활용한 충청남도 사진관광 웹애플리�
 | **Spring Data JPA** | **Git** | **Jenkins** | **MinIO** |
 | **QueryDSL** | **Swagger** |  |  |
 | **Spring Security** | |  |  |
+
+## 프로젝트 기간
+2024.05. ~ 2024.10.
 
 ## 팀구성
 |황제연|성현석|신동욱|
@@ -45,7 +65,7 @@ TourAPI 및 공공데이터를 활용한 충청남도 사진관광 웹애플리�
 ## 백엔드 개발자간 협업 방법
 ### Github Wiki
 - 협업 간, 이해를 돕기위해 Github Wiki를 작성하였습니다.
-[MinIO 사용방법 및 사용목적](https://github.com/Trendravel/photoravel-be/wiki/Minio-%EC%82%AC%EC%9A%A9%EB%B0%A9%EB%B2%95-%EB%B0%8F-%EC%82%AC%EC%9A%A9%EB%AA%A9%EC%A0%81-%EC%A0%95%EB%A6%AC%EA%B8%80)
+  - [MinIO 사용방법 및 사용목적](https://github.com/Trendravel/photoravel-be/wiki/Minio-%EC%82%AC%EC%9A%A9%EB%B0%A9%EB%B2%95-%EB%B0%8F-%EC%82%AC%EC%9A%A9%EB%AA%A9%EC%A0%81-%EC%A0%95%EB%A6%AC%EA%B8%80)
 
 
 ### Code Review Culture
