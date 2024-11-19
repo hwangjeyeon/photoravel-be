@@ -28,6 +28,7 @@ TourAPI 및 공공데이터를 활용한 충청남도 사진관광 웹애플리�
 | **Spring boot 3** | **Junit5** | **AWS (EC2, RDS, S3)** | **AWS (Cloudfront)** |
 | **Spring Data JPA** | **Git** | **Jenkins** | **MinIO** |
 | **QueryDSL** | **Swagger** |  |  |
+| **Spring Security** | |  |  |
 
 ## 팀구성
 |황제연|성현석|신동욱|
