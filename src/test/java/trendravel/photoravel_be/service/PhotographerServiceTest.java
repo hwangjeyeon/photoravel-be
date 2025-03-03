@@ -3,13 +3,10 @@ package trendravel.photoravel_be.service;
 import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.mock.web.MockMultipartFile;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.web.multipart.MultipartFile;
-import trendravel.photoravel_be.commom.error.GuidebookErrorCode;
-import trendravel.photoravel_be.commom.error.PhotographerErrorCode;
-import trendravel.photoravel_be.commom.exception.ApiException;
+import trendravel.photoravel_be.common.exception.error.PhotographerErrorCode;
+import trendravel.photoravel_be.common.exception.ApiException;
 import trendravel.photoravel_be.db.enums.Region;
 import trendravel.photoravel_be.db.photographer.Photographer;
 import trendravel.photoravel_be.db.respository.photographer.PhotographerRepository;
@@ -19,10 +16,7 @@ import trendravel.photoravel_be.domain.photographer.dto.response.PhotographerLis
 import trendravel.photoravel_be.domain.photographer.dto.response.PhotographerSingleResponseDto;
 import trendravel.photoravel_be.domain.photographer.service.PhotographerService;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 

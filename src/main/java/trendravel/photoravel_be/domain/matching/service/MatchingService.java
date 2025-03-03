@@ -3,10 +3,10 @@ package trendravel.photoravel_be.domain.matching.service;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import trendravel.photoravel_be.commom.error.MatchingErrorCode;
-import trendravel.photoravel_be.commom.error.MemberErrorCode;
-import trendravel.photoravel_be.commom.error.PhotographerErrorCode;
-import trendravel.photoravel_be.commom.exception.ApiException;
+import trendravel.photoravel_be.common.exception.error.MatchingErrorCode;
+import trendravel.photoravel_be.common.exception.error.MemberErrorCode;
+import trendravel.photoravel_be.common.exception.error.PhotographerErrorCode;
+import trendravel.photoravel_be.common.exception.ApiException;
 import trendravel.photoravel_be.db.match.Matching;
 import trendravel.photoravel_be.db.match.enums.MatchingStatus;
 import trendravel.photoravel_be.db.photographer.Photographer;
@@ -16,9 +16,7 @@ import trendravel.photoravel_be.db.respository.photographer.PhotographerReposito
 import trendravel.photoravel_be.domain.matching.dto.request.MatchingRequestDto;
 import trendravel.photoravel_be.domain.matching.dto.response.MatchingResponseDto;
 
-import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor

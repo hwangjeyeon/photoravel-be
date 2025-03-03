@@ -7,8 +7,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import trendravel.photoravel_be.commom.error.TokenErrorCode;
-import trendravel.photoravel_be.commom.exception.JwtException;
+import trendravel.photoravel_be.common.exception.error.TokenErrorCode;
+import trendravel.photoravel_be.common.exception.JwtException;
 import trendravel.photoravel_be.domain.token.model.TokenDto;
 
 import javax.crypto.SecretKey;

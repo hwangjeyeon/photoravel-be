@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import trendravel.photoravel_be.commom.response.Api;
+import trendravel.photoravel_be.common.response.Api;
 import trendravel.photoravel_be.domain.member.dto.MemberInfoCheckResponse;
 import trendravel.photoravel_be.domain.member.dto.MemberLoginRequest;
 import trendravel.photoravel_be.domain.member.dto.MemberRegisterRequest;

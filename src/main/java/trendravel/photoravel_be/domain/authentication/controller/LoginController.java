@@ -5,7 +5,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import trendravel.photoravel_be.commom.response.Api;
+import trendravel.photoravel_be.common.response.Api;
 import trendravel.photoravel_be.domain.authentication.oauth2.service.SocialLoginService;
 import trendravel.photoravel_be.domain.member.dto.BaseMemberDto;
 import trendravel.photoravel_be.domain.member.dto.CompleteMemberDto;

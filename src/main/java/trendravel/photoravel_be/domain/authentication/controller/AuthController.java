@@ -7,7 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
-import trendravel.photoravel_be.commom.response.Api;
+import trendravel.photoravel_be.common.response.Api;
 import trendravel.photoravel_be.domain.authentication.dto.RefreshTokenRequest;
 import trendravel.photoravel_be.db.inmemorydb.entity.Token;
 import trendravel.photoravel_be.domain.token.model.TokenDto;
