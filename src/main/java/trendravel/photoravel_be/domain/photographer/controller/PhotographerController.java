@@ -9,19 +9,19 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import trendravel.photoravel_be.common.response.Api;
-import trendravel.photoravel_be.common.response.Result;
+import trendravel.photoravel_be.util.response.Api;
+import trendravel.photoravel_be.util.response.Result;
 import trendravel.photoravel_be.db.inmemorydb.entity.Token;
-import trendravel.photoravel_be.domain.authentication.dto.RefreshTokenRequest;
+import trendravel.photoravel_be.common.authentication.dto.RefreshTokenRequest;
 import trendravel.photoravel_be.domain.photographer.dto.request.PhotographerLoginRequestDto;
 import trendravel.photoravel_be.domain.photographer.dto.request.PhotographerRequestDto;
 import trendravel.photoravel_be.domain.photographer.dto.request.PhotographerUpdateDto;
 import trendravel.photoravel_be.domain.photographer.dto.response.PhotographerListResponseDto;
 import trendravel.photoravel_be.domain.photographer.dto.response.PhotographerSingleResponseDto;
 import trendravel.photoravel_be.domain.photographer.service.PhotographerService;
-import trendravel.photoravel_be.domain.token.model.TokenDto;
-import trendravel.photoravel_be.domain.token.model.TokenResponse;
-import trendravel.photoravel_be.domain.token.service.TokenService;
+import trendravel.photoravel_be.common.authentication.token.model.TokenDto;
+import trendravel.photoravel_be.common.authentication.token.model.TokenResponse;
+import trendravel.photoravel_be.common.authentication.token.service.TokenService;
 
 import java.util.List;
 

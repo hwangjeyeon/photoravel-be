@@ -7,7 +7,7 @@ import lombok.Data;
 import org.springframework.http.MediaType;
 import trendravel.photoravel_be.db.enums.Region;
 import trendravel.photoravel_be.domain.review.dto.response.RecentReviewsDto;
-import trendravel.photoravel_be.domain.token.model.TokenResponse;
+import trendravel.photoravel_be.common.authentication.token.model.TokenResponse;
 
 import java.time.LocalDateTime;
 import java.util.List;

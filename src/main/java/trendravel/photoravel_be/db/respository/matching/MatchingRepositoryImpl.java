@@ -3,7 +3,7 @@ package trendravel.photoravel_be.db.respository.matching;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import trendravel.photoravel_be.db.match.Matching;
-import trendravel.photoravel_be.domain.matching.dto.response.MatchingResponseDto;
+import trendravel.photoravel_be.common.matching.dto.response.MatchingResponseDto;
 
 import java.util.List;
 

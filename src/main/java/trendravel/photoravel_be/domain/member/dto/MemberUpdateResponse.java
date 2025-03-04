@@ -1,7 +1,7 @@
 package trendravel.photoravel_be.domain.member.dto;
 
 import lombok.*;
-import trendravel.photoravel_be.domain.token.model.TokenResponse;
+import trendravel.photoravel_be.common.authentication.token.model.TokenResponse;
 
 import java.time.LocalDateTime;
 

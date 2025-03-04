@@ -16,13 +16,13 @@ import trendravel.photoravel_be.common.image.service.ImageServiceFacade;
 import trendravel.photoravel_be.db.inmemorydb.entity.Token;
 import trendravel.photoravel_be.db.member.MemberEntity;
 import trendravel.photoravel_be.db.respository.member.MemberRepository;
-import trendravel.photoravel_be.domain.authentication.service.MemberAuthenticationService;
-import trendravel.photoravel_be.domain.authentication.session.UserSession;
+import trendravel.photoravel_be.common.authentication.service.MemberAuthenticationService;
+import trendravel.photoravel_be.common.authentication.session.UserSession;
 import trendravel.photoravel_be.domain.member.convertor.MemberConvertor;
 import trendravel.photoravel_be.domain.member.dto.*;
-import trendravel.photoravel_be.domain.token.model.TokenDto;
-import trendravel.photoravel_be.domain.token.model.TokenResponse;
-import trendravel.photoravel_be.domain.token.service.TokenService;
+import trendravel.photoravel_be.common.authentication.token.model.TokenDto;
+import trendravel.photoravel_be.common.authentication.token.model.TokenResponse;
+import trendravel.photoravel_be.common.authentication.token.service.TokenService;
 
 import java.util.List;
 

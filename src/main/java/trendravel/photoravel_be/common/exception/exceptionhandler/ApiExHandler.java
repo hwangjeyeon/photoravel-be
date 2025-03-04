@@ -12,7 +12,7 @@ import org.springframework.web.method.annotation.HandlerMethodValidationExceptio
 import org.springframework.web.multipart.MaxUploadSizeExceededException;
 import trendravel.photoravel_be.common.exception.ApiException;
 import trendravel.photoravel_be.common.exception.error.ErrorCodeIfs;
-import trendravel.photoravel_be.common.response.Api;
+import trendravel.photoravel_be.util.response.Api;
 
 import static trendravel.photoravel_be.common.exception.error.ErrorCode.*;
 

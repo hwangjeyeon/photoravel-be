@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import trendravel.photoravel_be.common.exception.ImageSystemException;
 import trendravel.photoravel_be.common.exception.error.ErrorCode;
-import trendravel.photoravel_be.common.response.Api;
+import trendravel.photoravel_be.util.response.Api;
 
 import java.util.*;
 import java.util.stream.Collectors;
