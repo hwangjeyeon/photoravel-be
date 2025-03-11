@@ -87,8 +87,10 @@ public class LocationRepositoryImpl implements LocationRepositoryCustom{
         }
         points.setSRID(4326);
 
-        return Expressions.booleanTemplate("ST_Contains(ST_BUFFER({0}, {1}), {2})",
-                points, range, location.point);
+        return Expressions.booleanTemplate(
+                "ST_Distance_Sphere(ST_GeomFromText({0}, 4326), {1}) <= {2}",
+                points.toText(), location.point, range
+        );
     }
 
     @Override
