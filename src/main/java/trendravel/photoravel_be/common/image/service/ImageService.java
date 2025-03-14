@@ -22,20 +22,16 @@ import java.util.List;
 public class ImageService{
 
 
-    private final S3Client amazonS3;
-    private final S3Client minioClient;
+    private final S3Client imageStorage;
 
-
-
-    @Value("${spring.cloud.aws.s3.bucket}")
+    @Value("${storage.bucket.name}")
     private String bucketName;
 
     public void uploadImages(List<MultipartFile> images, List<String> rebuildImageName){
         if(images == null){
             return;
         }
-        uploadImageToStorage(images, rebuildImageName, minioClient);
-//      uploadImageToStorage(images, rebuildImageName, amazonS3);
+        uploadImageToStorage(images, rebuildImageName, imageStorage);
     }
 
 
@@ -63,8 +59,7 @@ public class ImageService{
      */
 
     public void deleteAllImages(List<String> deleteImages){
-        deleteImagesInStorage(deleteImages, minioClient);
-//        deleteImagesInStorage(deleteImages, amazonS3);
+        deleteImagesInStorage(deleteImages, imageStorage);
     }
 
     private void deleteImagesInStorage(List<String> deleteImages, S3Client storage) {
