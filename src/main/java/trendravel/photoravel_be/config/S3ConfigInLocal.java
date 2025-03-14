@@ -14,9 +14,9 @@ import java.net.URI;
 
 @Configuration
 @Profile({"dev"})
-public class S3ConfigInLocal extends S3Config{
+public class S3ConfigInLocal{
 
-    @Value("${spring.cloud.aws.region.static}")
+    @Value("${minio.region.static}")
     private String region;
 
     @Value("${minio.access.key}")
@@ -41,7 +41,4 @@ public class S3ConfigInLocal extends S3Config{
                 .forcePathStyle(true)
                 .build();
     }
-
-
-
 }

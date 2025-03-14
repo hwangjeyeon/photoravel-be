@@ -9,7 +9,6 @@ import software.amazon.awssdk.auth.credentials.*;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.s3.S3Client;
 
-import java.net.URI;
 
 @Configuration
 @Profile({"prod","test"})
@@ -34,11 +33,6 @@ public class S3Config {
                                 .create(accessKey, accessSecret)))
                 .build();
     }
-
-
-
-
-
 
 
 }
